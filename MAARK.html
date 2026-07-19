@@ -910,33 +910,88 @@ function toast(msg,type){
 /* ==========================================================
    CHATBOT (on-prem, canned knowledge)
    ========================================================== */
+const BOT={
+  name:"MAARK Assistant", app:"MAARK 2.0", entity:"case", entities:"cases",
+  idRe:/maark[\s\/]*\d{4}[\s\/]*\d{1,4}/i,
+  hello:"Namaste \u{1F64F} I'm the <b>MAARK Assistant</b> — an on-premise, ETAI-compliant AI that runs fully offline on the Army Data Network. I can explain policies, workflows, roles, security &amp; support, and answer live questions about the case data.<br><span style='color:var(--muted);font-size:11.5px'>Try: “eligibility rules”, “how many approved?”, or “show MAARK/2026/0003”.</span>",
+  summary:x=>`<b>${x.id}</b><br>Beneficiary: <b>${x.name}</b> (${x.rank}, ${x.relation})<br>Unit: ${x.unit}<br>State: ${x.state} &middot; District: ${x.district}<br>Allowance: ₹${x.amount.toLocaleString('en-IN')}<br>Status: <b>${x.status}</b> &middot; Registered: ${x.created}`
+};
+const DEFAULT_SUG=["What is MAARK 2.0?","How many approved?","Eligibility rules","Security features"];
 const KB=[
-  {k:["how many","total case","number of case"],a:()=>"There are currently <b>"+DB.cases().length+"</b> registered cases in MAARK 2.0. "+DB.cases().filter(x=>x.status==='Open').length+" are open/pending."},
-  {k:["approved"],a:()=>DB.cases().filter(x=>x.status==='Approved').length+" cases are <b>Approved</b> and ready for disbursement."},
-  {k:["allowance","amount","money","total value"],a:()=>"Total sanctioned allowance across all cases is <b>₹"+DB.cases().reduce((s,x)=>s+x.amount,0).toLocaleString('en-IN')+"</b>."},
-  {k:["new case","add case","create","register"],a:()=>"To register a new case, open <b>New Case (Data Entry)</b> from the menu. The system auto-generates the Case Number and encrypts the record with AES-256."},
-  {k:["transfer"],a:()=>DB.cases().filter(x=>x.transfer).length+" cases have been transferred. Admins can transfer a case In/Out from the Total Cases screen."},
-  {k:["security","encryption","2fa","safe"],a:()=>"MAARK 2.0 uses SAML 2.0 IAM login, mandatory IACA-token 2FA, AES-256 encryption at rest, IACA SSL, RBAC and full audit logging. It runs fully offline on the ADN &mdash; no internet."},
-  {k:["policy","allowance rule","eligib"],a:()=>"Maintenance allowance is payable to eligible dependents (widow/mother/father/son) of soldiers. Claims move through Data Entry &rarr; Verification &rarr; Approval &rarr; Disbursement."},
-  {k:["report","export"],a:()=>"Open <b>Reports</b> to generate Case Summary, State-wise or Pending Approvals reports. Every output is digitally watermarked with your ID, IP and timestamp, and can be printed or exported to CSV."},
-  {k:["migration","version 1","v1"],a:()=>"Existing MAARK 1.0 data is migrated into 2.0 via a dedicated migration module that preserves encryption, authenticity and integrity. You can dry-run it from CMS &rarr; Database Update."}
+  {t:["hello","hi","hey","namaste","good morning","good evening"],a:()=>"Namaste 🙏 How can I help? Ask about policies, using "+BOT.app+", security, or live case data.",n:["What is MAARK 2.0?","How do I register a case?","Is it secure?"]},
+  {t:["thank","thanks","great","appreciate"],a:()=>"Happy to help. Anything else on cases, policy or security?"},
+  {t:["who are you","what are you","your name","what can you do","help me","capabilities","topics"],a:()=>"I'm the on-premise "+BOT.name+", an offline ETAI-compliant assistant. I cover policies &amp; eligibility, registering/editing cases, roles &amp; access, security (SAML/2FA/AES-256), reports, analytics, migration and support/AMC — plus live data (counts &amp; case look-ups).",n:["Eligibility rules","How many cases?","Security features"]},
+  {t:["what is maark","about maark","about the app","what does this","purpose"],a:()=>"<b>MAARK 2.0</b> (Maintenance Allowance Automated Record Keeping) is the upgraded ADG HR web application that digitises maintenance-allowance case management for soldiers' dependents — registration, verification, approval and disbursement — with a CMS, analytics and a full audit trail, hosted on the Army Data Network.",n:["Eligibility rules","Workflow stages","Who can use it?"]},
+  {t:["scope","version 2","upgrade","re-develop","redevelop","new feature","v2"],a:()=>"Version 2.0 re-develops the legacy PHP/MySQL app with a modern secure stack, a CMS, e-office workflow automation, encrypted V1→V2 data migration, API integration with Army applications, digital watermarking and an on-prem AI assistant.",n:["Technology stack","Migration","Security features"]},
+  {t:["eligib","policy","who is entitled","who can claim","allowance rule","dependent","beneficiary"],a:()=>"Maintenance allowance is payable to eligible dependents — <b>widow, mother, father or son/daughter</b> — of soldiers. Each claim is registered, verified, approved by the competent authority, then disbursed; amounts are recorded per case.",n:["Workflow stages","How do I register a case?"]},
+  {t:["workflow","process","stages","e-office","lifecycle","steps"],a:()=>"The e-office workflow has four stages: <b>1) Data Entry</b> (register), <b>2) Verification</b> (Under Review), <b>3) Approval</b> by Admin/competent authority, <b>4) Disbursement</b>. Live counts appear on the dashboard's Workflow pipeline.",n:["How many under review?","How do I approve a case?"]},
+  {t:["role","access","permission","who can use","privilege"],a:()=>"Three roles with least-privilege RBAC: <b>User</b> (register &amp; update cases, view reports/analytics), <b>Admin</b> (all cases + approve + transfer), <b>Super Admin</b> (everything + Content Management + Audit Log).",n:["How do I register a case?","Security features"]},
+  {t:["register","new case","add case","create case","data entry","file a case"],a:()=>"Open <b>New Case (Data Entry)</b>. The 5-step form captures Auto Case No (system-generated), Personnel, Address, Family and Complaint details. On submit the record is AES-256 encrypted and enters the workflow as ‘Open’.",n:["Workflow stages","Eligibility rules"]},
+  {t:["edit","update case","modify","change a case"],a:()=>"Open <b>Update Regd Cases</b> (or Total Cases for admins), click <b>Edit</b>, change the fields and Save. Every change is audit-logged.",n:["Audit log","How do I approve a case?"]},
+  {t:["approve","approval","sanction"],a:()=>"Admins/Super Admins can <b>Approve</b> a case from Total Cases; approved cases are ready for disbursement.",n:["How many approved?","Workflow stages"]},
+  {t:["transfer","move case","transferred"],a:()=>DB.cases().filter(x=>x.transfer).length+" cases are transferred. Admins can <b>Transfer</b> a case In/Out to another ADG HR cell; they appear in the Transferred Cases register.",n:["How many cases?"]},
+  {t:["report","export","csv","print"],a:()=>"<b>Reports</b> offers Case Summary, State-wise Allowance and Pending Approvals. Every report is <b>digitally watermarked</b> with your ID, IP and timestamp, and can be printed or exported to CSV.",n:["Analytics","Watermarking"]},
+  {t:["analytic","chart","visual","statistic","graph"],a:()=>"<b>Analytics</b> shows District-wise, State-wise and Group-of-States summaries plus allowance by group, as interactive charts. The dashboard is clickable too — filter by status via KPIs, pills or donut.",n:["How many approved?","Reports"]},
+  {t:["migration","version 1","v1","legacy data","old data"],a:()=>"Existing MAARK 1.0 data (PHP/MySQL, encrypted) is migrated to 2.0 by a dedicated <b>migration module</b> that preserves authenticity and integrity. Dry-run it from CMS → Database Update.",n:["Technology stack","Database"]},
+  {t:["security","secure","encryption","aes","2fa","two factor","saml","iaca","iam","rbac","hardening","owasp"],a:()=>"<b>Security:</b> SAML 2.0 login via Army IAM, mandatory <b>IACA-token 2FA</b>, <b>AES-256</b> encryption at rest (nothing stored unencrypted), IACA SSL/HTTPS, role-based access, malicious-upload checks and comprehensive audit logging. Runs fully offline on the ADN — no internet.",n:["Audit log","Is it offline?","Watermarking"]},
+  {t:["audit","who did","activity","trail"],a:()=>"The <b>Audit Log</b> (Super Admin) records every action — logins, views, edits, approvals, deletes, report generation — with user, role, timestamp and IP, for security analysis.",n:["Security features","Roles"]},
+  {t:["watermark"],a:()=>"Any printed/PDF output is <b>digitally watermarked</b> with the machine IP, User ID and timestamp — visible across generated reports.",n:["Reports","Security features"]},
+  {t:["backup","normalis","normaliz","3nf","bcnf"],a:()=>"Database backups run <b>daily</b> (or on demand from CMS). Data is normalised to <b>3NF/BCNF</b>.",n:["Database","Migration"]},
+  {t:["database","data field","how many field","how many user","10000","500 field","capacity"],a:()=>"Database: <b>MS SQL 2022 or MySQL</b>, up to <b>500 data fields</b>, catering for up to <b>10,000 users</b>, 3NF/BCNF normalised, daily backups.",n:["Technology stack","Backup"]},
+  {t:["tech","technology","stack","language","framework","built with"],a:()=>"Stack: <b>PHP/Python/.NET</b> with <b>MS SQL 2022/MySQL</b>, on <b>Ubuntu LTS or Windows Server 2025</b> (VM). No external licensed dependencies — libraries provided in-house.",n:["Deployment","Database"]},
+  {t:["deploy","adn","hosting","host","data center","data centre","port","bandwidth"],a:()=>"Deployed on the <b>Army Data Network</b>, hosted at the Central Data Centre, minimal open ports (Army-vetted), federated, within common-user bandwidth, complying with ADN routing.",n:["Is it offline?","Security features"]},
+  {t:["support","amc","maintenance","warranty","direct support"],a:()=>"Support: <b>1 year Direct Support</b> (6-hour response, minor changes free) then a <b>5-year AMC</b> covering fixes, patches and upgrades — 6 years total.",n:["Training","Technology stack"]},
+  {t:["training","train"],a:()=>"On go-live, in-depth <b>training for 20–25 personnel</b> is provided at ADG HR premises, Delhi.",n:["Support & AMC"]},
+  {t:["ipr","intellectual property","ownership","who owns"],a:()=>"The <b>IPR</b> of the developed application rests entirely with the buyer (ADG HR); nothing is shared outside.",n:["About MAARK 2.0"]},
+  {t:["chatbot","ai","etai","assistant","llm","model"],a:()=>"This assistant is an <b>on-premise, ETAI-compliant (DRDO/SAG) AI</b> running fully offline on the ADN with no internet — answering from the application's policies, functions and live data. In production it is served by a self-hosted open-weights model.",n:["Is it offline?","Security features"]},
+  {t:["offline","internet","air gap","air-gap","no internet","connectivity"],a:()=>"Yes — the entire application, <b>including this AI assistant, runs fully offline</b> on the Army Data Network with no internet, per the RFP's air-gapped requirement.",n:["Security features","Technology stack"]}
 ];
-function initChat(){
-  document.getElementById("chatBody").innerHTML="";
-  bot("Namaste \u{1F64F} I'm the MAARK Assistant &mdash; an on-premise, ETAI-compliant AI. Ask me about cases, allowances, reports or security.");
-  const sug=["How many cases?","Total allowance?","How do I add a case?","Is it secure?"];
-  document.getElementById("chatSug").innerHTML=sug.map(s=>'<button onclick="quick(this)">'+s+'</button>').join("");
+function normalize(s){return " "+s.toLowerCase().replace(/[^a-z0-9\/ ]/g," ").replace(/\s+/g," ").trim()+" ";}
+function scoreEntry(e,low){let sc=0;e.t.forEach(term=>{const t=term.trim();const hit=t.length<=3?low.indexOf(" "+t+" ")>=0:low.indexOf(t)>=0;if(hit)sc+=t.split(" ").length*3;});return sc;}
+let lastNext=null;
+function caseSummary(x){lastNext=DEFAULT_SUG;return BOT.summary(x);}
+function countAnswer(low){
+  const c=DB.cases();let f=c.slice();let lbl="";
+  const st=STATUS.find(s=>low.indexOf(s.toLowerCase())>=0);if(st){f=f.filter(x=>x.status===st);lbl=st+" ";}
+  const locs=[].concat(STATES, typeof AREAS!=='undefined'?AREAS:[], typeof DISTRICTS!=='undefined'?DISTRICTS:[]);
+  const loc=locs.find(a=>low.indexOf(a.toLowerCase())>=0);if(loc){f=f.filter(x=>x.state===loc||x.area===loc||x.district===loc);lbl+="in "+loc+" ";}
+  if(typeof ALLEGATIONS!=='undefined'){const al=ALLEGATIONS.find(a=>low.indexOf(a.toLowerCase())>=0);if(al){f=f.filter(x=>x.allegationType===al);lbl+=al+" ";}}
+  lastNext=DEFAULT_SUG;return "There are <b>"+f.length+"</b> "+lbl+BOT.entities+" (of "+c.length+" total).";
 }
+function listAnswer(low){
+  const c=DB.cases();let f=c.slice();
+  const st=STATUS.find(s=>low.indexOf(s.toLowerCase())>=0);if(st)f=f.filter(x=>x.status===st);
+  const locs=[].concat(STATES, typeof AREAS!=='undefined'?AREAS:[], typeof DISTRICTS!=='undefined'?DISTRICTS:[]);
+  const loc=locs.find(a=>low.indexOf(a.toLowerCase())>=0);if(loc)f=f.filter(x=>x.state===loc||x.area===loc||x.district===loc);
+  if(!st&&!loc)return null;lastNext=DEFAULT_SUG;
+  if(!f.length)return "No matching "+BOT.entities+".";
+  return "Showing "+Math.min(6,f.length)+" of "+f.length+":<br>"+f.slice(0,6).map(x=>"• <b>"+x.id+"</b> — "+(x.name||x.victim)+" ("+x.status+")").join("<br>");
+}
+function botAnswer(q){
+  const low=normalize(q);lastNext=null;
+  const idm=q.match(BOT.idRe);
+  if(idm){const raw=idm[0].toUpperCase().replace(/\s+/g,"/").replace(/\/+/g,"/");let x=DB.cases().find(c=>c.id.toUpperCase()===raw);
+    if(!x){const num=(idm[0].match(/(\d{1,4})\s*$/)||[])[1];if(num)x=DB.cases().find(c=>c.id.endsWith(String(parseInt(num)).padStart(4,"0")));}
+    return x?caseSummary(x):"I couldn't find that case number — please check and try again.";}
+  const nm=low.match(/\b(?:case|complaint)\s*(?:no\.?|number|#)?\s*(\d{1,4})\b/);
+  if(nm){const y=DB.cases().find(c=>c.id.endsWith(String(parseInt(nm[1])).padStart(4,"0")));if(y)return caseSummary(y);}
+  if(/\b(how many|count|number of|total number|how much)\b/.test(low))return countAnswer(low);
+  if(/\b(list|show me|which|display|show all)\b/.test(low)){const r=listAnswer(low);if(r)return r;}
+  let best=null,bs=0;KB.forEach(e=>{const s=scoreEntry(e,low);if(s>bs){bs=s;best=e;}});
+  if(best&&bs>0){lastNext=best.n||DEFAULT_SUG;return typeof best.a==="function"?best.a():best.a;}
+  lastNext=DEFAULT_SUG;
+  return "I can help with <b>policies &amp; eligibility</b>, registering/editing cases, <b>roles &amp; access</b>, <b>security</b> (SAML/2FA/AES-256), reports, analytics, migration and support — plus live data (counts &amp; case look-ups). What would you like to know?";
+}
+function initChat(){document.getElementById("chatBody").innerHTML="";bot(BOT.hello);refreshSug(DEFAULT_SUG);}
+function refreshSug(list){document.getElementById("chatSug").innerHTML=(list||DEFAULT_SUG).map(s=>'<button onclick="quick(this)">'+s+'</button>').join("");}
 function toggleChat(){document.getElementById("chatWin").classList.toggle("hidden");document.getElementById("chatFab").classList.toggle("hidden");}
 function bot(html){const b=document.getElementById("chatBody");const d=document.createElement("div");d.className="bub bot";d.innerHTML=html;b.appendChild(d);b.scrollTop=b.scrollHeight;}
 function me(t){const b=document.getElementById("chatBody");const d=document.createElement("div");d.className="bub me";d.textContent=t;b.appendChild(d);b.scrollTop=b.scrollHeight;}
 function quick(el){document.getElementById("chatIn").value=el.textContent;sendChat();}
 function sendChat(){
-  const inp=document.getElementById("chatIn");const q=inp.value.trim();if(!q)return;me(q);inp.value="";
-  const low=q.toLowerCase();
-  const hit=KB.find(e=>e.k.some(k=>low.includes(k)));
-  setTimeout(()=>bot(hit?hit.a():"I can help with cases, allowances, reports, migration and security. Try: “How many cases?” or “Is it secure?”"),350);
-  log("CHATBOT_QUERY",q);
+  const inp=document.getElementById("chatIn");const q=inp.value.trim();if(!q)return;me(q);inp.value="";log("CHATBOT_QUERY",q);
+  const b=document.getElementById("chatBody");const t=document.createElement("div");t.className="bub bot";t.innerHTML="<span style='opacity:.5'>typing…</span>";b.appendChild(t);b.scrollTop=b.scrollHeight;
+  setTimeout(()=>{t.remove();bot(botAnswer(q));refreshSug(lastNext||DEFAULT_SUG);},420);
 }
 
 /* ==========================================================
