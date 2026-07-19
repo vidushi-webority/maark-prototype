@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>MAARK 2.0 — Prototype Showcase | Webority Technologies</title>
+<style>
+:root{--g:#123A22;--g2:#1F5E39;--gold:#C8A64B;--ink:#1a2019;--muted:#5c6b58;--bg:#eef1ea;--line:#e2e5da}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",Roboto,Arial,sans-serif}
+body{background:var(--bg);color:var(--ink);line-height:1.55}
+.tri{height:4px;background:linear-gradient(90deg,#E0821E 0 33.33%,#fff 33.33% 66.66%,#178A3B 66.66% 100%)}
+.wrap{max-width:1040px;margin:0 auto;padding:44px 22px 60px}
+header{text-align:center;margin-bottom:14px}
+.emblem{width:78px;height:78px;margin:0 auto 16px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#fbf1cf,var(--gold) 70%,#9c7c2e);border:3px solid #fbeeb6;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.emblem svg{width:80%;height:80%}
+h1{font-family:Georgia,serif;color:var(--g);font-size:34px;letter-spacing:.5px}
+h1 span{color:var(--gold);vertical-align:super;font-size:19px}
+.sub{color:var(--muted);font-size:15px;margin-top:6px}
+.org{font-size:12.5px;color:var(--muted);margin-top:10px;letter-spacing:.3px}
+.notice{background:#fff7e6;border:1px solid #ecdca0;border-left:5px solid var(--gold);border-radius:11px;padding:14px 18px;margin:26px 0;font-size:13px;color:#6f5714;display:flex;gap:11px;align-items:flex-start}
+.notice b{color:#8a6a10}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:10px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 3px 14px rgba(20,40,20,.07);transition:.2s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(20,40,20,.14)}
+.swatch{height:96px;display:flex;align-items:flex-end;padding:12px 16px;color:#fff;font-family:Georgia,serif;font-size:19px;letter-spacing:.4px;position:relative}
+.swatch .tag{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);font-family:Segoe UI;font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 9px;border-radius:20px}
+.sw-green{background:linear-gradient(120deg,#0C2A18,#1F5E39)}
+.sw-neutral{background:linear-gradient(120deg,#20242b,#4d5563)}
+.sw-indigo{background:linear-gradient(120deg,#111a3a,#2c4489)}
+.cbody{padding:16px 18px 20px;flex:1;display:flex;flex-direction:column}
+.cbody p{font-size:13px;color:var(--muted);margin:6px 0 16px;flex:1}
+.cbody h3{font-size:16px;color:var(--g)}
+.btn{display:block;text-align:center;background:linear-gradient(160deg,#1F5E39,#2C7346);color:#fff;padding:11px;border-radius:9px;font-weight:700;font-size:14px;text-decoration:none;letter-spacing:.3px}
+.btn:hover{filter:brightness(1.08)}
+.feat{margin-top:34px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 26px}
+.feat h2{font-family:Georgia,serif;color:var(--g);font-size:20px;margin-bottom:16px}
+.feat ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px 22px}
+.feat li{font-size:13.5px;color:var(--ink);padding-left:24px;position:relative}
+.feat li::before{content:"\2714";position:absolute;left:0;color:var(--g2);font-weight:700}
+.tips{margin-top:22px;font-size:13px;color:var(--muted);background:#f4f6f0;border-radius:11px;padding:14px 18px}
+.tips b{color:var(--g)}
+footer{text-align:center;margin-top:36px;font-size:12px;color:var(--muted);line-height:1.7}
+footer .em{color:var(--g);font-weight:600}
+</style>
+</head>
+<body>
+<div class="tri"></div>
+<div class="wrap">
+  <header>
+    <div class="emblem" id="emb"></div>
+    <h1>MAARK <span>2.0</span></h1>
+    <div class="sub">Maintenance Allowance Automated Record Keeping &mdash; Interactive Prototype</div>
+    <div class="org">Concept demonstration for the Additional Directorate General of Human Rights, IHQ of MoD (Army)</div>
+  </header>
+
+  <div class="notice">
+    <span style="font-size:18px">&#9888;</span>
+    <div><b>Prototype &mdash; demonstration only.</b> This is a concept demonstration built by <b>Webority Technologies</b> using dummy data to illustrate the proposed re-development of MAARK to Version 2.0. It is <b>not</b> a live, official, or classified Government of India / Ministry of Defence system. All records shown are fictitious.</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="swatch sw-green">Army Green <span class="tag">FLAGSHIP</span></div>
+      <div class="cbody"><h3>Regimental Theme</h3><p>Bottle-green &amp; regimental gold with the Ashoka Chakra &mdash; ceremonial identity intended for Army leadership review.</p>
+      <a class="btn" href="MAARK.html">Open Demo &rarr;</a></div>
+    </div>
+    <div class="card">
+      <div class="swatch sw-neutral">Neutral <span class="tag">GRAPHITE</span></div>
+      <div class="cbody"><h3>Neutral Theme</h3><p>Understated graphite &amp; warm-taupe palette for a corporate-neutral, distraction-free presentation.</p>
+      <a class="btn" href="MAARK-Neutral.html">Open Demo &rarr;</a></div>
+    </div>
+    <div class="card">
+      <div class="swatch sw-indigo">Indigo <span class="tag">MODERN</span></div>
+      <div class="cbody"><h3>Indigo / Navy Theme</h3><p>Modern government IT-portal look in indigo-navy with gold accents. A contemporary alternative.</p>
+      <a class="btn" href="MAARK-Indigo.html">Open Demo &rarr;</a></div>
+    </div>
+  </div>
+
+  <div class="feat">
+    <h2>What the prototype demonstrates</h2>
+    <ul>
+      <li>Role-based access (User / Admin / Super Admin)</li>
+      <li>SAML 2.0 IAM login + IACA-token 2FA (simulated)</li>
+      <li>Interactive dashboard with live filters &amp; charts</li>
+      <li>5-section case data-entry wizard</li>
+      <li>Case management: view / edit / approve / transfer</li>
+      <li>Digitally-watermarked, printable reports + CSV export</li>
+      <li>Analytics: district, state &amp; group-of-states</li>
+      <li>Content Management System + V1&rarr;V2 migration</li>
+      <li>On-premise, ETAI-compliant AI assistant</li>
+      <li>Comprehensive audit logging</li>
+      <li>AES-256 encryption &amp; RBAC indicators</li>
+      <li>100% offline &mdash; zero external dependencies</li>
+    </ul>
+  </div>
+
+  <div class="tips"><b>How to explore:</b> open any theme &rarr; pick a role &rarr; enter <b>any 6-digit code</b> as the 2FA token &rarr; the interactive dashboard loads. Try clicking the KPI cards, the status filter pills, and the donut chart segments.</div>
+
+  <footer>
+    <div class="em">Webority Technologies</div>
+    Prepared for RFP A/60463 &mdash; Upgradation &amp; Re-development of Web Applications<br>
+    &copy; 2026 Webority Technologies &middot; Prototype for evaluation purposes only
+  </footer>
+</div>
+<script>
+function chakra(){let s="";for(let i=0;i<24;i++){const a=i*15*Math.PI/180;s+=`<line x1="50" y1="50" x2="${50+38*Math.cos(a)}" y2="${50+38*Math.sin(a)}" stroke="#0A2E6E" stroke-width="1.6"/><circle cx="${50+38*Math.cos(a)}" cy="${50+38*Math.sin(a)}" r="1.7" fill="#0A2E6E"/>`;}
+return `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="41" fill="none" stroke="#0A2E6E" stroke-width="3.2"/>${s}<circle cx="50" cy="50" r="6" fill="#0A2E6E"/></svg>`;}
+document.getElementById("emb").innerHTML=chakra();
+</script>
+</body>
+</html>
