@@ -16,7 +16,6 @@
   /* Indian Army palette — deep bottle green + regimental gold */
   --g900:#0C2A18; --g800:#123A22; --g700:#184A2C; --g600:#1F5E39; --g500:#2C7346;
   --gold:#C8A64B; --gold-l:#E6CF88; --gold-d:#9C7C2E; --gold-soft:#f3ead0;
-  --saffron:#E0821E; --chakra:#0A2E6E;
   --ink:#132018; --muted:#66756A; --faint:#8b978d;
   --line:#e4e7dd; --line-2:#eef1e9;
   --bg:#eef1ea; --paper:#ffffff; --cream:#f8f6ee;
@@ -36,8 +35,8 @@ input,select,textarea{font-family:inherit;font-size:14px}
 h1,h2,h3,.serif{font-family:var(--serif)}
 ::selection{background:var(--gold);color:#241c04}
 
-/* tricolor hairline */
-.tricolor{height:3px;background:linear-gradient(90deg,#E0821E 0 33.33%,#ffffff 33.33% 66.66%,#178A3B 66.66% 100%)}
+/* neutral brand hairline (no national symbol) */
+.tricolor{height:3px;background:linear-gradient(90deg,var(--g600),var(--gold) 50%,var(--g600))}
 
 /* ---------- Classification + security ribbon ---------- */
 .classbar{background:#0A2011;color:#c7d8c0;font-size:10.5px;letter-spacing:.6px;padding:5px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center}
@@ -45,7 +44,7 @@ h1,h2,h3,.serif{font-family:var(--serif)}
 .classbar .badge{display:inline-flex;gap:6px;align-items:center;color:#a9c9a0}
 .classbar .dot{width:7px;height:7px;border-radius:50%;background:#57d06a;box-shadow:0 0 7px #57d06a}
 
-/* ---------- Emblem / Chakra ---------- */
+/* ---------- Emblem (neutral monogram) ---------- */
 .emblem{width:48px;height:48px;flex:none;border-radius:50%;
   background:radial-gradient(circle at 38% 32%,#fbf1cf,var(--gold) 70%,var(--gold-d));
   border:2px solid #fbeeb6;display:flex;align-items:center;justify-content:center;
@@ -193,8 +192,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
 /* ---------- Login ---------- */
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;
   background:linear-gradient(150deg,var(--g900),var(--g800) 55%,var(--g900))}
-.login-wrap .bgchakra{position:absolute;width:720px;height:720px;opacity:.05;right:-180px;bottom:-180px}
-.login-wrap .bgchakra svg{width:100%;height:100%}
+.login-wrap .bgmark{position:absolute;width:720px;height:720px;opacity:.05;right:-180px;bottom:-180px}
+.login-wrap .bgmark svg{width:100%;height:100%}
 .login-wrap .vignette{position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,transparent,rgba(0,0,0,.45))}
 .login-card{background:#fff;border-radius:20px;width:100%;max-width:430px;overflow:hidden;box-shadow:var(--sh-3);position:relative;z-index:2;border:1px solid rgba(230,207,136,.5)}
 .login-card .top{background:linear-gradient(170deg,var(--g800),var(--g600));color:#fff;padding:30px 26px 24px;text-align:center;position:relative;overflow:hidden}
@@ -263,6 +262,25 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
 .mini-bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--g600),var(--g500));border-radius:5px}
 .wfcard{padding:14px;border:1px solid var(--line);border-radius:11px;background:linear-gradient(180deg,#fff,#fbfbf6)}
 @media print{.classbar,header.app,nav.side,.chat-fab,.chat-win,.noprint,.tricolor{display:none!important}main{padding:0}.report-sheet{border:none;box-shadow:none}}
+
+/* ---------- Consolidated single-page form ---------- */
+.formsec{padding:4px 0 18px;border-bottom:1px dashed var(--line)}
+.formsec:last-of-type{border-bottom:none;padding-bottom:6px}
+.formsec-h{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:15px;color:var(--g800);font-weight:700;margin:12px 0 14px}
+.formsec-h .secn{width:24px;height:24px;flex:none;border-radius:50%;background:linear-gradient(160deg,var(--g700),var(--g600));color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:var(--sans)}
+.formsec-h .hint{font-family:var(--sans);font-weight:500;font-size:11.5px;color:var(--faint);margin-left:2px}
+.form-actions{display:flex;justify-content:flex-end;gap:11px;margin-top:14px;border-top:1px solid var(--line);padding-top:18px;align-items:center}
+
+/* ---------- Interactive analytics ---------- */
+.an-ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.an-ctrl select{padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;font-weight:600;color:var(--ink)}
+.an-ctrl select:focus{outline:2px solid var(--g500);border-color:var(--g500)}
+.chart-wrap{overflow-x:auto;padding-top:4px}
+.chart-wrap svg{display:block}
+.bar-int{transition:opacity .15s}
+.bar-int:hover{opacity:.78}
+.leg-click{cursor:pointer}
+.leg-click:hover{color:var(--g700)}
 </style>
 </head>
 <body>
@@ -277,12 +295,12 @@ Concept demo by <b>Webority Technologies</b> using dummy data. This is <b>not</b
 
 <!-- ============ LOGIN ============ -->
 <div id="loginView" class="login-wrap">
-  <div class="bgchakra" data-chakra></div>
+  <div class="bgmark" data-emblem></div>
   <div class="vignette"></div>
   <div class="login-card">
     <div class="tricolor"></div>
     <div class="top">
-      <div class="emblem" data-chakra></div>
+      <div class="emblem" data-emblem></div>
       <div class="t1">MAARK<span style="font-size:15px;vertical-align:super;color:var(--gold-l)"> 2.0</span></div>
       <div class="t2">Maintenance Allowance Automated Record Keeping</div>
     </div>
@@ -314,7 +332,7 @@ Concept demo by <b>Webority Technologies</b> using dummy data. This is <b>not</b
         <div class="demo-note">Demo OTP: any 6 digits (e.g. <b>482913</b>). 2FA is mandatory per RFP &mdash; IACA tokens only.</div>
         <button class="btn ghost" style="width:100%;justify-content:center;margin-top:9px" onclick="backToLogin()">&larr; Back</button>
       </div>
-      <div class="login-foot">GOVERNMENT OF INDIA &middot; MINISTRY OF DEFENCE<br>Authorised personnel only &middot; All access is monitored &amp; logged</div>
+      <div class="login-foot">ADDITIONAL DIRECTORATE GENERAL OF HUMAN RIGHTS<br>Authorised personnel only &middot; All access is monitored &amp; logged</div>
     </div>
   </div>
 </div>
@@ -331,13 +349,13 @@ Concept demo by <b>Webority Technologies</b> using dummy data. This is <b>not</b
     <span class="badge">&#128220; Audit Logged</span>
   </div>
   <header class="app">
-    <div class="emblem" data-chakra></div>
+    <div class="emblem" data-emblem></div>
     <div class="brand">
       <h1>MAARK<span class="v">2.0</span></h1>
       <p>Maintenance Allowance Automated Record Keeping</p>
     </div>
     <div class="spacer"></div>
-    <div class="motto">"Service Before Self"<b>&#2360;&#2375;&#2357;&#2366; &#2346;&#2352;&#2350;&#2379; &#2343;&#2352;&#2381;&#2350;&#2307;</b></div>
+    <div class="motto">"Service Before Self"<b>CARE &middot; DIGNITY &middot; TRUST</b></div>
     <div class="userchip">
       <div class="av" id="uAv">U</div>
       <div><b id="uName">User</b><small id="uRole">User</small></div>
@@ -373,36 +391,60 @@ Concept demo by <b>Webority Technologies</b> using dummy data. This is <b>not</b
 
 <script>
 /* ==========================================================
-   ASHOKA CHAKRA (SVG) — national emblem, drawn, no assets
+   APP EMBLEM (SVG) — neutral monogram badge, drawn, no assets.
+   Deliberately uses no national symbol / insignia.
    ========================================================== */
-function chakraSVG(){
-  let spokes="";
-  for(let i=0;i<24;i++){const a=i*15*Math.PI/180;
-    spokes+=`<line x1="50" y1="50" x2="${50+38*Math.cos(a)}" y2="${50+38*Math.sin(a)}" stroke="#0A2E6E" stroke-width="1.6"/>`;
-    spokes+=`<circle cx="${50+38*Math.cos(a)}" cy="${50+38*Math.sin(a)}" r="1.7" fill="#0A2E6E"/>`;}
+function emblemMark(){
+  const ink="#14352a";
   return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="41" fill="none" stroke="#0A2E6E" stroke-width="3.2"/>
-    ${spokes}<circle cx="50" cy="50" r="6" fill="#0A2E6E"/></svg>`;
+    <circle cx="50" cy="50" r="40" fill="none" stroke="${ink}" stroke-width="3"/>
+    <text x="50" y="53" text-anchor="middle" dominant-baseline="middle" font-family="Georgia,'Times New Roman',serif" font-weight="700" font-size="40" fill="${ink}">M</text>
+    <rect x="34" y="70" width="32" height="3" rx="1.5" fill="${ink}"/></svg>`;
 }
-document.querySelectorAll("[data-chakra]").forEach(el=>el.innerHTML=chakraSVG());
+document.querySelectorAll("[data-emblem]").forEach(el=>el.innerHTML=emblemMark());
 function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||"#333";}
 
 /* ==========================================================
    DATA LAYER  (localStorage-backed, seeded)
    ========================================================== */
-const STATES=["Jammu & Kashmir","Punjab","Rajasthan","Uttar Pradesh","Assam","Nagaland","Manipur","West Bengal","Maharashtra","Karnataka"];
-const GROUPS={"Northern":["Jammu & Kashmir","Punjab"],"Western":["Rajasthan","Maharashtra"],"Central":["Uttar Pradesh"],"Eastern":["West Bengal","Assam"],"North-East":["Nagaland","Manipur"],"Southern":["Karnataka"]};
-const DISTRICTS=["Srinagar","Jammu","Amritsar","Jaipur","Lucknow","Guwahati","Kohima","Imphal","Kolkata","Pune","Bengaluru","Barmer"];
+/* Current official list — 28 States + 8 Union Territories (post 2019–20 reorganisation) */
+const STATES=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman & Nicobar Islands","Chandigarh","Dadra & Nagar Haveli and Daman & Diu","Delhi","Jammu & Kashmir","Ladakh","Lakshadweep","Puducherry"];
+/* Regional commands (each State/UT mapped to exactly one) */
+const GROUPS={
+  "Northern Command":["Jammu & Kashmir","Ladakh","Himachal Pradesh","Punjab","Chandigarh"],
+  "Western Command":["Haryana","Delhi","Uttarakhand"],
+  "South Western Command":["Rajasthan","Gujarat","Dadra & Nagar Haveli and Daman & Diu"],
+  "Central Command":["Uttar Pradesh","Madhya Pradesh","Chhattisgarh","Bihar","Jharkhand"],
+  "Eastern Command":["West Bengal","Sikkim","Assam","Arunachal Pradesh","Nagaland","Manipur","Mizoram","Tripura","Meghalaya","Odisha","Andaman & Nicobar Islands"],
+  "Southern Command":["Maharashtra","Goa","Karnataka","Kerala","Tamil Nadu","Telangana","Andhra Pradesh","Puducherry","Lakshadweep"]
+};
+/* Representative current districts per State/UT (keeps state–district pairing consistent) */
+const STATE_DISTRICTS={
+  "Andhra Pradesh":["Visakhapatnam","Guntur"],"Arunachal Pradesh":["Tawang","Papum Pare"],"Assam":["Kamrup Metro","Sonitpur"],
+  "Bihar":["Patna","Gaya"],"Chhattisgarh":["Raipur","Bastar"],"Goa":["North Goa"],"Gujarat":["Ahmedabad","Kutch"],
+  "Haryana":["Gurugram","Ambala"],"Himachal Pradesh":["Shimla","Kangra"],"Jharkhand":["Ranchi","Bokaro"],
+  "Karnataka":["Bengaluru Urban","Belagavi"],"Kerala":["Thiruvananthapuram","Ernakulam"],"Madhya Pradesh":["Bhopal","Gwalior"],
+  "Maharashtra":["Pune","Nagpur"],"Manipur":["Imphal East","Churachandpur"],"Meghalaya":["East Khasi Hills"],
+  "Mizoram":["Aizawl"],"Nagaland":["Kohima","Dimapur"],"Odisha":["Khordha","Cuttack"],"Punjab":["Amritsar","Ludhiana"],
+  "Rajasthan":["Jaipur","Barmer","Jaisalmer"],"Sikkim":["Gangtok"],"Tamil Nadu":["Chennai","Coimbatore"],
+  "Telangana":["Hyderabad","Medchal–Malkajgiri"],"Tripura":["West Tripura"],"Uttar Pradesh":["Lucknow","Prayagraj","Meerut"],
+  "Uttarakhand":["Dehradun","Nainital"],"West Bengal":["Kolkata","Darjeeling"],"Andaman & Nicobar Islands":["South Andaman"],
+  "Chandigarh":["Chandigarh"],"Dadra & Nagar Haveli and Daman & Diu":["Daman"],"Delhi":["New Delhi"],
+  "Jammu & Kashmir":["Srinagar","Baramulla","Anantnag"],"Ladakh":["Leh","Kargil"],"Lakshadweep":["Kavaratti"],"Puducherry":["Puducherry"]
+};
+const DISTRICTS=[...new Set(Object.values(STATE_DISTRICTS).flat())].sort();
+function distOf(state,i){const d=STATE_DISTRICTS[state]||["—"];return d[i%d.length];}
 const STATUS=["Open","Under Review","Approved","Rejected","Transferred"];
 const RANKS=["Sep","Nk","Hav","Sub","Nb Sub","Lt","Capt","Maj"];
+const SEED_V="2";
 
 function seed(force){
-  if(!force && localStorage.getItem("maark_cases")) return;
+  if(!force && localStorage.getItem("maark_cases") && localStorage.getItem("maark_seed_v")===SEED_V) return;
   const names=["Ramesh Kumar","Suresh Singh","Vijay Sharma","Anil Yadav","Manoj Verma","Rakesh Gupta","Deepak Rawat","Sunil Negi","Pradeep Rana","Ashok Bisht","Naresh Tomar","Dinesh Chauhan","Karan Mehta","Rohit Dubey","Sandeep Nair","Amit Joshi","Vikram Patil","Harish Reddy","Gopal Das","Mahesh Iyer"];
   const cases=[]; let n=1;
   for(let i=0;i<24;i++){
     const st=STATES[i%STATES.length];
-    const dt=DISTRICTS[i%DISTRICTS.length];
+    const dt=distOf(st,i);
     const stat=STATUS[i%STATUS.length];
     const amt=[8000,10000,12000,15000,20000][i%5];
     cases.push({
@@ -422,6 +464,7 @@ function seed(force){
   localStorage.setItem("maark_cases",JSON.stringify(cases));
   localStorage.setItem("maark_audit",JSON.stringify([]));
   localStorage.setItem("maark_seq","25");
+  localStorage.setItem("maark_seed_v",SEED_V);
   localStorage.setItem("maark_settings",JSON.stringify({title:"MAARK 2.0",banner:"Serving those who serve the nation",theme:"Army Green",backup:"Daily 02:00 IST"}));
 }
 function groupOf(state){for(const g in GROUPS)if(GROUPS[g].includes(state))return g;return "Other";}
@@ -522,8 +565,8 @@ function vDashboard(m){
   dashStatus="All"; dashView="count";
   const SEGS=["All","Open","Under Review","Approved","Rejected","Transferred"];
   m.innerHTML=`<div class="hero">
-    <div class="cw" data-chakra></div>
-    <div class="emblem" data-chakra></div>
+    <div class="cw" data-emblem></div>
+    <div class="emblem" data-emblem></div>
     <div>
       <div class="crumb" style="color:rgba(255,255,255,.6)">Additional Directorate General of Human Rights</div>
       <h2>Welcome, ${fn}</h2>
@@ -562,12 +605,12 @@ function vDashboard(m){
     </h3>
     <div class="grid" id="wfGrid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))"></div>
   </div>`;
-  document.querySelectorAll("#mainArea [data-chakra]").forEach(el=>el.innerHTML=chakraSVG());
+  document.querySelectorAll("#mainArea [data-emblem]").forEach(el=>el.innerHTML=emblemMark());
   dashRenderRows(); dashRenderWF();
 }
 function kpi(l,v,c,ico,icbg,tr,dir){return `<div class="card kpi"><div class="strip" style="background:${c}"></div><div class="top"><div class="lbl">${l}</div><div class="ico" style="background:${icbg}">${ico}</div></div><div class="val">${v}</div><div class="tr ${dir}">${tr}</div></div>`;}
 function kpiC(l,v,c,ico,icbg,tr,status){return `<div class="card kpi clickable" onclick="jumpCases('${status}')"><div class="strip" style="background:${c}"></div><div class="top"><div class="lbl">${l}</div><div class="ico" style="background:${icbg}">${ico}</div></div><div class="val">${v}</div><div class="tr" style="color:var(--info)">${tr} &rarr;</div></div>`;}
-function jumpCases(status){filterS=status==="All"?"":status;filterQ="";go(SESSION.role==="User"?"mycases":"allcases");}
+function jumpCases(status){filterS=status==="All"?"":status;filterQ="";filterG="";go(SESSION.role==="User"?"mycases":"allcases");}
 function dashSetStatus(s){
   dashStatus=(dashStatus===s&&s!=="All")?"All":s;
   document.querySelectorAll("#segbar .seg").forEach(b=>b.classList.toggle("on",b.dataset.s===dashStatus));
@@ -608,14 +651,16 @@ function donutDash(data){
 }
 function statusTag(s){const m={"Open":"t-open","Under Review":"t-review","Approved":"t-appr","Rejected":"t-rej","Transferred":"t-trans"};return '<span class="tag '+m[s]+'">'+s+'</span>';}
 
-/* ---- New Case wizard ---- */
-let wizStep=0, wizData={};
+/* ---- New Case — single consolidated page ---- */
+let wizData={};
 function vNewCase(m){
-  wizStep=0;wizData={id:DB.nextId()};
-  m.innerHTML=head("New Case &mdash; Data Entry","Auto Case No: <b>"+wizData.id+"</b>","New Case");
-  m.innerHTML+='<div class="card panel"><div class="wizard" id="wiz"></div><div id="wizBody"></div>'+
-    '<div style="display:flex;justify-content:space-between;margin-top:20px"><button class="btn ghost" onclick="wizNav(-1)" id="wizBack">&larr; Back</button><button class="btn primary" onclick="wizNav(1)" id="wizNext">Next &rarr;</button></div></div>';
-  renderWiz();
+  wizData={id:DB.nextId()};
+  m.innerHTML=head("New Case &mdash; Data Entry","Auto Case No: <b>"+wizData.id+"</b> &middot; complete all sections below, then submit","New Case");
+  m.innerHTML+='<div class="card panel"><div id="formSecs"></div>'+
+    '<div class="form-actions"><span class="muted" style="margin-right:auto;font-size:12px">Fields marked <span class="req" style="color:var(--danger)">*</span> are mandatory</span>'+
+    '<button class="btn ghost" onclick="go(SESSION.role===\'User\'?\'mycases\':\'allcases\')">Cancel</button>'+
+    '<button class="btn primary" onclick="submitSingle()">&#10003; Submit Case</button></div></div>';
+  renderForm();
 }
 const WIZ=[
   {t:"Auto Case No",f:[["id","Case Number","text",true,true]]},
@@ -624,13 +669,10 @@ const WIZ=[
   {t:"Family Details",f:[["family","Dependents","text",true],["amount","Allowance Claimed (₹)","number",true]]},
   {t:"Complaint Details",f:[["complaint","Complaint / Remarks","textarea",true]]}
 ];
-function renderWiz(){
-  const wiz=document.getElementById("wiz");
-  wiz.innerHTML=WIZ.map((s,i)=>'<div class="step '+(i===wizStep?'active':i<wizStep?'done':'')+'"><span class="n">'+(i<wizStep?'✓':i+1)+'</span>'+s.t+'</div>').join("");
-  const body=document.getElementById("wizBody");
-  body.innerHTML='<div class="formgrid">'+WIZ[wizStep].f.map(f=>fieldHtml(f)).join("")+'</div>';
-  document.getElementById("wizBack").style.visibility=wizStep===0?'hidden':'visible';
-  document.getElementById("wizNext").innerHTML=wizStep===WIZ.length-1?'&#10003; Submit Case':'Next &rarr;';
+function renderForm(){
+  document.getElementById("formSecs").innerHTML=WIZ.map((s,i)=>
+    '<div class="formsec"><div class="formsec-h"><span class="secn">'+(i+1)+'</span>'+s.t+'</div>'+
+    '<div class="formgrid">'+s.f.map(f=>fieldHtml(f)).join("")+'</div></div>').join("");
 }
 function fieldHtml([k,label,type,req,ro,opts]){
   const v=wizData[k]||"";const r=req?' <span class="req">*</span>':'';
@@ -640,15 +682,12 @@ function fieldHtml([k,label,type,req,ro,opts]){
   else inp='<input id="wz_'+k+'" type="'+type+'" value="'+v+'" '+(ro?'readonly style="background:#f0f3ee;font-weight:700;color:var(--g700)"':'')+'>';
   return '<div class="field '+(type==="textarea"?'full':'')+'"><label>'+label+r+'</label>'+inp+'</div>';
 }
-function collectWiz(){WIZ[wizStep].f.forEach(([k])=>{const el=document.getElementById("wz_"+k);if(el)wizData[k]=el.value;});}
-function wizNav(dir){
-  collectWiz();
-  if(dir>0){
-    const miss=WIZ[wizStep].f.filter(([k,l,t,req])=>req&&!wizData[k]);
-    if(miss.length){toast("Please fill: "+miss.map(f=>f[1]).join(", "),"err");return;}
-    if(wizStep===WIZ.length-1){submitCase();return;}
-  }
-  wizStep=Math.max(0,Math.min(WIZ.length-1,wizStep+dir));renderWiz();
+function collectAll(){WIZ.forEach(s=>s.f.forEach(([k])=>{const el=document.getElementById("wz_"+k);if(el)wizData[k]=el.value;}));}
+function submitSingle(){
+  collectAll();
+  const miss=[];WIZ.forEach(s=>s.f.forEach(([k,label,t,req])=>{if(req&&!wizData[k])miss.push(label);}));
+  if(miss.length){toast("Please complete: "+miss.slice(0,4).join(", ")+(miss.length>4?" and "+(miss.length-4)+" more":""),"err");return;}
+  submitCase();
 }
 function submitCase(){
   const c=DB.cases();
@@ -661,17 +700,19 @@ function submitCase(){
 }
 
 /* ---- Cases list ---- */
-let filterQ="",filterS="";
+let filterQ="",filterS="",filterG="";
 function vCases(m){
   const isAll=CURRENT==="allcases";
   m.innerHTML=head(isAll?"Total Cases":"Update Registered Cases",isAll?"All cases across the directorate":"Cases you can view and update",isAll?"Total Cases":"My Cases");
   m.innerHTML+=`<div class="card panel">
     <div class="toolbar">
-      <div class="search"><input id="q" placeholder="Search case ID, name, state..." oninput="filterQ=this.value;drawRows()"></div>
+      <div class="search"><input id="q" value="${filterQ}" placeholder="Search case ID, name, state..." oninput="filterQ=this.value;drawRows()"></div>
       <select id="fs" onchange="filterS=this.value;drawRows()" style="padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff">
-        <option value="">All Status</option>${STATUS.map(s=>'<option>'+s+'</option>').join("")}</select>
+        <option value="">All Status</option>${STATUS.map(s=>'<option'+(s===filterS?' selected':'')+'>'+s+'</option>').join("")}</select>
+      ${(filterG||filterS||filterQ)?'<button class="btn sm" onclick="filterQ=\'\';filterS=\'\';filterG=\'\';go(CURRENT)">&#10005; Clear filters</button>':''}
       <button class="btn primary sm" onclick="go('new')">+ New Case</button>
     </div>
+    ${filterG?'<div class="muted" style="margin:-6px 0 12px;font-size:12px">Showing cases under command: <b>'+filterG+'</b></div>':''}
     <table class="tbl"><thead><tr><th>Case ID</th><th>Beneficiary</th><th>State / District</th><th>Allowance</th><th>Status</th><th>Actions</th></tr></thead>
     <tbody id="rows"></tbody></table>
     <div id="empty" class="muted" style="text-align:center;padding:24px;display:none">No matching cases.</div>
@@ -683,6 +724,7 @@ function drawRows(){
   let c=DB.cases();
   if(filterQ){const q=filterQ.toLowerCase();c=c.filter(x=>(x.id+x.name+x.state+x.district).toLowerCase().includes(q));}
   if(filterS)c=c.filter(x=>x.status===filterS);
+  if(filterG)c=c.filter(x=>x.group===filterG);
   document.getElementById("empty").style.display=c.length?"none":"block";
   const canApprove=SESSION.role!=="User";
   rows.innerHTML=c.map(x=>`<tr>
@@ -790,7 +832,7 @@ function genReport(){
   const wmText=(SESSION.name+" | "+SESSION.ip+" | "+stamp+"   ").repeat(40);
   document.getElementById("reportArea").innerHTML=`<div class="report-sheet">
     <div class="wm"><span>${wmText}</span></div>
-    <div class="rh"><div class="emblem" data-chakra></div><h3>Additional Directorate General of Human Rights</h3><div class="muted">IHQ of MoD (Army) &middot; MAARK 2.0 &middot; ${title}</div></div>
+    <div class="rh"><div class="emblem" data-emblem></div><h3>Additional Directorate General of Human Rights</h3><div class="muted">IHQ of MoD (Army) &middot; MAARK 2.0 &middot; ${title}</div></div>
     ${rows}
     <div class="rf">
       <span>&#128274; Generated by: <b>${SESSION.name}</b> (${SESSION.role})</span>
@@ -799,7 +841,7 @@ function genReport(){
       <span>Digitally watermarked &middot; IPR: ADG HR</span>
     </div>
   </div>`;
-  document.querySelectorAll("#reportArea [data-chakra]").forEach(el=>el.innerHTML=chakraSVG());
+  document.querySelectorAll("#reportArea [data-emblem]").forEach(el=>el.innerHTML=emblemMark());
   log("GENERATE_REPORT",title);
 }
 function exportCsv(){
@@ -810,41 +852,94 @@ function exportCsv(){
   log("EXPORT_CSV","Exported "+c.length+" cases");toast("Exported "+c.length+" cases to CSV");
 }
 
-/* ---- Analytics ---- */
+/* ---- Analytics (interactive, scaled axes + legends) ---- */
+const AN_DIMS=[["state","State","state"],["district","District","district"],["command","Command","group"],["status","Status","status"]];
+let anDim="state", anMeasure="count";
+const STATUS_COL={"Open":"#c77800","Under Review":"#1565a8","Approved":"#2c6e39","Rejected":"#a83232","Transferred":"#6b45b0"};
 function vAnalytics(m){
-  const c=DB.cases();
-  m.innerHTML=head("Analytics &amp; Visualisation","Summary District-wise, State-wise &amp; Group of States","Analytics");
-  const byDist={},bySt={},byGrp={};
-  c.forEach(x=>{byDist[x.district]=(byDist[x.district]||0)+1;bySt[x.state]=(bySt[x.state]||0)+1;byGrp[x.group]=(byGrp[x.group]||0)+1;});
-  m.innerHTML+=`<div class="grid" style="grid-template-columns:1fr 1fr;gap:18px">
-    <div class="card chartcard"><h3><span class="bar"></span> Summary &mdash; District-wise</h3>${barChart(byDist,cssv('--g600'))}</div>
-    <div class="card chartcard"><h3><span class="bar"></span> Summary &mdash; State-wise</h3>${barChart(bySt,cssv('--gold'))}</div>
-    <div class="card chartcard"><h3><span class="bar"></span> Group of States</h3>${donut(Object.keys(byGrp).map((g,i)=>[g,byGrp[g],[cssv('--g800'),cssv('--g600'),cssv('--g500'),cssv('--gold'),"#1c5c96","#6b45b0"][i%6]]))}</div>
-    <div class="card chartcard"><h3><span class="bar"></span> Allowance by Group (₹)</h3>${barChart(grpAmount(c),cssv('--g600'),true)}</div>
+  m.innerHTML=head("Analytics &amp; Visualisation","Interactive analytics &mdash; pick a dimension &amp; measure; click any bar or legend to drill into those cases","Analytics");
+  m.innerHTML+=`<div class="card panel">
+    <div class="an-ctrl">
+      <span class="muted" style="font-weight:700;letter-spacing:.4px">GROUP BY</span>
+      <select id="anDim" onchange="anDim=this.value;drawAnalytics()">${AN_DIMS.map(d=>`<option value="${d[0]}"${d[0]===anDim?' selected':''}>${d[1]}</option>`).join("")}</select>
+      <span class="toggle" style="margin-left:4px">
+        <button class="tg on" id="anMc" onclick="anSetMeasure('count')">Case Count</button>
+        <button class="tg" id="anMv" onclick="anSetMeasure('value')">Allowance &#8377;</button>
+      </span>
+      <span class="muted" id="anTot" style="margin-left:auto;font-weight:600"></span>
+    </div>
+    <div id="anMain"></div>
+    <div class="legend" id="anLeg" style="margin-top:10px"></div>
+  </div>
+  <div class="row2" style="margin-top:18px">
+    <div class="card chartcard"><h3><span class="bar"></span> Command-wise Distribution</h3><div id="anDonut"></div></div>
+    <div class="card chartcard"><h3><span class="bar"></span> Status Breakdown</h3><div id="anStatus"></div></div>
   </div>`;
+  drawAnalytics(); drawSideCharts();
   log("VIEW_ANALYTICS","Opened analytics dashboard");
 }
-function grpAmount(c){const o={};c.forEach(x=>{o[x.group]=(o[x.group]||0)+x.amount;});return o;}
-function barChart(obj,color,money){
-  const keys=Object.keys(obj);const max=Math.max(...keys.map(k=>obj[k]),1);
-  const w=Math.max(340,keys.length*54);const H=210;
-  let bars="";keys.forEach((k,i)=>{
-    const h=(obj[k]/max)*150;const x=24+i*((w-44)/keys.length);const bw=(w-44)/keys.length-14;
-    bars+=`<rect x="${x}" y="${172-h}" width="${bw}" height="${h}" rx="4" fill="${color}"><title>${k}: ${obj[k]}</title></rect>
-      <text x="${x+bw/2}" y="188" font-size="9" text-anchor="middle" fill="${cssv('--muted')}" transform="rotate(20 ${x+bw/2} 188)">${k.length>8?k.slice(0,7)+'…':k}</text>
-      <text x="${x+bw/2}" y="${167-h}" font-size="10" text-anchor="middle" fill="${cssv('--g800')}" font-weight="700">${money?'₹'+(obj[k]/1000)+'k':obj[k]}</text>`;
-  });
-  return '<div style="overflow-x:auto"><svg width="'+w+'" height="'+H+'" viewBox="0 0 '+w+' '+H+'"><line x1="24" y1="172" x2="'+(w-12)+'" y2="172" stroke="#e4e7dd"/>'+bars+'</svg></div>';
+function anSetMeasure(v){anMeasure=v;document.getElementById("anMc").classList.toggle("on",v==="count");document.getElementById("anMv").classList.toggle("on",v==="value");drawAnalytics();}
+function anAgg(field,measure){const c=DB.cases();const o={};c.forEach(x=>{const k=x[field]||"—";o[k]=(o[k]||0)+(measure==="value"?(x.amount||0):1);});return o;}
+function drawAnalytics(){
+  const dim=AN_DIMS.find(d=>d[0]===anDim);const money=anMeasure==="value";
+  const o=anAgg(dim[2],anMeasure);
+  const data=Object.keys(o).sort((a,b)=>o[b]-o[a]).map(k=>[k,o[k],k]);
+  const color=money?cssv('--gold'):cssv('--g600');
+  document.getElementById("anMain").innerHTML=barChartAxis(data,{color,money,onClick:"anJump"});
+  const tot=data.reduce((s,d)=>s+d[1],0);
+  document.getElementById("anTot").innerHTML=money?"Total ₹"+tot.toLocaleString('en-IN'):tot+" cases · "+data.length+" "+dim[1].toLowerCase()+(data.length>1?"s":"");
+  document.getElementById("anLeg").innerHTML=`<span><i style="background:${color}"></i>${money?'Allowance disbursed (₹)':'Number of cases'} by ${dim[1]}</span><span class="muted">&#128073; Click a bar to view those cases</span>`;
 }
-function donut(data){
-  const total=data.reduce((s,d)=>s+d[1],0)||1;let a=-90;const cx=92,cy=92,r=72,ir=44;
-  let paths="";data.forEach(d=>{
-    if(d[1]<=0)return;
-    const ang=d[1]/total*360;const a2=a+ang;
-    const p=arc(cx,cy,r,ir,a,a2);paths+='<path d="'+p+'" fill="'+d[2]+'"><title>'+d[0]+': '+d[1]+'</title></path>';a=a2;
+function anJump(key){filterQ="";filterS="";filterG="";
+  if(anDim==="status")filterS=key;else if(anDim==="command")filterG=key;else filterQ=key;
+  go(SESSION.role==="User"?"mycases":"allcases");}
+function drawSideCharts(){
+  const c=DB.cases();
+  const byGrp={};c.forEach(x=>{byGrp[x.group]=(byGrp[x.group]||0)+1;});
+  const pal=[cssv('--g800'),cssv('--g600'),cssv('--g500'),cssv('--gold'),"#1c5c96","#6b45b0","#b3781a","#2c6e39"];
+  const gd=Object.keys(byGrp).sort((a,b)=>byGrp[b]-byGrp[a]).map((g,i)=>[g,byGrp[g],pal[i%pal.length]]);
+  document.getElementById("anDonut").innerHTML=donut(gd,{onClick:"anCmdJump"});
+  const sdata=STATUS.map(s=>[s,c.filter(x=>x.status===s).length,s,STATUS_COL[s]||cssv('--g600')]);
+  document.getElementById("anStatus").innerHTML=barChartAxis(sdata,{onClick:"anStatusJump"});
+}
+function anCmdJump(key){filterQ="";filterS="";filterG=key;go(SESSION.role==="User"?"mycases":"allcases");}
+function anStatusJump(key){filterQ="";filterG="";filterS=key;go(SESSION.role==="User"?"mycases":"allcases");}
+function niceCeil(v){if(v<=5)return 5;const pow=Math.pow(10,Math.floor(Math.log10(v)));const nn=v/pow;let step;if(nn<=1)step=1;else if(nn<=2)step=2;else if(nn<=2.5)step=2.5;else if(nn<=5)step=5;else step=10;return step*pow;}
+function kfmt(v){return v>=1000?(Math.round(v/100)/10)+'k':v;}
+function barChartAxis(data,opts){
+  opts=opts||{};const baseColor=opts.color||cssv('--g600');const money=opts.money;
+  const fmt=v=>money?'₹'+kfmt(v):v;
+  const n=data.length||1;
+  const maxV=Math.max(...data.map(d=>d[1]),1);const top=niceCeil(maxV);
+  const padL=52,padR=16,padT=18,padB=60,plotH=188;
+  const slot=Math.max(50,Math.min(120,Math.floor(620/n)));
+  const w=padL+padR+n*slot;const H=padT+plotH+padB;const y0=padT+plotH;const ticks=4;
+  let grid="";
+  for(let t=0;t<=ticks;t++){const val=top*t/ticks;const yy=y0-(val/top)*plotH;
+    grid+=`<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${w-padR}" y2="${yy.toFixed(1)}" stroke="${cssv('--line')}" ${t?'stroke-dasharray="3 4"':''}/>`;
+    grid+=`<text x="${padL-8}" y="${(yy+3).toFixed(1)}" text-anchor="end" font-size="9" fill="${cssv('--faint')}">${money?'₹'+kfmt(val):Math.round(val)}</text>`;}
+  let bars="";
+  data.forEach((d,i)=>{
+    const bh=(d[1]/top)*plotH;const bw=slot*0.56;const bx=padL+i*slot+(slot-bw)/2;const by=y0-bh;
+    const col=d[3]||baseColor;const key=String(d[2]!=null?d[2]:d[0]).replace(/'/g,"\\'");
+    const clk=opts.onClick?` style="cursor:pointer" onclick="${opts.onClick}('${key}')"`:'';
+    const lbl=d[0].length>11?d[0].slice(0,10)+'…':d[0];
+    bars+=`<g class="bar-int"${clk}><rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0,bh).toFixed(1)}" rx="4" fill="${col}"><title>${d[0]}: ${fmt(d[1])}</title></rect>`;
+    bars+=`<text x="${(bx+bw/2).toFixed(1)}" y="${(by-6).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="700" fill="${cssv('--g800')}">${fmt(d[1])}</text>`;
+    bars+=`<text x="${(bx+bw/2).toFixed(1)}" y="${y0+15}" text-anchor="middle" font-size="9" fill="${cssv('--muted')}" transform="rotate(22 ${(bx+bw/2).toFixed(1)} ${y0+16})">${lbl}</text></g>`;
   });
-  const leg=data.map(d=>'<span><i style="background:'+d[2]+'"></i>'+d[0]+' ('+d[1]+')</span>').join("");
-  return '<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><svg width="184" height="184" viewBox="0 0 184 184">'+paths+'<text x="92" y="88" text-anchor="middle" font-size="24" font-weight="800" fill="'+cssv('--g800')+'" font-family="Georgia,serif">'+total+'</text><text x="92" y="106" text-anchor="middle" font-size="10" fill="'+cssv('--muted')+'" letter-spacing="1">TOTAL</text></svg><div class="legend" style="flex-direction:column;gap:7px">'+leg+'</div></div>';
+  const axis=`<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${y0}" stroke="${cssv('--faint')}"/><line x1="${padL}" y1="${y0}" x2="${w-padR}" y2="${y0}" stroke="${cssv('--faint')}"/>`;
+  return `<div class="chart-wrap"><svg width="${w}" height="${H}" viewBox="0 0 ${w} ${H}">${grid}${axis}${bars}</svg></div>`;
+}
+function donut(data,opts){
+  opts=opts||{};
+  const total=data.reduce((s,d)=>s+d[1],0)||1;let a=-90;const cx=92,cy=92,r=72,ir=44;
+  let paths="";data.forEach(d=>{if(d[1]<=0)return;const ang=d[1]/total*360;const a2=a+ang;const pct=Math.round(d[1]/total*100);
+    const clk=opts.onClick?` style="cursor:pointer" onclick="${opts.onClick}('${String(d[0]).replace(/'/g,"\\'")}')"`:'';
+    paths+=`<path d="${arc(cx,cy,r,ir,a,a2)}" fill="${d[2]}"${clk}><title>${d[0]}: ${d[1]} (${pct}%)</title></path>`;a=a2;});
+  const leg=data.map(d=>{const pct=Math.round(d[1]/total*100);
+    return `<span class="${opts.onClick?'leg-click':''}"${opts.onClick?` onclick="${opts.onClick}('${String(d[0]).replace(/'/g,"\\'")}')"`:''}><i style="background:${d[2]}"></i>${d[0]} &mdash; <b>${d[1]}</b> (${pct}%)</span>`;}).join("");
+  return `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><svg width="184" height="184" viewBox="0 0 184 184">${paths}<text x="92" y="88" text-anchor="middle" font-size="24" font-weight="800" fill="${cssv('--g800')}" font-family="Georgia,serif">${total}</text><text x="92" y="106" text-anchor="middle" font-size="10" fill="${cssv('--muted')}" letter-spacing="1">TOTAL</text></svg><div class="legend" style="flex-direction:column;gap:7px">${leg}</div></div>`;
 }
 function arc(cx,cy,r,ir,a1,a2){
   const p=(ang,rad)=>[cx+rad*Math.cos(ang*Math.PI/180),cy+rad*Math.sin(ang*Math.PI/180)];
@@ -926,12 +1021,12 @@ const KB=[
   {t:["eligib","policy","who is entitled","who can claim","allowance rule","dependent","beneficiary"],a:()=>"Maintenance allowance is payable to eligible dependents — <b>widow, mother, father or son/daughter</b> — of soldiers. Each claim is registered, verified, approved by the competent authority, then disbursed; amounts are recorded per case.",n:["Workflow stages","How do I register a case?"]},
   {t:["workflow","process","stages","e-office","lifecycle","steps"],a:()=>"The e-office workflow has four stages: <b>1) Data Entry</b> (register), <b>2) Verification</b> (Under Review), <b>3) Approval</b> by Admin/competent authority, <b>4) Disbursement</b>. Live counts appear on the dashboard's Workflow pipeline.",n:["How many under review?","How do I approve a case?"]},
   {t:["role","access","permission","who can use","privilege"],a:()=>"Three roles with least-privilege RBAC: <b>User</b> (register &amp; update cases, view reports/analytics), <b>Admin</b> (all cases + approve + transfer), <b>Super Admin</b> (everything + Content Management + Audit Log).",n:["How do I register a case?","Security features"]},
-  {t:["register","new case","add case","create case","data entry","file a case"],a:()=>"Open <b>New Case (Data Entry)</b>. The 5-step form captures Auto Case No (system-generated), Personnel, Address, Family and Complaint details. On submit the record is AES-256 encrypted and enters the workflow as ‘Open’.",n:["Workflow stages","Eligibility rules"]},
+  {t:["register","new case","add case","create case","data entry","file a case"],a:()=>"Open <b>New Case (Data Entry)</b>. A single consolidated form captures Auto Case No (system-generated), Personnel, Address, Family and Complaint details — all on one page. On submit the record is AES-256 encrypted and enters the workflow as ‘Open’.",n:["Workflow stages","Eligibility rules"]},
   {t:["edit","update case","modify","change a case"],a:()=>"Open <b>Update Regd Cases</b> (or Total Cases for admins), click <b>Edit</b>, change the fields and Save. Every change is audit-logged.",n:["Audit log","How do I approve a case?"]},
   {t:["approve","approval","sanction"],a:()=>"Admins/Super Admins can <b>Approve</b> a case from Total Cases; approved cases are ready for disbursement.",n:["How many approved?","Workflow stages"]},
   {t:["transfer","move case","transferred"],a:()=>DB.cases().filter(x=>x.transfer).length+" cases are transferred. Admins can <b>Transfer</b> a case In/Out to another ADG HR cell; they appear in the Transferred Cases register.",n:["How many cases?"]},
   {t:["report","export","csv","print"],a:()=>"<b>Reports</b> offers Case Summary, State-wise Allowance and Pending Approvals. Every report is <b>digitally watermarked</b> with your ID, IP and timestamp, and can be printed or exported to CSV.",n:["Analytics","Watermarking"]},
-  {t:["analytic","chart","visual","statistic","graph"],a:()=>"<b>Analytics</b> shows District-wise, State-wise and Group-of-States summaries plus allowance by group, as interactive charts. The dashboard is clickable too — filter by status via KPIs, pills or donut.",n:["How many approved?","Reports"]},
+  {t:["analytic","chart","visual","statistic","graph"],a:()=>"<b>Analytics</b> is fully interactive — group cases by State, District, Command or Status, switch between Case Count and Allowance ₹, and click any bar, donut segment or legend to drill straight into those cases. All charts carry proper scales &amp; legends.",n:["How many approved?","Reports"]},
   {t:["migration","version 1","v1","legacy data","old data"],a:()=>"Existing MAARK 1.0 data (PHP/MySQL, encrypted) is migrated to 2.0 by a dedicated <b>migration module</b> that preserves authenticity and integrity. Dry-run it from CMS → Database Update.",n:["Technology stack","Database"]},
   {t:["security","secure","encryption","aes","2fa","two factor","saml","iaca","iam","rbac","hardening","owasp"],a:()=>"<b>Security:</b> SAML 2.0 login via Army IAM, mandatory <b>IACA-token 2FA</b>, <b>AES-256</b> encryption at rest (nothing stored unencrypted), IACA SSL/HTTPS, role-based access, malicious-upload checks and comprehensive audit logging. Runs fully offline on the ADN — no internet.",n:["Audit log","Is it offline?","Watermarking"]},
   {t:["audit","who did","activity","trail"],a:()=>"The <b>Audit Log</b> (Super Admin) records every action — logins, views, edits, approvals, deletes, report generation — with user, role, timestamp and IP, for security analysis.",n:["Security features","Roles"]},
