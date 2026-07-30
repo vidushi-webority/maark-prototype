@@ -68,6 +68,34 @@ header.app::after{content:"";position:absolute;inset:0;pointer-events:none;
 .userchip .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(160deg,var(--gold-l),var(--gold-d));color:#241c04;display:flex;align-items:center;justify-content:center;font-weight:800;box-shadow:inset 0 1px 2px rgba(255,255,255,.5)}
 .userchip b{font-size:13px}
 .userchip small{display:block;opacity:.8;font-size:10px;letter-spacing:.3px}
+.userchip{cursor:pointer;transition:background .15s,border-color .15s}
+.userchip:hover,.userchip:focus-visible{background:rgba(255,255,255,.18);border-color:rgba(230,207,136,.55);outline:none}
+.userchip .chev{font-size:11px;opacity:.7;margin-left:1px;transition:transform .15s}
+.userchip:hover .chev{transform:translateY(1px)}
+/* profile & settings modal */
+.prof-hd{display:flex;align-items:center;gap:14px;margin-bottom:4px}
+.prof-hd .pav{width:52px;height:52px;border-radius:50%;flex:none;background:linear-gradient(160deg,var(--gold-l),var(--gold-d));color:#241c04;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:21px;box-shadow:inset 0 1px 2px rgba(255,255,255,.5)}
+.prof-hd b{font-size:15px}
+.prof-sec{margin-top:16px}
+.prof-sec h4{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:0 0 6px;font-weight:800}
+.prof-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.prof-row:last-child{border-bottom:0}
+.prof-row .k{color:var(--muted)}
+.prof-row .v{font-weight:600;text-align:right}
+.prof-tog{display:flex;gap:10px;flex-wrap:wrap}
+.prof-tog button{padding:9px 13px;border:1.5px solid var(--line);border-radius:10px;background:transparent;font-weight:700;font-size:12.5px;color:inherit;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.15s}
+.prof-tog button:hover{border-color:var(--g600)}
+.prof-tog button.on{border-color:var(--g600);background:var(--gold-soft);color:var(--g700)}
+.prof-tog button .dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.35}
+.prof-tog button.on .dot{opacity:1}
+.prof-swatch{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+.prof-swatch .sw{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--line);border-radius:10px;background:transparent;font-weight:700;font-size:12.5px;color:inherit;cursor:pointer;transition:.15s}
+.prof-swatch .sw:hover{border-color:var(--g600)}
+.prof-swatch .sw.on{border-color:var(--g600);background:var(--gold-soft);color:var(--g700)}
+.prof-swatch .sw .swx{width:15px;height:15px;border-radius:50%;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
+.pw-meter{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:9px}
+.pw-meter i{display:block;height:100%;width:0;background:var(--danger);transition:width .2s,background .2s}
+.cp-msg{color:var(--danger);font-size:12px;font-weight:600;margin-top:9px;min-height:14px}
 .btn-logout{background:transparent;border:1px solid rgba(230,207,136,.45);color:#f0e2b6;padding:7px 13px;border-radius:8px;font-size:12px;font-weight:600}
 .btn-logout:hover{background:rgba(230,207,136,.15)}
 
@@ -87,10 +115,10 @@ main{flex:1;padding:26px 30px;overflow:auto;background:
 
 /* ---------- Page head ---------- */
 .crumb{font-size:11.5px;color:var(--faint);margin-bottom:4px;letter-spacing:.3px}
-.pagehead{display:flex;align-items:flex-end;gap:14px;margin-bottom:22px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.pagehead{margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--line)}
 .pagehead h2{font-size:26px;color:var(--g800);letter-spacing:.2px}
-.pagehead h2::after{content:"";display:block;width:54px;height:3px;background:linear-gradient(90deg,var(--gold),transparent);border-radius:2px;margin-top:6px}
-.pagehead .sub{color:var(--muted);font-size:13px;margin-bottom:4px}
+.pagehead h2::after{content:"";display:block;width:54px;height:3px;background:linear-gradient(90deg,var(--gold),transparent);border-radius:2px;margin-top:8px}
+.pagehead .sub{color:var(--muted);font-size:13px;margin-top:12px;max-width:84ch;line-height:1.5}
 
 /* ---------- Hero (leadership welcome) ---------- */
 .hero{background:linear-gradient(115deg,var(--g900),var(--g700) 60%,var(--g600));color:#fff;border-radius:18px;padding:26px 30px;display:flex;align-items:center;gap:22px;margin-bottom:22px;position:relative;overflow:hidden;box-shadow:var(--sh-2);border:1px solid rgba(230,207,136,.25)}
@@ -244,7 +272,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
 /* ---------- Report / watermark ---------- */
 .report-sheet{background:#fff;border:1px solid var(--line);border-radius:10px;padding:38px;position:relative;overflow:hidden;box-shadow:var(--sh-1)}
 .wm{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.wm span{transform:rotate(-30deg);font-size:24px;color:rgba(18,58,34,.05);font-weight:800;white-space:nowrap;letter-spacing:2px;text-align:center;line-height:2.6}
+.wm span{transform:rotate(-30deg);width:170%;white-space:normal;word-break:break-word;font-size:19px;color:rgba(18,58,34,.055);font-weight:800;letter-spacing:3px;text-align:center;line-height:2.5;text-transform:uppercase}
 .report-sheet .rh{text-align:center;border-bottom:2px solid var(--g700);padding-bottom:14px;margin-bottom:18px;position:relative}
 .report-sheet .rh .emblem{width:44px;height:44px;margin:0 auto 8px}
 .report-sheet .rh h3{color:var(--g800);font-size:18px;letter-spacing:.4px}
@@ -338,6 +366,7 @@ body.compact .kpi .val{font-size:27px}
 .qf{border:1px solid var(--line);background:#fff;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:600;color:var(--muted)}
 .qf:hover{border-color:var(--g600)}
 .qf.on{background:var(--g700);color:#fff;border-color:var(--g700)}
+.qf b{font-weight:800;margin-left:3px;opacity:.85}
 /* searchable select */
 .ssel{position:relative}
 .ssel-inp{width:100%;padding:10px 30px 10px 12px;border:1px solid var(--line);border-radius:9px;background:#fdfdfb}
@@ -487,10 +516,10 @@ Concept demo by <b>Webority Technologies</b> using dummy data. This is <b>not</b
     <div class="spacer"></div>
     <div class="motto">"Service Before Self"<b>CARE &middot; DIGNITY &middot; TRUST</b></div>
     <button class="htool" id="themeBtn" onclick="toggleTheme()" title="Toggle dark mode"></button>
-    <button class="htool" id="densBtn" onclick="toggleDensity()" title="Compact rows"></button>
-    <div class="userchip">
+    <div class="userchip" id="userChip" onclick="openProfile()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProfile();}" title="Open profile &amp; settings" role="button" tabindex="0">
       <div class="av" id="uAv">U</div>
       <div><b id="uName">User</b><small id="uRole">User</small></div>
+      <span class="chev" aria-hidden="true">&#9662;</span>
     </div>
     <button class="btn-logout" onclick="logout()">Logout</button>
   </header>
@@ -688,7 +717,7 @@ function go(k){
 /* ==========================================================
    VIEWS
    ========================================================== */
-function head(title,sub,crumb){return '<div class="crumb">Home &nbsp;/&nbsp; '+crumb+'</div><div class="pagehead"><div><h2>'+title+'</h2></div><div class="sub">'+sub+'</div></div>';}
+function head(title,sub,crumb){return '<div class="crumb">Home &nbsp;/&nbsp; '+crumb+'</div><div class="pagehead"><h2>'+title+'</h2>'+(sub?'<div class="sub">'+sub+'</div>':'')+'</div>';}
 
 let dashStatus="All", dashView="count";
 function vDashboard(m){
@@ -713,10 +742,10 @@ function vDashboard(m){
   const amtB={};c.forEach(x=>{const mo=(x.created||'').slice(0,7);if(mo)amtB[mo]=(amtB[mo]||0)+(x.amount||0);});const mAmt=Object.keys(amtB).sort().map(k=>amtB[k]);
   m.innerHTML+=`
   <div class="grid kpis" style="margin-bottom:18px">
-    ${kpiC("Total Cases",c.length,cssv('--g700'),"&#128193;","var(--line-2)","view all cases","All",mAll)}
-    ${kpiC("Open / Pending",open,cssv('--warn'),"&#9203;","#fbf1dd",rev+" under review","Open",mOpen)}
-    ${kpiC("Approved",appr,cssv('--ok'),"&#9989;","#e6f3e7","disbursement ready","Approved",mAppr)}
-    ${kpi("Sanctioned (₹)",total,cssv('--gold-d'),"&#128176;","var(--gold-soft)","total value","",mAmt,true)}
+    ${kpiC("Total Cases",c.length,cssv('--g700'),"&#128193;","var(--line-2)","view all cases","jumpToQf('all')",mAll)}
+    ${kpiC("Pending Action",open+rev,cssv('--warn'),"&#9203;","#fbf1dd",open+" open &middot; "+rev+" in review","jumpToQf('pending')",mOpen)}
+    ${kpiC("Approved",appr,cssv('--ok'),"&#9989;","#e6f3e7","disbursement ready","jumpToQf('approved')",mAppr)}
+    ${kpiC("Sanctioned (₹)",total,cssv('--gold-d'),"&#128176;","var(--gold-soft)","view reports","go('reports')",mAmt,true)}
   </div>
   <div class="card chartcard" style="margin-bottom:18px"><h3><span class="bar"></span> New Cases &mdash; Monthly Trend</h3>${lineChart(monthly(c),{color:cssv('--g600')})}</div>
   <div class="row2">
@@ -748,8 +777,9 @@ function vDashboard(m){
 }
 function kpiValHtml(v,money){return typeof v==="number"?`<span data-count data-to="${v}" data-money="${money?1:0}">0</span>`:v;}
 function kpi(l,v,c,ico,icbg,tr,dir,spark,money){return `<div class="card kpi"><div class="strip" style="background:${c}"></div><div class="top"><div class="lbl">${l}</div><div class="ico" style="background:${icbg}">${ico}</div></div><div class="val">${kpiValHtml(v,money)}</div><div class="tr ${dir||''}">${tr}</div>${spark?sparkSVG(spark,c):''}</div>`;}
-function kpiC(l,v,c,ico,icbg,tr,status,spark){return `<div class="card kpi clickable" onclick="jumpCases('${status}')"><div class="strip" style="background:${c}"></div><div class="top"><div class="lbl">${l}</div><div class="ico" style="background:${icbg}">${ico}</div></div><div class="val">${kpiValHtml(v,false)}</div><div class="tr" style="color:var(--info)">${tr} &rarr;</div>${spark?sparkSVG(spark,c):''}</div>`;}
-function jumpCases(status){filterS=status==="All"?"":status;filterQ="";filterG="";go(SESSION.role==="User"?"mycases":"allcases");}
+function kpiC(l,v,c,ico,icbg,tr,click,spark,money){return `<div class="card kpi clickable" onclick="${click}"><div class="strip" style="background:${c}"></div><div class="top"><div class="lbl">${l}</div><div class="ico" style="background:${icbg}">${ico}</div></div><div class="val">${kpiValHtml(v,money)}</div><div class="tr" style="color:var(--info)">${tr} &rarr;</div>${spark?sparkSVG(spark,c):''}</div>`;}
+function jumpCases(status){filterS=status==="All"?"":status;filterQ="";filterG="";qfKey=status==="All"?"all":"";page=1;go(SESSION.role==="User"?"mycases":"allcases");}
+function jumpToQf(qf){qfKey=qf;filterS="";filterQ="";filterG="";page=1;go(SESSION.role==="User"?"mycases":"allcases");}
 function dashSetStatus(s){
   dashStatus=(dashStatus===s&&s!=="All")?"All":s;
   document.querySelectorAll("#segbar .seg").forEach(b=>b.classList.toggle("on",b.dataset.s===dashStatus));
@@ -860,7 +890,7 @@ function vCases(m){
   const isAll=CURRENT==="allcases";page=1;selected=new Set();
   m.innerHTML=head(isAll?"Total Cases":"Update Registered Cases",isAll?"All cases across the directorate":"Cases you can view and update",isAll?"Total Cases":"My Cases");
   m.innerHTML+=`<div class="card panel">
-    <div class="qfbar">${QF.map(q=>`<button class="qf${q[0]===qfKey?' on':''}" onclick="setQf('${q[0]}')">${q[1]}</button>`).join("")}</div>
+    <div class="qfbar">${QF.map(q=>{const qn=DB.cases().filter(q[2]).length;return `<button class="qf${q[0]===qfKey?' on':''}" onclick="setQf('${q[0]}')">${q[1]} <b>${qn}</b></button>`;}).join("")}</div>
     <div class="toolbar">
       <div class="search"><input id="q" value="${filterQ}" placeholder="Search case ID, name, state..." oninput="filterQ=this.value;page=1;drawRows()"></div>
       <select id="fs" onchange="filterS=this.value;page=1;drawRows()" style="padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff">
@@ -977,7 +1007,7 @@ function vTransfers(m){
 
 /* ---- Reports (with digital watermark) ---- */
 function vReports(m){
-  m.innerHTML=head("Reports","Templated, printable &amp; exportable reports &mdash; digitally watermarked","Reports");
+  m.innerHTML=head("Reports","Templated, printable and exportable reports, digitally watermarked.","Reports");
   m.innerHTML+=`<div class="card panel">
     <div class="toolbar">
       <select id="rt" style="padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff">
@@ -1009,7 +1039,7 @@ function genReport(){
     rows='<table class="tbl"><thead><tr><th>Case ID</th><th>Beneficiary</th><th>State</th><th>Amount</th><th>Status</th></tr></thead><tbody>'+
       c.slice(0,12).map(x=>'<tr><td>'+x.id+'</td><td>'+x.name+'</td><td>'+x.state+'</td><td>₹'+x.amount.toLocaleString('en-IN')+'</td><td>'+x.status+'</td></tr>').join("")+'</tbody></table>';
   }
-  const wmText=(SESSION.name+" | "+SESSION.ip+" | "+stamp+"   ").repeat(40);
+  const wmText=(SESSION.name+" · ADG HR · CONFIDENTIAL · "+SESSION.ip+" · ").repeat(120);
   document.getElementById("reportArea").innerHTML=`<div class="report-sheet">
     <div class="wm"><span>${wmText}</span></div>
     <div class="rh"><div class="emblem" data-emblem></div><h3>Additional Directorate General of Human Rights</h3><div class="muted">IHQ of MoD (Army) &middot; MAARK 2.0 &middot; ${title}</div></div>
@@ -1031,7 +1061,7 @@ const AN_DIMS=[["state","State","state"],["district","District","district"],["co
 let anDim="state", anMeasure="count";
 const STATUS_COL={"Open":"#c77800","Under Review":"#1565a8","Approved":"#2c6e39","Rejected":"#a83232","Transferred":"#6b45b0"};
 function vAnalytics(m){
-  m.innerHTML=head("Analytics &amp; Visualisation","Interactive analytics &mdash; pick a dimension &amp; measure; click any bar or legend to drill into those cases","Analytics");
+  m.innerHTML=head("Analytics &amp; Visualisation","Pick a dimension and measure, then click any bar, donut segment or legend to drill into those cases.","Analytics");
   m.innerHTML+=`<div class="card panel">
     <div class="an-ctrl">
       <span class="muted" style="font-weight:700;letter-spacing:.4px">GROUP BY</span>
@@ -1064,7 +1094,7 @@ function drawAnalytics(){
   document.getElementById("anTot").innerHTML=money?"Total ₹"+tot.toLocaleString('en-IN'):tot+" cases · "+data.length+" "+dim[1].toLowerCase()+(data.length>1?"s":"");
   document.getElementById("anLeg").innerHTML=`<span><i style="background:${color}"></i>${money?'Allowance disbursed (₹)':'Number of cases'} by ${dim[1]}</span><span class="muted">&#128073; Click a bar to view those cases</span>`;
 }
-function anJump(key){filterQ="";filterS="";filterG="";
+function anJump(key){filterQ="";filterS="";filterG="";qfKey="";page=1;
   if(anDim==="status")filterS=key;else if(anDim==="command")filterG=key;else filterQ=key;
   go(SESSION.role==="User"?"mycases":"allcases");}
 function drawSideCharts(){
@@ -1076,17 +1106,28 @@ function drawSideCharts(){
   const sdata=STATUS.map(s=>[s,c.filter(x=>x.status===s).length,s,STATUS_COL[s]||cssv('--g600')]);
   document.getElementById("anStatus").innerHTML=barChartAxis(sdata,{onClick:"anStatusJump"});
 }
-function anCmdJump(key){filterQ="";filterS="";filterG=key;go(SESSION.role==="User"?"mycases":"allcases");}
-function anStatusJump(key){filterQ="";filterG="";filterS=key;go(SESSION.role==="User"?"mycases":"allcases");}
+function anCmdJump(key){filterQ="";filterS="";filterG=key;qfKey="";page=1;go(SESSION.role==="User"?"mycases":"allcases");}
+function anStatusJump(key){filterQ="";filterG="";filterS=key;qfKey="";page=1;go(SESSION.role==="User"?"mycases":"allcases");}
 function niceCeil(v){if(v<=5)return 5;const pow=Math.pow(10,Math.floor(Math.log10(v)));const nn=v/pow;let step;if(nn<=1)step=1;else if(nn<=2)step=2;else if(nn<=2.5)step=2.5;else if(nn<=5)step=5;else step=10;return step*pow;}
 function kfmt(v){return v>=1000?(Math.round(v/100)/10)+'k':v;}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function wrapLabel(s,maxLen){
+  s=String(s);if(s.length<=maxLen)return[s];
+  const words=s.split(/\s+/);if(words.length===1)return[s];
+  let l1="",l2="";
+  for(const w of words){if(!l2&&(l1?l1+" "+w:w).length<=maxLen){l1=l1?l1+" "+w:w;}else{l2=l2?l2+" "+w:w;}}
+  return l2?[l1,l2]:[l1];
+}
 function barChartAxis(data,opts){
   opts=opts||{};const baseColor=opts.color||cssv('--g600');const money=opts.money;
   const fmt=v=>money?'₹'+kfmt(v):v;
   const n=data.length||1;
   const maxV=Math.max(...data.map(d=>d[1]),1);const top=niceCeil(maxV);
-  const padL=52,padR=16,padT=18,padB=60,plotH=188;
-  const slot=Math.max(50,Math.min(120,Math.floor(620/n)));
+  const slot=Math.max(58,Math.min(150,Math.floor(840/n)));
+  const maxChars=Math.max(7,Math.floor(slot/6.2));
+  const labels=data.map(d=>wrapLabel(d[0],maxChars));
+  const maxLines=Math.max(1,...labels.map(l=>l.length));
+  const padL=52,padR=18,padT=20,plotH=190;const padB=20+maxLines*12;
   const w=padL+padR+n*slot;const H=padT+plotH+padB;const y0=padT+plotH;const ticks=4;
   let grid="";
   for(let t=0;t<=ticks;t++){const val=top*t/ticks;const yy=y0-(val/top)*plotH;
@@ -1097,10 +1138,11 @@ function barChartAxis(data,opts){
     const bh=(d[1]/top)*plotH;const bw=slot*0.56;const bx=padL+i*slot+(slot-bw)/2;const by=y0-bh;
     const col=d[3]||baseColor;const key=String(d[2]!=null?d[2]:d[0]).replace(/'/g,"\\'");
     const clk=opts.onClick?` style="cursor:pointer" onclick="${opts.onClick}('${key}')"`:'';
-    const lbl=d[0].length>11?d[0].slice(0,10)+'…':d[0];
-    bars+=`<g class="bar-int"${clk}><rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0,bh).toFixed(1)}" rx="4" fill="${col}" data-tip="<b>${d[0]}</b> &middot; ${fmt(d[1])}"></rect>`;
-    bars+=`<text x="${(bx+bw/2).toFixed(1)}" y="${(by-6).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="700" fill="${cssv('--g800')}">${fmt(d[1])}</text>`;
-    bars+=`<text x="${(bx+bw/2).toFixed(1)}" y="${y0+15}" text-anchor="middle" font-size="9" fill="${cssv('--muted')}" transform="rotate(22 ${(bx+bw/2).toFixed(1)} ${y0+16})">${lbl}</text></g>`;
+    const cx=(bx+bw/2).toFixed(1);
+    bars+=`<g class="bar-int"${clk}><rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0,bh).toFixed(1)}" rx="4" fill="${col}" data-tip="<b>${esc(d[0])}</b> &middot; ${fmt(d[1])}"></rect>`;
+    bars+=`<text x="${cx}" y="${(by-6).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="700" fill="${cssv('--g800')}">${fmt(d[1])}</text>`;
+    labels[i].forEach((ln,li)=>{bars+=`<text x="${cx}" y="${(y0+14+li*11).toFixed(1)}" text-anchor="middle" font-size="8.6" fill="${cssv('--muted')}">${esc(ln)}</text>`;});
+    bars+=`</g>`;
   });
   const axis=`<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${y0}" stroke="${cssv('--faint')}"/><line x1="${padL}" y1="${y0}" x2="${w-padR}" y2="${y0}" stroke="${cssv('--faint')}"/>`;
   return `<div class="chart-wrap"><svg width="${w}" height="${H}" viewBox="0 0 ${w} ${H}">${grid}${axis}${bars}</svg></div>`;
@@ -1130,7 +1172,7 @@ function vCMS(m){
     <div class="card panel"><h3><span class="bar"></span> Web Settings</h3>
       <div class="field"><label>Portal Title</label><input id="cms_title" value="${s.title}"></div>
       <div class="field" style="margin-top:12px"><label>Home Banner Text</label><input id="cms_banner" value="${s.banner}"></div>
-      <div class="field" style="margin-top:12px"><label>Theme</label><select id="cms_theme"><option ${s.theme==='Army Green'?'selected':''}>Army Green</option><option>Navy Blue</option><option>Neutral Grey</option></select></div>
+      <div class="field" style="margin-top:12px"><label>Theme <span class="muted" style="font-weight:400;text-transform:none;letter-spacing:0">(applies instantly)</span></label><select id="cms_theme" onchange="applyTheme(this.value)">${Object.keys(PALETTES).map(t=>`<option${t===currentPal()?' selected':''}>${t}</option>`).join("")}</select></div>
       <button class="btn primary" style="margin-top:16px" onclick="saveCms()">Save Settings</button>
     </div>
     <div class="card panel"><h3><span class="bar"></span> Database Update</h3>
@@ -1170,6 +1212,70 @@ function modal(title,body,buttons){
   (buttons||[]).forEach((b,i)=>{document.querySelector('.mf [data-i="'+i+'"]').onclick=b.fn;});
 }
 function closeModal(){document.getElementById("modalRoot").innerHTML="";}
+function openProfile(){
+  const dark=document.body.classList.contains("dark");
+  const cmp=document.body.classList.contains("compact");
+  const nm=SESSION.name.split("(")[0].trim();
+  const email=nm.toLowerCase().replace(/[^a-z]+/g,".").replace(/(^\.|\.$)/g,"")+"@army.gov.in";
+  const initial=(document.getElementById("uAv")||{}).textContent||nm[0]||"U";
+  const formation={"Super Admin":"HQ ADG-HR &middot; Records Cell","Admin":"Formation HQ &middot; HR Cell","User":"Unit Orderly Room"}[SESSION.role]||"—";
+  const body=`
+    <div class="prof-hd">
+      <div class="pav">${initial}</div>
+      <div><b>${SESSION.name}</b><br><span class="pill">${SESSION.role}</span></div>
+    </div>
+    <div class="prof-sec"><h4>Account</h4>
+      <div class="prof-row"><span class="k">Full name</span><span class="v">${nm}</span></div>
+      <div class="prof-row"><span class="k">Role / access</span><span class="v">${SESSION.role}</span></div>
+      <div class="prof-row"><span class="k">Email</span><span class="v">${email}</span></div>
+      <div class="prof-row"><span class="k">Formation</span><span class="v">${formation}</span></div>
+      <div class="prof-row"><span class="k">Signed in from</span><span class="v">${SESSION.ip}</span></div>
+      <div class="prof-row"><span class="k">Authentication</span><span class="v">SAML 2.0 + IACA 2FA</span></div>
+    </div>
+    <div class="prof-sec"><h4>Appearance</h4>
+      <div class="prof-tog">
+        <button type="button" class="${dark?'on':''}" onclick="toggleTheme();openProfile()"><span class="dot"></span>Dark mode</button>
+        <button type="button" class="${cmp?'on':''}" onclick="toggleDensity();openProfile()"><span class="dot"></span>Compact rows</button>
+      </div>
+      <div class="prof-swatch">${Object.keys(PALETTES).map(nm=>`<button type="button" class="sw${nm===currentPal()?' on':''}" onclick="applyTheme('${nm}');openProfile()"><span class="swx" style="background:${PAL_SWATCH[nm]||'#888'}"></span>${nm}</button>`).join("")}</div>
+    </div>
+    <div class="prof-sec"><h4>Notifications</h4>
+      <div class="prof-tog">
+        <button type="button" class="on" onclick="this.classList.toggle('on')"><span class="dot"></span>Case status updates</button>
+        <button type="button" class="on" onclick="this.classList.toggle('on')"><span class="dot"></span>Approvals &amp; sign-offs</button>
+        <button type="button" onclick="this.classList.toggle('on')"><span class="dot"></span>Weekly summary</button>
+      </div>
+    </div>
+    <div class="prof-sec"><h4>Security</h4>
+      <div class="prof-tog">
+        <button type="button" onclick="closeModal();changePassword()"><span class="dot" style="opacity:1"></span>Change password</button>
+        <button type="button" onclick="toast('IACA PIN changes are handled by the Army IAM portal in production.')"><span class="dot" style="opacity:1"></span>Change IACA PIN</button>
+        <button type="button" onclick="closeModal();logout()"><span class="dot" style="opacity:1"></span>Sign out</button>
+      </div>
+    </div>
+    <p class="muted" style="font-size:11px;margin:14px 0 0">Prototype &mdash; profile fields are illustrative and read from the demo session. In production these are provisioned by Army IAM (SAML) and are not edited here.</p>`;
+  modal("Profile &amp; Settings",body,[{t:"Done",c:"primary",fn:closeModal}]);
+}
+function changePassword(){
+  modal("Change Password",`
+    <div class="field"><label>Current password</label><input id="cp_old" type="password" placeholder="Enter current password"></div>
+    <div class="field" style="margin-top:12px"><label>New password</label><input id="cp_new" type="password" placeholder="Min 8 characters, at least 1 number" oninput="cpStrength()"></div>
+    <div class="pw-meter"><i id="cp_bar"></i></div>
+    <div class="field" style="margin-top:12px"><label>Confirm new password</label><input id="cp_conf" type="password" placeholder="Re-enter the new password"></div>
+    <div id="cp_msg" class="cp-msg"></div>
+    <div class="demo-note" style="margin-top:14px">&#128274; Passwords are validated locally in this prototype. In production, changes are enforced through Army IAM (SAML) policy.</div>`,
+   [{t:"Cancel",c:"ghost",fn:closeModal},{t:"Update password",c:"primary",fn:submitPassword}]);
+}
+function cpStrength(){const v=(document.getElementById("cp_new")||{}).value||"";let s=0;if(v.length>=8)s++;if(/\d/.test(v))s++;if(/[A-Z]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  const bar=document.getElementById("cp_bar");if(bar){bar.style.width=(s*25)+"%";bar.style.background=s<=1?"var(--danger)":s<=2?"var(--warn)":"var(--ok)";}}
+function submitPassword(){
+  const o=val("cp_old"),n=val("cp_new"),c=val("cp_conf");const msg=document.getElementById("cp_msg");
+  if(!o){msg.textContent="Enter your current password.";return;}
+  if(n.length<8||!/\d/.test(n)){msg.textContent="New password must be at least 8 characters and include a number.";return;}
+  if(n===o){msg.textContent="New password must be different from the current password.";return;}
+  if(n!==c){msg.textContent="New password and confirmation do not match.";return;}
+  log("CHANGE_PASSWORD","Account password updated");closeModal();toast("Password updated successfully");
+}
 function toast(msg,type){
   const t=document.createElement("div");t.className="toast"+(type==="err"?" err":"");t.innerHTML=msg;
   document.getElementById("toastWrap").appendChild(t);
@@ -1285,7 +1391,29 @@ function icon(k){return '<span class="navic"><svg viewBox="0 0 24 24">'+(ICONS[k
 function svgIco(k,sz){sz=sz||17;return '<svg viewBox="0 0 24 24" style="width:'+sz+'px;height:'+sz+'px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round">'+(ICONS[k]||'')+'</svg>';}
 
 /* preferences: dark mode + density */
+/* colour themes — live palette swap on :root */
+const PAL_KEYS=['--g900','--g800','--g700','--g600','--g500','--gold','--gold-l','--gold-d','--gold-soft','--ink','--muted','--faint','--line','--line-2','--bg','--paper','--cream','--danger','--ok','--warn','--info'];
+const DEFAULT_PAL="Army Green";
+const PAL_SWATCH={"Army Green":"#2f5233","Navy Blue":"#1b3168","Neutral Grey":"#333840"};
+const PALETTES={
+  "Army Green":null,
+  "Navy Blue":{'--g900':'#0b1836','--g800':'#122250','--g700':'#1b3168','--g600':'#254291','--g500':'#3557b0','--gold':'#C8A64B','--gold-l':'#E6CF88','--gold-d':'#9C7C2E','--gold-soft':'#f3ead0','--ink':'#141b2e','--muted':'#5f6980','--faint':'#8b93a6','--line':'#e2e4ea','--line-2':'#eef0f5','--bg':'#eceef4','--paper':'#ffffff','--cream':'#f6f7fb','--danger':'#b23b3b','--ok':'#2c6e39','--warn':'#b3781a','--info':'#2a5c9c'},
+  "Neutral Grey":{'--g900':'#1a1c1f','--g800':'#26292e','--g700':'#333840','--g600':'#454b54','--g500':'#5b626c','--gold':'#B08D57','--gold-l':'#D8BC8A','--gold-d':'#87683a','--gold-soft':'#efe7d8','--ink':'#20232a','--muted':'#6c727b','--faint':'#9aa0a8','--line':'#e5e6e9','--line-2':'#eef0f2','--bg':'#eef0f2','--paper':'#ffffff','--cream':'#f7f6f3','--danger':'#a83232','--ok':'#2c6e39','--warn':'#b3781a','--info':'#3a5a8c'}
+};
+function currentPal(){const p=localStorage.getItem("ui_palette");return (p&&PALETTES[p]!==undefined)?p:DEFAULT_PAL;}
+function setPalTokens(name){
+  const root=document.documentElement;PAL_KEYS.forEach(k=>root.style.removeProperty(k));
+  const p=PALETTES[name];if(p)PAL_KEYS.forEach(k=>{if(p[k])root.style.setProperty(k,p[k]);});
+}
+function applyTheme(name){
+  if(PALETTES[name]===undefined)name=DEFAULT_PAL;
+  localStorage.setItem("ui_palette",name);setPalTokens(name);
+  try{const s=DB.settings();s.theme=name;DB.saveSettings(s);}catch(e){}
+  const av=document.getElementById("appView");
+  if(av&&!av.classList.contains("hidden")&&typeof CURRENT!=="undefined")go(CURRENT);
+}
 function applyPrefs(){
+  setPalTokens(currentPal());
   const dark=localStorage.getItem("ui_theme")==="dark";document.body.classList.toggle("dark",dark);
   const cmp=localStorage.getItem("ui_density")==="compact";document.body.classList.toggle("compact",cmp);
   const tb=document.getElementById("themeBtn");if(tb){tb.innerHTML=svgIco(dark?"sun":"moon");tb.title=dark?"Switch to light mode":"Switch to dark mode";}
