@@ -693,7 +693,7 @@ function vReports(m){
    dd('rcmd',[{v:'',l:'All Commands'}].concat(COMMANDS),'All Commands','','sm')+
    dd('rstat',[{v:'',l:'All Status'}].concat(["Registered","Active","Sub-judice","Closed"]),'All Status','','sm')+
    '<div class="sp" style="flex:1"></div><button class="btn prim" onclick="genReport()">'+ic('Chart21',17)+'Generate report</button>'+
-   '<button class="btn ghost" onclick="exportReportCsv()">'+ic('DocumentDownload',17)+'Export to CSV</button><button class="btn ghost" onclick="window.print()">'+ic('Printer',17)+'Print report</button></div></div>'+
+   '<button class="btn ghost" onclick="exportReportPdf()">'+ic('DocumentDownload',17)+'Export to PDF</button><button class="btn ghost" onclick="exportReportPdf()">'+ic('Printer',17)+'Print report</button></div></div>'+
  '<div id="reportArea"></div>';genReport();
 }
 function reportData(){const type=document.getElementById('rt').value;let c=scoped();
@@ -702,10 +702,70 @@ function reportData(){const type=document.getElementById('rt').value;let c=scope
  if(type==='pending')c=c.filter(x=>x.status==="Registered");
  const title=type==='cmd'?'Command-wise Report':type==='pending'?'Pending Approvals Report':'Case Summary Report';
  return {c,title};}
-function exportReportCsv(){const{c,title}=reportData();
- const rows=[['Case No','Applicant','Relation','Member','Army No','Command','Maintenance','Status']]
-   .concat(c.map(x=>[x.id,x.applicant,x.relation,x.memberName,x.armyNo,x.command,x.maintenance||'-',x.status]));
- downloadCsv('MAARK-'+title.replace(/\s+/g,'-')+'.csv',rows);addAudit('EXPORT_REPORT',title+' exported to CSV');toast('Report exported to CSV ('+c.length+' rows)');}
+/* Renders the report into a standalone A4 sheet and hands it to the browser
+   print dialog, where "Save as PDF" writes the file. No library, nothing fetched. */
+function exportReportPdf(){
+ const r=reportData(),c=r.c,title=r.title;
+ const cmd=(document.getElementById('rcmd')||{}).value||'All commands';
+ const st=(document.getElementById('rstat')||{}).value||'All statuses';
+ const when=fmtDate(new Date());
+ const mark=esc(SESSION.name+' . '+SESSION.role+' . '+SESSION.ip);
+ const meta=(k,v)=>'<div><span>'+k+'</span><b>'+esc(v)+'</b></div>';
+ const body=c.length?c.map(x=>'<tr><td class="mono">'+esc(x.id)+'</td><td>'+esc(x.applicant)+' <i>('+esc(x.relation)+')</i></td>'+
+   '<td>'+esc(x.memberName)+' <i>'+esc(x.armyNo)+'</i></td><td>'+esc(x.command)+'</td>'+
+   '<td class="num">'+esc(x.maintenance||'-')+'</td><td>'+esc(x.status)+'</td></tr>').join('')
+   :'<tr><td colspan="6" class="none">No records match this filter.</td></tr>';
+ let wm='';for(let i=0;i<24;i++)wm+='<span>CONFIDENTIAL &middot; '+mark+'</span>';
+ const html='<!doctype html><html><head><meta charset="utf-8"><title>MAARK - '+esc(title)+'</title><style>'+
+  '@page{size:A4 portrait;margin:14mm 12mm 16mm}'+
+  '*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+  'body{color:#252F4A;font-size:10.5px;line-height:1.45;background:#6B7280;padding:20px 0}'+
+  '.bar{position:fixed;top:0;left:0;right:0;height:48px;z-index:5;background:#071437;color:#fff;display:flex;align-items:center;gap:10px;padding:0 16px;font-size:12px}'+
+  '.bar b{font-weight:600}.bar .sp{flex:1}'+
+  '.bar button{height:32px;padding:0 14px;border:none;border-radius:7px;background:#184A2C;color:#fff;font-size:12px;font-weight:600;cursor:pointer}'+
+  '.bar button.gh{background:rgba(255,255,255,.14)}'+
+  '.page{position:relative;width:210mm;min-height:297mm;margin:68px auto 0;background:#fff;padding:14mm 12mm 16mm;box-shadow:0 10px 30px rgba(0,0,0,.35);overflow:hidden}'+
+  '@media print{body{background:#fff;padding:0}.bar{display:none}.page{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;overflow:visible}.wm{position:fixed}}'+
+  '.wm{position:absolute;inset:0;z-index:0;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:26px 34px;transform:rotate(-32deg);pointer-events:none}'+
+  '.wm span{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(24,74,44,.07);white-space:nowrap}'+
+  '.sheet{position:relative;z-index:1}'+
+  '.hd{display:flex;align-items:flex-start;gap:10px;border-bottom:2px solid #184A2C;padding-bottom:10px}'+
+  '.mk{flex:none;background:#184A2C;color:#fff;font-size:10px;font-weight:800;letter-spacing:1.4px;padding:7px 10px;border-radius:5px}'+
+  '.hd b{display:block;font-size:12.5px;color:#071437}.hd small{display:block;font-size:9.5px;color:#78829D;margin-top:1px}'+
+  '.conf{margin-left:auto;border:1px solid #F8285A;color:#E82646;font-size:8.5px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:20px;text-transform:uppercase}'+
+  '.ti{display:flex;align-items:baseline;gap:8px;margin-top:12px}'+
+  '.ti h1{font-size:15px;font-weight:700;color:#071437}.ti em{font-style:normal;font-size:9.5px;color:#78829D}'+
+  '.mt{display:grid;grid-template-columns:repeat(4,1fr);gap:6px 14px;margin:10px 0 12px;padding:8px 10px;background:#F4F6F8;border-radius:6px}'+
+  '.mt span{display:block;font-size:8px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#99A1B7}'+
+  '.mt b{display:block;font-size:10px;color:#071437;margin-top:1px}'+
+  'table{width:100%;border-collapse:collapse}'+
+  'thead{display:table-header-group}tr{page-break-inside:avoid}'+
+  'th{text-align:left;font-size:8.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#4B5675;background:#EBEDF3;padding:7px 8px;border-bottom:1px solid #C4CADA}'+
+  'td{padding:7px 8px;border-bottom:1px solid #EBEDF3;font-size:10px;color:#252F4A;vertical-align:top}'+
+  'td i{font-style:normal;color:#78829D}td.mono{font-weight:600;color:#071437;white-space:nowrap}'+
+  'th.num,td.num{text-align:right;white-space:nowrap}'+
+  'td.none{text-align:center;color:#78829D;padding:18px}'+
+  '.ft{margin-top:12px;padding-top:8px;border-top:1px solid #EBEDF3;display:flex;gap:10px;font-size:8.5px;color:#99A1B7}'+
+  '.ft span:last-child{margin-left:auto}'+
+  '</style></head><body>'+
+  '<div class="bar"><b>'+esc(title)+'</b><span>A4 portrait &middot; '+c.length+(c.length===1?' record':' records')+'</span><span class="sp"></span>'+
+  '<button onclick="window.print()">Save as PDF</button><button class="gh" onclick="window.close()">Close</button></div>'+
+  '<div class="page"><div class="wm">'+wm+'</div><div class="sheet">'+
+  '<div class="hd"><span class="mk">MAARK</span><div><b>Additional Directorate General of Human Rights</b>'+
+  '<small>MAARK 2.0 &middot; maintenance allowance case system</small></div><span class="conf">Confidential</span></div>'+
+  '<div class="ti"><h1>'+esc(title)+'</h1><em>'+c.length+(c.length===1?' record':' records')+'</em></div>'+
+  '<div class="mt">'+meta('Generated on',when)+meta('Generated by',SESSION.name+' ('+SESSION.role+')')+meta('Command',cmd)+meta('Status',st)+'</div>'+
+  '<table><thead><tr><th>Case No</th><th>Applicant</th><th>Member</th><th>Command</th><th class="num">Maintenance</th><th>Status</th></tr></thead>'+
+  '<tbody>'+body+'</tbody></table>'+
+  '<div class="ft"><span>Watermarked with user ID, machine IP and timestamp &middot; '+mark+'</span><span>'+when+'</span></div>'+
+  '</div></div></body></html>';
+ const w=window.open('','_blank');
+ if(!w){toast('Allow pop-ups to export the PDF','err');return;}
+ w.document.open();w.document.write(html);w.document.close();
+ w.focus();setTimeout(()=>w.print(),350);
+ addAudit('EXPORT_REPORT',title+' exported to PDF');
+ toast('A4 report ready. Choose Save as PDF in the print dialog.');
+}
 function rptHead(title,c){
  const cmd=(document.getElementById('rcmd')||{}).value||'All commands';
  const st=(document.getElementById('rstat')||{}).value||'All statuses';

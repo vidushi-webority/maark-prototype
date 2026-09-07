@@ -21,3 +21,9 @@ code lives in `../prototype/`; nothing here is loaded by the browser.
 |---|---|
 | [context.md](project/context.md) | Client, RFP reference, scope and disclaimers |
 | [conventions.md](project/conventions.md) | Coding and content rules for this repository |
+
+## Deliverables
+
+| Document | Covers |
+|---|---|
+| [deliverables/](deliverables/README.md) | The wireframe and screen-design PDFs sent to the client, and how they are regenerated |
