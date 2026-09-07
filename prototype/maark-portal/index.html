@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAARK 2.0 Portal | Maintenance Allowance Automated Record Keeping &middot; ADG HR</title>
+<link rel="stylesheet" href="../assets/css/maark-portal.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginView" class="login">
+  <div class="lsplit">
+    <div class="lleft">
+      <div class="lcopy">
+      <div class="lg">MAARK<span style="font-size:18px;font-weight:500;opacity:.85"> 2.0</span></div>
+      <div class="sub">Maintenance Allowance Automated Record Keeping</div>
+      <div class="tag">Secure, paperless management of maintenance-allowance cases across the command hierarchy.</div>
+      <div class="chips">
+        <span class="chip">Army IAM &middot; SAML 2.0</span>
+        <span class="chip">IACA 2FA</span>
+        <span class="chip">AES-256 encrypted</span>
+        <span class="chip">Air-gapped (ADN)</span>
+      </div>
+      </div>
+    </div>
+    <div class="lright">
+      <div class="lcard">
+        <div class="lbrand">MAARK <span>2.0</span><em>ADG HR &middot; Human Rights</em></div>
+
+        <div class="lform">
+          <!-- STEP 1 -->
+          <div id="step1">
+            <h2>Welcome back</h2>
+            <p>Sign in to manage maintenance-allowance cases.</p>
+            <label class="slab">Continue as</label>
+            <div class="seg" id="rolepick">
+              <button class="rolebtn on" data-role="Super Admin" data-hint="Full visibility of all commands">Super Admin</button>
+              <button class="rolebtn" data-role="Command Admin" data-hint="Approves and manages cases in the command">Command Admin</button>
+              <button class="rolebtn" data-role="Unit User" data-hint="Registers and files cases">Unit User</button>
+            </div>
+            <div class="seghint" id="segHint">Full visibility of all commands</div>
+            <div class="fld">
+              <label for="loginEmail">Service Email</label>
+              <input id="loginEmail" type="email" autocomplete="username" placeholder="Enter your email" oninput="emailGate()" onkeydown="if(event.key==='Enter')goPassword()">
+              <div class="err" id="emailErr"></div>
+            </div>
+            <button class="signin" id="continueBtn" disabled onclick="goPassword()">Continue</button>
+          </div>
+
+          <!-- STEP 2 -->
+          <div id="step2" class="hidden">
+            <h2>Enter your password</h2>
+            <p>Confirm it is you to continue.</p>
+            <div class="idrow">
+              <span class="idav" id="idAv">A</span>
+              <span class="idem" id="idEmail"></span>
+              <button class="idch" onclick="backToEmail()">Change</button>
+            </div>
+            <div class="fld">
+              <div class="flabel"><label for="loginPwd">Password</label><a class="link" onclick="toast('Contact your unit IT cell to reset the password','info')">Forgot password?</a></div>
+              <div class="pwrap">
+                <input id="loginPwd" type="password" autocomplete="current-password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()">
+                <button class="peye" id="peye" onclick="togglePwd()" aria-label="Show password" title="Show password"></button>
+              </div>
+              <div class="err" id="pwdErr"></div>
+            </div>
+            <button class="signin" onclick="doLogin()">Login</button>
+            <button class="ghost" onclick="backToEmail()">Go back</button>
+            <div class="lhelp">Trouble signing in? <a class="link" onclick="toast('Contact the ADG HR help desk on the ADN directory','info')">Get help</a></div>
+          </div>
+        </div>
+
+        <div class="lfoot">Authorised users only. All activity is logged and audited. Demo prototype.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appView" class="hidden">
+  <div class="hdr">
+    <div class="brand" onclick="go('dashboard')">MAARK<small>2.0 &middot; ADG HR</small></div>
+    <div class="searchwrap"><span class="sicon" id="searchIcon"></span><input class="search" id="globalSearch" placeholder="Search" oninput="globalSearch(this.value)"></div>
+    <div class="sp"></div>
+    <div class="uwrap">
+      <button class="uchip" id="uChip" onclick="toggleProfileMenu(event)" aria-haspopup="true" aria-expanded="false"><div class="ut"><small id="uName">User</small><b id="uRole">Role</b></div><span class="av" id="uAv">A</span></button>
+      <div class="pmenu hidden" id="pmenu">
+        <div class="pm-head">
+          <span class="pm-av" id="pmAv">A</span>
+          <div class="pm-id"><b id="pmName">User</b><small id="pmMail">user@adghr.army.in</small></div>
+          <span class="pm-tag" id="pmTag">Role</span>
+        </div>
+        <div class="pm-list">
+          <button class="pm-i" onclick="pmGo('profile')"><span class="pm-ic" data-pmic="Profile"></span>My Profile</button>
+          <button class="pm-i" onclick="pmGo('audit')"><span class="pm-ic" data-pmic="NoteText"></span>Audit Trail</button>
+          <button class="pm-i" onclick="pmGo('assistant')"><span class="pm-ic" data-pmic="Magicpen"></span>AI Assistant</button>
+          <div class="pm-i pm-static"><span class="pm-ic" data-pmic="Element3"></span>Compact view<button class="pm-sw" id="pmDense" onclick="toggleDense()" role="switch" aria-checked="false"><i></i></button></div>
+        </div>
+        <div class="pm-foot"><button class="pm-out" onclick="logout()">Log out</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="shell">
+    <nav class="side" id="side"></nav>
+    <main class="main" id="main"></main>
+  </div>
+  <button class="aifab" id="aiFab" onclick="go('assistant')" title="AI Assistant" aria-label="AI Assistant"></button>
+</div>
+
+<div id="modalRoot"></div>
+<div class="toastwrap" id="toastWrap"></div>
+
+<script src="../assets/js/maark-portal.js"></script>
+</body>
+</html>

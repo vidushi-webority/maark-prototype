@@ -1,0 +1,13 @@
+:root{
+  /* Human Rights theme — deep petrol-teal + copper */
+  --g900:#0A2E34; --g800:#0E3A42; --g700:#124C56; --g600:#186470; --g500:#1F8290;
+  --gold:#C07C3A; --gold-l:#E0A468; --gold-d:#8F5A24; --gold-soft:#f2e6d8;
+  --ink:#0f2429; --muted:#5a6f72; --faint:#8aa0a2;
+  --line:#dde7e6; --line-2:#eaf1f0;
+  --bg:#eef3f2; --paper:#ffffff; --cream:#f6f4ee;
+  --danger:#b23b3b; --ok:#1f7a5a; --warn:#b3781a; --info:#1c6c96;
+  --sh-1:0 1px 2px rgba(10,46,52,.06),0 2px 8px rgba(10,46,52,.05);
+  --sh-2:0 4px 14px rgba(10,46,52,.10);
+  --sh-3:0 18px 50px rgba(6,32,36,.30);
+  --emblem-ink:#0f2f36;
+}

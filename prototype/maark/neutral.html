@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="MAARK 2.0 - Maintenance Allowance Automated Record Keeping. Additional Directorate General of Human Rights, IHQ of MoD (Army).">
+<title>MAARK 2.0 (Neutral theme) | Maintenance Allowance Automated Record Keeping &middot; ADG HR</title>
+<link rel="stylesheet" href="../assets/css/theme-neutral.css">
+<link rel="stylesheet" href="../assets/css/maark.css">
+</head>
+<body>
+
+<!-- DEMO DISCLAIMER (added for public hosting) -->
+<div id="demoNotice" style="position:fixed;left:12px;bottom:12px;z-index:5000;background:rgba(18,18,18,.92);color:#f4e9c8;font:400 11px/1.45 'Segoe UI',Arial,sans-serif;padding:9px 30px 9px 12px;border-radius:9px;max-width:310px;box-shadow:0 8px 24px rgba(0,0,0,.35);border:1px solid rgba(230,207,136,.35)">
+<b style="color:#ffcf5c;letter-spacing:.3px"><i data-ico="warn" data-sz="13"></i> PROTOTYPE: DEMONSTRATION ONLY</b><br>
+Concept demo by <b>Webority Technologies</b> using dummy data. This is <b>not</b> a live, official or classified Government of India / Ministry of Defence system.
+<button onclick="document.getElementById('demoNotice').style.display='none'" style="position:absolute;top:5px;right:7px;background:none;border:none;color:#f4e9c8;font-size:15px;cursor:pointer;line-height:1">&times;</button>
+</div>
+
+
+<!-- ============ LOGIN ============ -->
+<div id="loginView" class="login-wrap">
+  <div class="bgmark" data-emblem></div>
+  <div class="vignette"></div>
+  <div class="login-card">
+    <div class="tricolor"></div>
+    <div class="top">
+      <div class="emblem" data-emblem></div>
+      <div class="t1">MAARK<span style="font-size:15px;vertical-align:super;color:var(--gold-l)"> 2.0</span></div>
+      <div class="t2">Maintenance Allowance Automated Record Keeping</div>
+    </div>
+    <div class="body">
+      <div id="loginStep">
+        <h2>Secure Access Portal</h2>
+        <p class="hint">Additional Directorate General of Human Rights<br>IHQ of MoD (Army) &middot; Army Data Network</p>
+        <div class="role-pick" id="rolePick">
+          <button data-role="User" class="on"><span class="ri" data-ico="user" data-sz="16"></span>User</button>
+          <button data-role="Admin"><span class="ri" data-ico="shield" data-sz="16"></span>Admin</button>
+          <button data-role="Super Admin"><span class="ri" data-ico="star" data-sz="16"></span>Super Admin</button>
+        </div>
+        <div class="field" style="margin-bottom:13px">
+          <label>Service / User ID</label>
+          <input id="loginUser" value="hr.user" autocomplete="off">
+        </div>
+        <div class="field" style="margin-bottom:13px">
+          <label>Password</label>
+          <input id="loginPass" type="password" value="demo123">
+        </div>
+        <button class="btn primary" style="width:100%;justify-content:center;padding:12px" onclick="doLogin()"><i data-ico="lock" data-sz="15"></i> Authenticate via Army IAM (SAML 2.0)</button>
+        <div class="demo-note"><b>Demo access:</b> select a role and click Authenticate. Credentials are pre-filled. Flow simulates Army IAM SSO + mandatory IACA-token 2FA.</div>
+      </div>
+      <div id="otpStep" class="hidden">
+        <h2>Two-Factor Authentication</h2>
+        <p class="hint">Enter the 6-digit code from your<br><b>IACA hardware token</b></p>
+        <div class="otp-boxes" id="otpBoxes"></div>
+        <button class="btn primary" style="width:100%;justify-content:center;padding:12px" onclick="verifyOtp()">Verify &amp; Enter Portal</button>
+        <div class="demo-note">Demo OTP: any 6 digits (e.g. <b>482913</b>). 2FA is mandatory per RFP, IACA tokens only.</div>
+        <button class="btn ghost" style="width:100%;justify-content:center;margin-top:9px" onclick="backToLogin()">&larr; Back</button>
+      </div>
+      <div class="login-foot">ADDITIONAL DIRECTORATE GENERAL OF HUMAN RIGHTS<br>Authorised personnel only &middot; All access is monitored &amp; logged</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="appView" class="hidden">
+  <div class="classbar">
+    <span class="cls">&#9679; RESTRICTED</span>
+    <span class="badge"><span class="dot"></span> ARMY DATA NETWORK: AIR-GAPPED / OFFLINE</span>
+    <span class="badge"><i data-ico="lock" data-sz="12"></i> IACA SSL</span>
+    <span class="badge"><i data-ico="key" data-sz="12"></i> AES-256</span>
+    <span class="badge"><i data-ico="user" data-sz="12"></i> SAML 2.0 IAM</span>
+    <span class="badge"><i data-ico="verified" data-sz="12"></i> 2FA IACA</span>
+    <span class="badge"><i data-ico="doc" data-sz="12"></i> Audit Logged</span>
+  </div>
+  <header class="app">
+    <div class="emblem" data-emblem></div>
+    <div class="brand">
+      <h1>MAARK<span class="v">2.0</span></h1>
+      <p>Maintenance Allowance Automated Record Keeping</p>
+    </div>
+    <div class="spacer"></div>
+    <div class="motto">"Service Before Self"<b>CARE &middot; DIGNITY &middot; TRUST</b></div>
+    <button class="htool" id="themeBtn" onclick="toggleTheme()" title="Toggle dark mode"></button>
+    <div class="userchip" id="userChip" onclick="openProfile()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProfile();}" title="Open profile &amp; settings" role="button" tabindex="0">
+      <div class="av" id="uAv">U</div>
+      <div><b id="uName">User</b><small id="uRole">User</small></div>
+      <span class="chev" aria-hidden="true" data-ico="chevron" data-sz="13"></span>
+    </div>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </header>
+
+  <div class="shell">
+    <nav class="side" id="sideNav"></nav>
+    <main id="mainArea"></main>
+  </div>
+</div>
+
+<!-- chatbot -->
+<button class="chat-fab" id="chatFab" onclick="toggleChat()"><i data-ico="bot" data-sz="24"></i></button>
+<div class="chat-win hidden" id="chatWin">
+  <div class="ch">
+    <div class="cbot"><i data-ico="bot" data-sz="15"></i></div>
+    <div><b>MAARK Assistant</b><small>ETAI-compliant &middot; on-prem AI</small></div>
+    <button class="x" style="color:#fff;margin-left:auto" onclick="toggleChat()">&times;</button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="chat-sug" id="chatSug"></div>
+  <div class="chat-in">
+    <input id="chatIn" placeholder="Ask about a case or policy..." onkeydown="if(event.key==='Enter')sendChat()">
+    <button onclick="sendChat()"><i data-ico="send" data-sz="15"></i></button>
+  </div>
+  <div class="etai">On-premise &middot; No internet &middot; DRDO/SAG ETAI framework</div>
+</div>
+
+<div id="modalRoot"></div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/core.js"></script>
+<script src="../assets/js/maark.js"></script>
+</body>
+</html>

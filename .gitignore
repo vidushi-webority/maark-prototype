@@ -1,0 +1,12 @@
+# editor / OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.vscode/
+.idea/
+
+# nothing is built in this repo - no node_modules, no dist
+
+# playwright mcp scratch output
+.playwright-mcp/

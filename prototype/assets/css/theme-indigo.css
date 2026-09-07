@@ -1,0 +1,13 @@
+:root{
+  /* Indigo palette: deep navy + regimental gold */
+  --g900:#0b1836; --g800:#122250; --g700:#1b3168; --g600:#254291; --g500:#3557b0;
+  --gold:#C8A64B; --gold-l:#E6CF88; --gold-d:#9C7C2E; --gold-soft:#f3ead0;
+  --ink:#141b2e; --muted:#5f6980; --faint:#8b93a6;
+  --line:#e2e4ea; --line-2:#eef0f5;
+  --bg:#eceef4; --paper:#ffffff; --cream:#f6f7fb;
+  --danger:#b23b3b; --ok:#2c6e39; --warn:#b3781a; --info:#2a5c9c;
+  --sh-1:0 1px 2px rgba(11,24,54,.07),0 2px 8px rgba(11,24,54,.05);
+  --sh-2:0 4px 14px rgba(11,24,54,.11);
+  --sh-3:0 18px 50px rgba(8,16,40,.32);
+  --emblem-ink:#122250;
+}
