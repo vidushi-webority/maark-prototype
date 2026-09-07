@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAARK 2.0 Portal | Maintenance Allowance Automated Record Keeping &middot; ADG HR</title>
+<style>
+:root{
+  --violet:#4A0FBF; --violet-d:#3A0091; --ink:#16093A; --v2:#4C1D95;
+  --bg:#F7F6FB; --paper:#ffffff; --line:#E8E4F2; --line2:#EFECF6;
+  --muted:#8A8494; --text:#3B3B47; --box:#F4F2F9; --lav:#F3EEF9;
+  --ok:#276749; --ok-bg:#DCEFE0; --warn:#B45309; --warn-bg:#FBE4D0; --clo:#4C1D95; --clo-bg:#E7E4F0;
+  --gold:#D8BC8A;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter','Segoe UI',Roboto,Arial,sans-serif}
+body{background:var(--bg);color:var(--text);font-size:14px}
+a{color:inherit}
+.hidden{display:none!important}
+/* ---------- Login ---------- */
+.login{min-height:100vh;display:flex;flex-direction:column}
+.restr{height:32px;background:var(--ink);color:#E7DBFF;display:flex;align-items:center;justify-content:center;font-size:12px;letter-spacing:2px}
+.lsplit{flex:1;display:flex;flex-wrap:wrap}
+.lleft{flex:1;min-width:320px;background:var(--violet);color:#fff;padding:56px 48px;display:flex;flex-direction:column;justify-content:center}
+.lleft .lg{font-size:44px;font-weight:800;letter-spacing:1px}
+.lleft .sub{font-size:16px;opacity:.85;margin-top:6px}
+.lleft .tag{font-size:20px;font-weight:600;margin-top:32px;line-height:1.5;max-width:440px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px;max-width:460px}
+.chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:7px 14px;font-size:13.5px}
+.lright{flex:1;min-width:340px;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:30px}
+.lcard{width:100%;max-width:430px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:32px;box-shadow:0 8px 30px rgba(20,28,40,.06)}
+.lcard h2{font-size:24px;color:var(--ink)}
+.lcard p{font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5}
+.rolepick{display:grid;grid-template-columns:1fr;gap:9px;margin:18px 0}
+.rolebtn{text-align:left;padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;background:#fff;cursor:pointer;transition:.15s}
+.rolebtn:hover{border-color:#C9B8EC}
+.rolebtn.on{border-color:var(--violet);background:var(--lav)}
+.rolebtn b{color:var(--ink);font-size:14px}
+.rolebtn span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.iam{margin-top:6px;height:48px;background:var(--violet);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;cursor:pointer}
+.or{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--muted);font-size:13px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.otp{display:flex;gap:10px}
+.otp input{flex:1;height:48px;border:1px solid #D8D2E6;border-radius:9px;background:var(--box);text-align:center;font-size:20px;color:var(--ink)}
+.signin{margin-top:20px;height:48px;background:var(--ink);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;width:100%;cursor:pointer}
+.lfoot{font-size:12px;color:var(--muted);margin-top:14px;text-align:center}
+/* ---------- Shell ---------- */
+.hdr{height:60px;background:var(--violet);color:#fff;display:flex;align-items:center;padding:0 20px;gap:16px;position:sticky;top:0;z-index:20}
+.hdr .brand{font-size:21px;font-weight:800;letter-spacing:.5px;cursor:pointer}
+.hdr .brand small{font-weight:500;opacity:.8;font-size:12px;margin-left:6px}
+.hdr .search{flex:1;max-width:360px;background:rgba(255,255,255,.16);border:none;border-radius:8px;height:34px;padding:0 12px;color:#fff;font-size:14px}
+.hdr .search::placeholder{color:#E7DBFF}
+.hdr .sp{flex:1}
+.hdr .chip2{background:rgba(255,255,255,.14);border-radius:20px;height:34px;display:flex;align-items:center;padding:0 12px;gap:8px;font-size:13.5px;cursor:pointer}
+.hdr .dot{width:26px;height:26px;border-radius:50%;background:var(--gold);color:#241c04;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.hdr .lo{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;height:34px;padding:0 14px;font-size:13.5px;cursor:pointer}
+.shell{display:flex;min-height:calc(100vh - 60px)}
+.side{width:224px;background:#fff;border-right:1px solid var(--line);padding:14px 0;flex:none}
+.side .grp{font-size:11px;letter-spacing:.6px;color:var(--muted);text-transform:uppercase;padding:8px 20px}
+.nav{display:flex;align-items:center;gap:12px;padding:11px 20px;font-size:15px;color:var(--text);cursor:pointer;border-left:3px solid transparent}
+.nav:hover{background:#FAF9FD}
+.nav .ic{width:18px;height:18px;border-radius:5px;background:#D8D2E6}
+.nav.on{background:var(--lav);color:var(--ink);font-weight:700;border-left-color:var(--violet)}
+.nav.on .ic{background:var(--violet)}
+.main{flex:1;padding:22px 26px;min-width:0}
+.crumb{font-size:13px;color:var(--muted);margin-bottom:6px}
+.h2{font-size:25px;font-weight:800;color:var(--ink);margin-bottom:16px;font-family:Georgia,serif}
+/* ---------- Components ---------- */
+.tools{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.inp,select.inp{height:38px;border:1px solid #D8D2E6;border-radius:8px;background:#fff;padding:0 12px;color:var(--text);font-size:13.5px}
+.search-i{flex:1;min-width:200px;max-width:360px}
+.btn{border-radius:9px;height:38px;padding:0 16px;font-size:14px;font-weight:700;cursor:pointer;border:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.ghost{background:#fff;border:1.5px solid #C9C2DC;color:var(--v2)}
+.prim{background:var(--violet);color:#fff}
+.sm{height:32px;padding:0 12px;font-size:13px}
+.pills{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.pill{border:1px solid #E0DBEC;border-radius:20px;padding:6px 13px;font-size:12.5px;color:#6B6577;cursor:pointer;background:#fff}
+.pill.on{background:var(--violet);color:#fff;border-color:var(--violet)}
+.pill b{margin-left:5px}
+.kpis{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.kpi{flex:1;min-width:150px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;cursor:pointer;transition:.15s}
+.kpi:hover{box-shadow:0 6px 18px rgba(20,28,40,.08)}
+.kpi .lbl{font-size:12px;color:#6B6577;text-transform:uppercase;letter-spacing:.3px}
+.kpi .val{font-size:30px;font-weight:800;color:var(--ink);margin-top:6px;font-family:Georgia,serif}
+.kpi .strip{height:4px;width:44px;border-radius:3px;margin-top:8px;background:var(--violet)}
+.row2{display:flex;gap:16px;flex-wrap:wrap}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.card h3{font-size:15px;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card h3 .b{width:5px;height:16px;background:var(--violet);border-radius:3px}
+.barwrap{display:flex;align-items:flex-end;gap:14px;height:150px;padding:0 4px}
+.bar{flex:1;background:var(--violet);border-radius:6px 6px 0 0;min-height:4px;position:relative}
+.bar span{position:absolute;top:-20px;left:0;right:0;text-align:center;font-size:12px;font-weight:700;color:var(--ink)}
+.barlbl{display:flex;gap:14px;padding:8px 4px 0}
+.barlbl span{flex:1;text-align:center;font-size:11.5px;color:var(--muted)}
+.aitem{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13.5px;color:var(--text);cursor:pointer}
+.aitem:hover{color:var(--violet)}
+.aitem .lvl{margin-left:auto;font-size:11px;background:var(--warn-bg);color:var(--warn);border-radius:20px;padding:3px 9px}
+.tblwrap{overflow-x:auto}
+.tbl{width:100%;border:1px solid var(--line);border-radius:12px;overflow:hidden;border-collapse:collapse;background:#fff}
+.tbl th{background:var(--violet);color:#fff;font-size:13px;font-weight:700;text-align:left;padding:11px 14px}
+.tbl td{border-top:1px solid var(--line2);padding:10px 14px;font-size:13.5px;color:var(--text);vertical-align:middle}
+.tbl tr:hover td{background:#FAF9FD}
+.stat{font-size:11.5px;border-radius:20px;padding:2px 10px;white-space:nowrap;font-weight:600}
+.s-Registered{background:#EDEAF7;color:#4C1D95}.s-Active{background:var(--ok-bg);color:var(--ok)}
+.s-Sub-judice{background:var(--warn-bg);color:var(--warn)}.s-Closed{background:var(--clo-bg);color:var(--clo)}
+.act{color:var(--v2);font-size:12.5px;margin-right:10px;cursor:pointer;font-weight:600}
+.act:hover{text-decoration:underline}
+.muted{color:var(--muted)}
+.pager{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px;color:var(--muted)}
+.pg{min-width:30px;height:30px;border:1px solid #E0DBEC;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;color:var(--v2);cursor:pointer;padding:0 6px}
+.pg.on{background:var(--violet);color:#fff;border-color:var(--violet)}
+.f{margin-bottom:12px}
+.f label{display:block;font-size:12.5px;color:var(--text);margin-bottom:5px;font-weight:600}
+.f label .req{color:#B3261E}
+.f input,.f select,.f textarea{width:100%;height:38px;border:1px solid #D8D2E6;border-radius:8px;background:#fff;padding:0 12px;font-size:13.5px;color:var(--ink)}
+.f textarea{height:64px;padding:9px 12px;resize:vertical}
+.f .hint{font-size:11.5px;color:var(--muted);margin-top:4px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px}
+.full{grid-column:1 / -1}
+.sech{font-size:15px;color:var(--v2);margin:6px 0 14px;display:flex;align-items:center;gap:8px;font-weight:700}
+.sech .b{width:5px;height:16px;background:var(--violet);border-radius:3px}
+.up{border:1.5px dashed #C9C2DC;border-radius:8px;background:#FAF9FD;height:48px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px}
+/* case detail */
+.chead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.chead .no{font-size:24px;font-weight:800;color:var(--ink);font-family:Georgia,serif}
+.chead .sp{flex:1}
+.timer{font-size:12.5px;color:var(--warn);background:var(--warn-bg);border-radius:20px;padding:6px 12px}
+.metaline{font-size:13.5px;color:var(--text);margin-bottom:14px}
+.metaline b{color:var(--ink)}
+.tabs{display:flex;gap:24px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:10px 2px;font-size:14.5px;color:var(--muted);cursor:pointer}
+.tab.on{color:var(--violet);font-weight:700;border-bottom:2.5px solid var(--violet)}
+.cols{display:flex;gap:18px;flex-wrap:wrap}
+.lcol{flex:1.7;min-width:300px}.rcol{flex:1;min-width:220px}
+.note{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px;border-left:5px solid #D8D2E6}
+.note.green{border-left-color:var(--ok);background:#F4FAF5}
+.note.yellow{border-left-color:#E0A400;background:#FEFBF0}
+.note .top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.note .who{font-size:13px;font-weight:700;color:var(--ink)}
+.note .badge{font-size:11px;border-radius:20px;padding:2px 9px;margin-left:auto}
+.badge.frozen{background:var(--ok-bg);color:var(--ok)}.badge.edit{background:var(--warn-bg);color:var(--warn)}
+.note .txt{font-size:13.5px;color:var(--text);line-height:1.45}
+.note .when{font-size:11.5px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:12px}
+.note .freeze{color:var(--v2);cursor:pointer;font-weight:600}
+.kv{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--line2)}
+.kv .k{color:var(--muted)}.kv .v{color:var(--ink);font-weight:600;text-align:right}
+.tl .tli{display:flex;gap:10px;font-size:13px;padding:6px 0}
+.tl .d{width:11px;height:11px;border-radius:50%;background:var(--ok);margin-top:4px;flex:none}
+.tl .d.pend{background:var(--warn)}.tl .d.todo{background:#D8D2E6}
+/* chat */
+.chat{display:flex;flex-direction:column;gap:12px;max-height:420px;overflow:auto;padding:4px}
+.msg{max-width:74%;border-radius:12px;padding:11px 14px;font-size:13.5px;line-height:1.45}
+.msg.bot{background:var(--box);color:var(--text)}
+.msg.me{align-self:flex-end;background:var(--violet);color:#fff}
+/* report sheet */
+.sheet{position:relative;overflow:hidden}
+.wm{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.wm span{transform:rotate(-30deg);width:170%;white-space:normal;word-break:break-word;font-size:18px;color:rgba(74,15,191,.05);font-weight:800;letter-spacing:3px;text-align:center;line-height:2.5;text-transform:uppercase}
+.rh{position:relative;text-align:center;border-bottom:2px solid var(--violet);padding-bottom:10px;margin-bottom:12px}
+.rh b{color:var(--ink);font-size:15px}.rh div{color:var(--muted);font-size:12.5px}
+/* modal + toast */
+.overlay{position:fixed;inset:0;background:rgba(20,10,50,.4);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.mh{display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.mh h3{font-size:17px;color:var(--ink);font-family:Georgia,serif}
+.mh .x{margin-left:auto;font-size:22px;color:var(--muted);cursor:pointer;background:none;border:none}
+.mb{padding:18px 20px}.mf{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+.toastwrap{position:fixed;right:20px;bottom:20px;z-index:60;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:1;transition:opacity .3s}
+.toast.err{background:#B3261E}
+.protonote{position:fixed;left:14px;bottom:14px;z-index:15;max-width:300px;background:var(--ink);color:#E7DBFF;font-size:11px;border-radius:10px;padding:10px 12px;line-height:1.4;opacity:.94}
+.protonote b{color:#fff}
+.protonote .x{float:right;cursor:pointer;color:#B7A9E0;margin-left:8px}
+@media(max-width:820px){.side{display:none}.main{padding:16px}.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginView" class="login">
+  <div class="restr">RESTRICTED &middot; ARMY DATA NETWORK &middot; AUTHORISED ACCESS ONLY</div>
+  <div class="lsplit">
+    <div class="lleft">
+      <div class="lg">MAARK<span style="font-size:20px;font-weight:700;opacity:.85"> 2.0</span></div>
+      <div class="sub">Maintenance Allowance Automated Record Keeping</div>
+      <div class="tag">Secure, paperless management of maintenance-allowance cases across the command hierarchy.</div>
+      <div class="chips">
+        <span class="chip">Army IAM &middot; SAML 2.0</span>
+        <span class="chip">IACA 2FA</span>
+        <span class="chip">AES-256 encrypted</span>
+        <span class="chip">Air-gapped (ADN)</span>
+      </div>
+    </div>
+    <div class="lright">
+      <div class="lcard">
+        <h2>Sign in</h2>
+        <p>Access is through the Army Identity Access Management. Select your role, then complete the IACA token.</p>
+        <div class="rolepick" id="rolepick">
+          <button class="rolebtn on" data-role="Super Admin"><b>ADG HR &middot; Super Admin</b><span>Full visibility of all commands</span></button>
+          <button class="rolebtn" data-role="Command Admin"><b>Command &middot; Admin</b><span>Approves and manages cases in the command</span></button>
+          <button class="rolebtn" data-role="Unit User"><b>Unit &middot; User</b><span>Registers and files cases</span></button>
+        </div>
+        <div class="iam" onclick="document.getElementById('otp0').focus()">Continue with Army IAM (SAML 2.0)</div>
+        <div class="or">then</div>
+        <label style="font-size:13px;color:var(--text);font-weight:600">IACA token (6-digit)</label>
+        <div class="otp" style="margin-top:8px" id="otp">
+          <input id="otp0" maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric">
+          <input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric">
+        </div>
+        <button class="signin" onclick="doLogin()">Sign in</button>
+        <div class="lfoot">Authorised users only. All activity is logged and audited. Demo prototype.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appView" class="hidden">
+  <div class="hdr">
+    <div class="brand" onclick="go('dashboard')">MAARK<small>2.0 &middot; ADG HR</small></div>
+    <input class="search" id="globalSearch" placeholder="Search case number, applicant, Army number" oninput="globalSearch(this.value)">
+    <div class="sp"></div>
+    <div class="chip2" onclick="go('assistant')">Assistant</div>
+    <div class="chip2"><span class="dot" id="uAv">A</span><span id="uName">User</span></div>
+    <button class="lo" onclick="logout()">Logout</button>
+  </div>
+  <div class="shell">
+    <nav class="side" id="side"></nav>
+    <main class="main" id="main"></main>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+<div class="toastwrap" id="toastWrap"></div>
+<div class="protonote" id="protonote"><span class="x" onclick="document.getElementById('protonote').remove()">&times;</span>
+<b>Prototype &mdash; demonstration only.</b> Concept demo by Webority Technologies using dummy data. Not a live or official Government of India / MoD system.</div>
+
+<script>
+/* ================= DATA ================= */
+const KEY="maark_portal_v2";
+const COMMANDS=["Northern","Western","Central","Eastern","Southern","South Western"];
+const OFFICERS={
+ "IC-50231":{rank:"Maj",name:"S. Rao",unit:"12 RAJRIF",command:"Western",salary:128000},
+ "IC-61144":{rank:"Capt",name:"J. Singh",unit:"7 SIKH",command:"Northern",salary:96000},
+ "JC-330219":{rank:"Sub",name:"K. Lal",unit:"18 GRENADIERS",command:"Central",salary:74000},
+ "IC-58890":{rank:"Maj",name:"A. Kumar",unit:"4 MADRAS",command:"Southern",salary:121000},
+ "JC-441027":{rank:"Hav",name:"P. Yadav",unit:"2 BIHAR",command:"Eastern",salary:61000}
+};
+function seed(){
+ const now=Date.now();
+ const mk=(id,applicant,relation,armyNo,category,maint,status,command,notings,daysAgo)=>{
+   const o=OFFICERS[armyNo]||{rank:"",name:"",unit:"",command:command,salary:0};
+   return {id,applicant,relation,ageNow:"48",ageFiling:"46",contact:"98765xxxxx",aadhaar:"XXXX-XXXX-1234",
+     address:"Village & PO, District, State", armyNo, rank:o.rank, memberName:o.name, unit:o.unit,
+     command:o.command||command, salary:o.salary, category, type:"Spouse maintenance", maintenance:maint,
+     appDate:"10-Aug-2026", filedDate:"12-Aug-2026", status, guardian:"", parent:"Smt. Kamla Devi",
+     spouseEmployment:"Unemployed", dependentCard:"DC-"+id.slice(-4), csdCard:"CSD-"+id.slice(-4), employability:"No",
+     docs:["Proof of marriage.pdf","Affidavit.pdf"], notings:notings||[], history:[{stage:"Unit filed",by:"Unit clerk",when:"12 Aug"}],
+     updated:new Date(now-daysAgo*864e5).toLocaleDateString('en-IN')};
+ };
+ const cases=[
+   mk("MNT/2026/0142","Smt. A. Devi","Wife","IC-50231","Maintenance","25%","Active","Western",
+     [{by:"Brigade Headquarters",role:"Approver",text:"Verification complete. Marriage proof and affidavit are in order.",colour:"green",frozen:true,when:"28 Aug 2026"},
+      {by:"Command (Western)",role:"Admin",text:"Recommend approval. Maintenance proposed at 25 percent of salary.",colour:"yellow",frozen:false,when:"1 Sep 2026"}],5),
+   mk("MNT/2026/0139","Smt. K. Bai","Mother","JC-330219","Maintenance","₹ 9,000","Registered","Central",[],5),
+   mk("MNT/2026/0137","Smt. R. Kaur","Wife","IC-61144","Maintenance","₹ 12,000","Sub-judice","Northern",
+     [{by:"Brigade Headquarters",role:"Approver",text:"Matter is before the civil court; hold pending order.",colour:"green",frozen:true,when:"30 Aug 2026"}],6),
+   mk("MNT/2026/0131","Smt. P. Yadav","Wife","JC-441027","Maintenance","20%","Registered","Eastern",[],7),
+   mk("MNT/2026/0128","Smt. L. Bai","Mother","IC-58890","Maintenance","20%","Closed","Southern",
+     [{by:"ADG HR",role:"Super Admin",text:"Approved and disbursed. Case closed.",colour:"green",frozen:true,when:"25 Aug 2026"}],13),
+   mk("MNT/2026/0124","Smt. S. Devi","Wife","IC-58890","Maintenance","15%","Closed","Southern",[],16)
+ ];
+ const audit=[
+   {ts:"7 Sep 2026, 11:42",user:"Maj S. Rao",role:"Command Admin",action:"APPROVE_CASE",detail:"Approved MNT/2026/0139",ip:"10.0.4.21"},
+   {ts:"7 Sep 2026, 11:20",user:"Sub R. Kumar",role:"Unit User",action:"CREATE_CASE",detail:"Registered MNT/2026/0142",ip:"10.0.7.14"},
+   {ts:"6 Sep 2026, 17:03",user:"Col A. Verma",role:"Super Admin",action:"GENERATE_REPORT",detail:"Case Summary Report",ip:"10.0.1.9"}
+ ];
+ const cms={portalTitle:"MAARK 2.0",banner:"Maintenance allowance, digitised",theme:"Light Green",notice:"Cases are to be resolved within 180 days.",
+   pages:["Home","About ADG HR","Policy and eligibility","Contact","FAQ"]};
+ return {cases,audit,cms,seq:143};
+}
+const DB={
+ load(){try{return JSON.parse(localStorage.getItem(KEY))||null}catch(e){return null}},
+ save(d){try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}},
+ get(){let d=this.load();if(!d){d=seed();this.save(d)}return d},
+ set(d){this.save(d)}
+};
+let STATE=DB.get();
+let SESSION=null;
+
+/* ================= AUTH ================= */
+document.querySelectorAll('#rolepick .rolebtn').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('#rolepick .rolebtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');});
+document.querySelectorAll('#otp input').forEach((el,i,arr)=>{
+ el.oninput=()=>{el.value=el.value.replace(/\D/g,'');if(el.value&&i<arr.length-1)arr[i+1].focus();};
+ el.onkeydown=(e)=>{if(e.key==='Backspace'&&!el.value&&i>0)arr[i-1].focus();};});
+function doLogin(){
+ const code=[...document.querySelectorAll('#otp input')].map(i=>i.value).join('');
+ if(code.replace(/\D/g,'').length<6){toast('Enter the 6-digit IACA token','err');return;}
+ const role=document.querySelector('#rolepick .rolebtn.on').dataset.role;
+ const map={"Super Admin":{name:"Col A. Verma",command:null},"Command Admin":{name:"Maj S. Rao",command:"Western"},"Unit User":{name:"Sub R. Kumar",command:"Western"}};
+ const m=map[role];
+ SESSION={role,name:m.name,command:m.command,ip:"10.0."+(Math.floor(Math.random()*9)+1)+"."+(Math.floor(Math.random()*200)+10)};
+ document.getElementById('loginView').classList.add('hidden');
+ document.getElementById('appView').classList.remove('hidden');
+ document.getElementById('uName').textContent=SESSION.name+" · "+role;
+ document.getElementById('uAv').textContent=SESSION.name.replace(/^\w+\s/,'')[0];
+ addAudit('LOGIN','Signed in via Army IAM + IACA 2FA');
+ buildNav();go('dashboard');
+}
+function logout(){SESSION=null;location.reload();}
+/* ================= SCOPE / HELPERS ================= */
+function scoped(){const c=STATE.cases;if(!SESSION||SESSION.role==="Super Admin")return c;return c.filter(x=>x.command===SESSION.command);}
+function findCase(id){return STATE.cases.find(x=>x.id===id);}
+function addAudit(action,detail){STATE.audit.unshift({ts:new Date().toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}),user:SESSION?SESSION.name:'-',role:SESSION?SESSION.role:'-',action,detail,ip:SESSION?SESSION.ip:'-'});DB.set(STATE);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function statTag(s){return '<span class="stat s-'+s.replace(/\s/g,'-')+'">'+s+'</span>';}
+function toast(msg,type){const t=document.createElement('div');t.className='toast'+(type==='err'?' err':'');t.textContent=msg;document.getElementById('toastWrap').appendChild(t);setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.remove(),300)},2600);}
+/* ================= NAV / ROUTER ================= */
+const NAV={
+ "Super Admin":[["dashboard","Dashboard"],["registered","Registered Cases"],["approvals","Approvals"],["reports","Reports"],["_a","Administration"],["cms","Content Management"],["audit","Audit Log"],["assistant","AI Assistant"]],
+ "Command Admin":[["dashboard","Dashboard"],["registered","Registered Cases"],["newcase","New Case"],["approvals","Approvals"],["reports","Reports"],["_a","Administration"],["audit","Audit Log"],["assistant","AI Assistant"]],
+ "Unit User":[["dashboard","Dashboard"],["registered","Registered Cases"],["newcase","New Case"],["reports","Reports"],["_a","Administration"],["assistant","AI Assistant"]]
+};
+let CURRENT="dashboard";
+function buildNav(){
+ const s=document.getElementById('side');s.innerHTML='<div class="grp">Main Menu</div>';
+ NAV[SESSION.role].forEach(([k,label])=>{
+   if(k==='_a'){s.innerHTML+='<div class="grp">'+label+'</div>';return;}
+   const a=document.createElement('div');a.className='nav';a.dataset.k=k;a.innerHTML='<span class="ic"></span>'+label;a.onclick=()=>go(k);s.appendChild(a);});
+}
+const VIEWS={dashboard:vDashboard,registered:vRegistered,newcase:vNewCase,casedetail:vCaseDetail,approvals:vApprovals,reports:vReports,cms:vCms,audit:vAudit,assistant:vAssistant};
+function go(view,arg){CURRENT=view;document.querySelectorAll('#side .nav').forEach(a=>a.classList.toggle('on',a.dataset.k===view));
+ const m=document.getElementById('main');m.scrollTop=0;(VIEWS[view]||vDashboard)(m,arg);}
+/* ================= DASHBOARD ================= */
+function vDashboard(m){
+ const c=scoped();
+ const cnt=s=>c.filter(x=>x.status===s).length;
+ const byCmd={};COMMANDS.forEach(k=>byCmd[k]=0);c.forEach(x=>{byCmd[x.command]=(byCmd[x.command]||0)+1;});
+ const maxB=Math.max(1,...Object.values(byCmd));
+ const pend=c.filter(x=>x.status==="Registered");
+ m.innerHTML='<div class="crumb">Home / Dashboard</div><div class="h2">Dashboard</div>'+
+ '<div class="kpis">'+
+   kpi("Total Cases",c.length,"var(--violet)","all")+
+   kpi("Active",cnt("Active"),"var(--ok)","Active")+
+   kpi("Sub-judice",cnt("Sub-judice"),"var(--warn)","Sub-judice")+
+   kpi("Closed",cnt("Closed"),"var(--clo)","Closed")+
+ '</div>'+
+ '<div class="row2">'+
+   '<div class="card" style="flex:1.5;min-width:280px"><h3><span class="b"></span>Cases by Command</h3>'+
+     '<div class="barwrap">'+COMMANDS.map(k=>'<div class="bar" style="height:'+Math.round(byCmd[k]/maxB*100)+'%"><span>'+byCmd[k]+'</span></div>').join('')+'</div>'+
+     '<div class="barlbl">'+COMMANDS.map(k=>'<span>'+k.replace('South Western','SW')+'</span>').join('')+'</div></div>'+
+   '<div class="card" style="flex:1;min-width:240px"><h3><span class="b"></span>Pending Approvals</h3>'+
+     (pend.length?pend.slice(0,6).map(x=>'<div class="aitem" onclick="go(\'casedetail\',\''+x.id+'\')">'+x.id+' &middot; '+esc(x.applicant)+'<span class="lvl">1 up</span></div>').join(''):'<div class="muted" style="padding:10px 0">No cases pending your action.</div>')+
+   '</div>'+
+ '</div>'+
+ '<div class="card" style="margin-top:16px"><h3><span class="b"></span>Recent Cases</h3><div class="tblwrap"><table class="tbl"><thead><tr><th>Case No</th><th>Applicant</th><th>Command</th><th>Status</th><th>Updated</th></tr></thead><tbody>'+
+   c.slice(0,6).map(x=>'<tr style="cursor:pointer" onclick="go(\'casedetail\',\''+x.id+'\')"><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td>'+x.updated+'</td></tr>').join('')+
+ '</tbody></table></div></div>';
+}
+function kpi(lbl,val,color,jump){return '<div class="kpi" onclick="go(\'registered\',{status:\''+jump+'\'})"><div class="lbl">'+lbl+'</div><div class="val">'+val+'</div><div class="strip" style="background:'+color+'"></div></div>';}
+/* ================= REGISTERED ================= */
+let regFilter={q:"",status:"all"};
+function vRegistered(m,arg){
+ if(arg&&arg.status)regFilter.status=arg.status;
+ const canNew=SESSION.role!=="Super Admin";
+ const c=scoped();const cnt=s=>c.filter(x=>x.status===s).length;
+ m.innerHTML='<div class="crumb">Home / Registered Cases</div><div class="h2">Registered Cases</div>'+
+ '<div class="tools"><input class="inp search-i" id="regq" placeholder="Search case number, applicant, Army number" value="'+esc(regFilter.q)+'" oninput="regFilter.q=this.value;drawReg()">'+
+   '<select class="inp" onchange="regFilter.cmd=this.value;drawReg()"><option value="">All Commands</option>'+COMMANDS.map(k=>'<option'+(regFilter.cmd===k?' selected':'')+'>'+k+'</option>').join('')+'</select>'+
+   '<div class="sp" style="flex:1"></div>'+(canNew?'<button class="btn prim" onclick="go(\'newcase\')">+ New Case</button>':'')+'</div>'+
+ '<div class="pills" id="regpills">'+
+   ['all','Registered','Active','Sub-judice','Closed'].map(s=>'<span class="pill'+(regFilter.status===s?' on':'')+'" onclick="regFilter.status=\''+s+'\';drawReg()">'+(s==='all'?'All':s)+'<b>'+(s==='all'?c.length:cnt(s))+'</b></span>').join('')+'</div>'+
+ '<div id="regtable"></div>';
+ drawReg();
+}
+function regRows(){let c=scoped();if(regFilter.status!=='all')c=c.filter(x=>x.status===regFilter.status);
+ if(regFilter.cmd)c=c.filter(x=>x.command===regFilter.cmd);
+ if(regFilter.q){const q=regFilter.q.toLowerCase();c=c.filter(x=>(x.id+x.applicant+x.armyNo+x.command).toLowerCase().includes(q));}return c;}
+function drawReg(){const c=regRows();const canEdit=SESSION.role!=="Super Admin";
+ document.getElementById('regtable').innerHTML=c.length?'<div class="tblwrap"><table class="tbl"><thead><tr><th>Case No</th><th>Applicant</th><th>Member</th><th>Command</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead><tbody>'+
+   c.map(x=>'<tr><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+esc(x.memberName)+' <span class="muted">('+x.armyNo+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td>'+x.updated+'</td><td><span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">View</span>'+(canEdit?'<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">Edit</span>':'')+'</td></tr>').join('')+
+ '</tbody></table></div><div class="pager">Showing '+c.length+' of '+scoped().length+' cases <span class="sp" style="flex:1"></span><span class="pg on">1</span></div>':'<div class="card muted" style="text-align:center;padding:30px">No matching cases.</div>';}
+/* ================= NEW CASE ================= */
+function vNewCase(m){
+ m.innerHTML='<div class="crumb">Home / New Case</div>'+
+ '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px"><div class="h2" style="margin:0">New Case &middot; Data Entry</div><div class="sp" style="flex:1"></div>'+
+   '<button class="btn ghost" onclick="submitCase(true)">Save Draft</button><button class="btn prim" onclick="submitCase(false)">Submit for Approval</button></div>'+
+ '<div class="card" style="margin-bottom:16px"><div class="sech"><span class="b"></span>Service Personnel (fetched by Army number)</div><div class="grid3">'+
+   f("Army number","nc_army","text","e.g. IC-50231",true,'Enter and click Fetch','<button class="btn ghost sm" style="margin-top:8px" onclick="fetchSvc()">Fetch details</button>')+
+   f("Rank","nc_rank")+f("Name of member","nc_mname")+f("Unit","nc_unit")+f("Command","nc_cmd")+f("Monthly salary","nc_salary")+
+ '</div></div>'+
+ '<div class="card" style="margin-bottom:16px"><div class="sech"><span class="b"></span>Applicant Details</div><div class="grid3">'+
+   f("Applicant name","nc_app","text","Full name",true)+
+   sel("Relation to member","nc_rel",["Wife","Mother","Child"],true)+
+   f("Age now","nc_agenow","number","Years")+f("Age at time of filing","nc_agefile","number","Years")+
+   f("Contact number","nc_contact","text","10-digit mobile",true)+f("Aadhaar number","nc_aadhaar","text","Validated")+
+   '<div class="f full"><label>Correspondence address</label><input id="nc_addr" placeholder="Address for correspondence"></div>'+
+ '</div></div>'+
+ '<div class="card" style="margin-bottom:16px"><div class="sech"><span class="b"></span>Case Details</div><div class="grid3">'+
+   sel("Case category","nc_cat",["Maintenance","Spouse allowance"],true)+
+   sel("Case type","nc_type",["Spouse maintenance","Mother maintenance","Child maintenance","Other"])+
+   f("Maintenance sought","nc_maint","text","Amount or percentage")+
+   f("Application date","nc_appdate","date","",true)+f("Filed date","nc_filedate","date")+
+   '<div class="f"><label>Status</label><input value="Registered" disabled></div>'+
+ '</div></div>'+
+ '<div class="card" style="margin-bottom:16px"><div class="sech"><span class="b"></span>Dependents and Cards</div><div class="grid3">'+
+   f("Guardian name","nc_guard","text","In addition to parent")+f("Parent name","nc_parent")+
+   sel("Estranged spouse employment","nc_emp",["Unemployed","Employed","Other"])+
+   f("Dependent card number","nc_dep")+f("CSD card number","nc_csd")+sel("Employability","nc_ability",["No","Yes"])+
+ '</div></div>'+
+ '<div class="card"><div class="sech"><span class="b"></span>Documents (PDF, multiple, size limited)</div><div class="grid3">'+
+   '<div class="f"><label>Proof of marriage <span class="req">*</span></label><div class="up">Upload PDF</div></div>'+
+   '<div class="f"><label>Affidavit <span class="req">*</span></label><div class="up">Upload PDF</div></div>'+
+   '<div class="f"><label>Supporting documents</label><div class="up">Upload multiple PDF</div></div>'+
+ '</div></div>';
+}
+function f(label,id,type,ph,req,hint,extra){return '<div class="f"><label>'+label+(req?' <span class="req">*</span>':'')+'</label><input id="'+id+'" type="'+(type||'text')+'" placeholder="'+(ph||'')+'">'+(hint?'<div class="hint">'+hint+'</div>':'')+(extra||'')+'</div>';}
+function sel(label,id,opts,req){return '<div class="f"><label>'+label+(req?' <span class="req">*</span>':'')+'</label><select id="'+id+'"><option value="">Select</option>'+opts.map(o=>'<option>'+o+'</option>').join('')+'</select></div>';}
+function fetchSvc(){const a=(document.getElementById('nc_army').value||'').trim().toUpperCase();const o=OFFICERS[a];
+ if(!o){toast('No record for that Army number. Try IC-50231.','err');return;}
+ document.getElementById('nc_rank').value=o.rank;document.getElementById('nc_mname').value=o.name;
+ document.getElementById('nc_unit').value=o.unit;document.getElementById('nc_cmd').value=o.command;
+ document.getElementById('nc_salary').value='₹ '+o.salary.toLocaleString('en-IN');toast('Service details fetched');}
+function val(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function submitCase(draft){
+ const app=val('nc_app'),rel=val('nc_rel'),army=val('nc_army').toUpperCase();
+ if(!draft&&(!app||!rel||!army)){toast('Fill applicant name, relation and Army number','err');return;}
+ STATE.seq++;const id="MNT/2026/"+String(STATE.seq).padStart(4,'0');
+ const o=OFFICERS[army]||{rank:val('nc_rank'),name:val('nc_mname'),unit:val('nc_unit'),command:val('nc_cmd')||SESSION.command||"Western",salary:0};
+ const cse={id,applicant:app||"(draft)",relation:rel||"Wife",ageNow:val('nc_agenow'),ageFiling:val('nc_agefile'),
+   contact:val('nc_contact'),aadhaar:val('nc_aadhaar'),address:val('nc_addr'),armyNo:army,rank:o.rank,memberName:o.name,
+   unit:o.unit,command:o.command,salary:o.salary,category:val('nc_cat')||"Maintenance",type:val('nc_type')||"Spouse maintenance",
+   maintenance:val('nc_maint'),appDate:val('nc_appdate'),filedDate:val('nc_filedate'),status:draft?"Registered":"Registered",
+   guardian:val('nc_guard'),parent:val('nc_parent'),spouseEmployment:val('nc_emp'),dependentCard:val('nc_dep'),
+   csdCard:val('nc_csd'),employability:val('nc_ability'),docs:["Proof of marriage.pdf","Affidavit.pdf"],
+   notings:[],history:[{stage:"Unit filed",by:SESSION.name,when:new Date().toLocaleDateString('en-IN')}],updated:new Date().toLocaleDateString('en-IN')};
+ STATE.cases.unshift(cse);DB.set(STATE);addAudit('CREATE_CASE','Registered '+id);
+ toast((draft?'Draft saved: ':'Case submitted: ')+id);go('casedetail',id);
+}
+/* ================= CASE DETAIL ================= */
+let cdTab="Notings";
+function vCaseDetail(m,id){
+ const x=findCase(id);if(!x){go('registered');return;}vCaseDetail.id=id;
+ const canAct=SESSION.role!=="Unit User";
+ m.innerHTML='<div class="crumb">Home / Registered Cases / '+id+'</div>'+
+ '<div class="chead"><div class="no">'+id+'</div>'+statTag(x.status)+'<div class="sp"></div>'+
+   (x.status!=="Closed"?'<div class="timer">SLA: 172 days left</div>':'')+
+   (canAct&&x.status==="Registered"?'<button class="btn ghost sm" onclick="caseAction(\''+id+'\',\'sendback\')">Send back</button> <button class="btn prim sm" onclick="caseAction(\''+id+'\',\'approve\')">Approve</button>':'')+
+   (canAct&&x.status==="Active"?'<button class="btn ghost sm" onclick="caseAction(\''+id+'\',\'subjudice\')">Mark sub-judice</button> <button class="btn prim sm" onclick="caseAction(\''+id+'\',\'close\')">Close case</button>':'')+
+   (canAct&&x.status==="Sub-judice"?'<button class="btn prim sm" onclick="caseAction(\''+id+'\',\'close\')">Close case</button>':'')+
+ '</div>'+
+ '<div class="metaline">Applicant: <b>'+esc(x.applicant)+' ('+x.relation+')</b> &middot; Member: <b>'+esc(x.memberName)+' ('+x.armyNo+')</b> &middot; Command: <b>'+x.command+'</b></div>'+
+ '<div class="tabs">'+["Details","Notings","Documents","History"].map(t=>'<div class="tab'+(cdTab===t?' on':'')+'" onclick="cdTab=\''+t+'\';go(\'casedetail\',\''+id+'\')">'+t+'</div>').join('')+'</div>'+
+ '<div class="cols"><div class="lcol">'+cdBody(x)+'</div><div class="rcol">'+
+   '<div class="card" style="margin-bottom:14px"><h3><span class="b"></span>Case summary</h3>'+
+     kv("Category",x.category)+kv("Maintenance sought",x.maintenance||'-')+kv("Application date",x.appDate||'-')+kv("Filed date",x.filedDate||'-')+kv("Status",x.status)+'</div>'+
+   '<div class="card"><h3><span class="b"></span>Approval history</h3><div class="tl">'+
+     x.history.map(h=>'<div class="tli"><span class="d"></span><span><b style="color:var(--ink)">'+esc(h.stage)+'</b> <span class="muted">&middot; '+h.when+'</span></span></div>').join('')+
+     (x.status==="Registered"?'<div class="tli"><span class="d pend"></span><span><b style="color:var(--ink)">Command review</b> <span class="muted">&middot; pending</span></span></div>':'')+
+   '</div></div>'+
+ '</div></div>';
+}
+function kv(k,v){return '<div class="kv"><span class="k">'+k+'</span><span class="v">'+esc(v)+'</span></div>';}
+function cdBody(x){
+ if(cdTab==="Details"){return '<div class="card">'+
+   kv("Applicant",x.applicant+" ("+x.relation+")")+kv("Age now / at filing",(x.ageNow||'-')+" / "+(x.ageFiling||'-'))+
+   kv("Contact",x.contact||'-')+kv("Aadhaar",x.aadhaar||'-')+kv("Address",x.address||'-')+
+   kv("Member",x.memberName+" ("+x.armyNo+")")+kv("Rank / Unit",(x.rank||'-')+" / "+(x.unit||'-'))+
+   kv("Monthly salary",x.salary?'₹ '+x.salary.toLocaleString('en-IN'):'-')+
+   kv("Guardian / Parent",(x.guardian||'-')+" / "+(x.parent||'-'))+kv("Estranged spouse employment",x.spouseEmployment||'-')+
+   kv("Dependent card / CSD",(x.dependentCard||'-')+" / "+(x.csdCard||'-'))+kv("Employability",x.employability||'-')+'</div>';}
+ if(cdTab==="Documents"){return '<div class="card"><h3><span class="b"></span>Documents</h3>'+
+   x.docs.map(d=>'<div class="aitem" style="cursor:default">'+esc(d)+'<span class="act" style="margin-left:auto" onclick="toast(\'Watermarked preview (demo)\')">Preview</span></div>').join('')+'</div>';}
+ if(cdTab==="History"){return '<div class="card"><h3><span class="b"></span>Case history</h3>'+
+   x.history.map(h=>'<div class="aitem" style="cursor:default"><b style="color:var(--ink)">'+esc(h.stage)+'</b><span class="muted" style="margin-left:auto">'+esc(h.by)+' &middot; '+h.when+'</span></div>').join('')+'</div>';}
+ // Notings
+ const canNote=SESSION.role!=="Unit User"||true;
+ return '<div>'+x.notings.map((n,i)=>note(x.id,n,i)).join('')+
+   (x.status==="Closed"?'':'<div class="card" style="border:1px dashed #C9C2DC"><div class="who" style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px">Add noting</div>'+
+     '<textarea id="newnote" style="width:100%;height:64px;border:1px solid #D8D2E6;border-radius:8px;padding:9px 12px;font-size:13.5px" placeholder="Type your noting..."></textarea>'+
+     '<div style="display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap"><span class="stat" style="background:var(--warn-bg);color:var(--warn)">Yellow &middot; editable</span>'+
+     '<label style="font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:7px"><input type="checkbox" id="confmove"> Confirm and move forward</label>'+
+     '<button class="btn prim sm" style="margin-left:auto" onclick="addNote(\''+x.id+'\')">Save noting</button></div></div>')+'</div>';
+}
+function note(id,n,i){return '<div class="note '+n.colour+'"><div class="top"><span class="who">'+esc(n.by)+'</span><span class="badge '+(n.frozen?'frozen':'edit')+'">'+(n.colour==='green'?'Green &middot; frozen':'Yellow &middot; editable')+'</span></div>'+
+ '<div class="txt">'+esc(n.text)+'</div><div class="when">'+n.when+' &middot; '+(n.frozen?'frozen at the authority, not amendable':'editable working note')+
+ (!n.frozen&&SESSION.role!=="Unit User"?'<span class="freeze" onclick="freezeNote(\''+id+'\','+i+')">Freeze (turn green)</span>':'')+'</div></div>';}
+function addNote(id){const x=findCase(id);const t=(document.getElementById('newnote').value||'').trim();if(!t){toast('Type a noting first','err');return;}
+ const conf=document.getElementById('confmove').checked;
+ x.notings.push({by:SESSION.name+" ("+SESSION.role+")",role:SESSION.role,text:t,colour:conf?'green':'yellow',frozen:conf,when:new Date().toLocaleDateString('en-IN')});
+ x.updated=new Date().toLocaleDateString('en-IN');DB.set(STATE);addAudit('ADD_NOTING',(conf?'Frozen noting on ':'Noting on ')+id);toast('Noting saved');go('casedetail',id);}
+function freezeNote(id,i){const x=findCase(id);const n=x.notings[i];n.colour='green';n.frozen=true;DB.set(STATE);addAudit('FREEZE_NOTING','Froze a noting on '+id);toast('Noting frozen (green). It can no longer be changed.');go('casedetail',id);}
+function caseAction(id,action){const x=findCase(id);
+ if(action==='approve'){x.status="Active";x.history.push({stage:"Command approved",by:SESSION.name,when:new Date().toLocaleDateString('en-IN')});addAudit('APPROVE_CASE','Approved '+id);toast('Case approved and set Active');}
+ if(action==='sendback'){x.history.push({stage:"Sent back",by:SESSION.name,when:new Date().toLocaleDateString('en-IN')});addAudit('SENDBACK','Sent back '+id);toast('Case sent back to the originator');}
+ if(action==='subjudice'){x.status="Sub-judice";x.history.push({stage:"Marked sub-judice",by:SESSION.name,when:new Date().toLocaleDateString('en-IN')});addAudit('SUBJUDICE','Marked '+id+' sub-judice');toast('Case marked sub-judice');}
+ if(action==='close'){x.status="Closed";x.history.push({stage:"Case closed",by:SESSION.name,when:new Date().toLocaleDateString('en-IN')});addAudit('CLOSE_CASE','Closed '+id);toast('Case closed');}
+ x.updated=new Date().toLocaleDateString('en-IN');DB.set(STATE);go('casedetail',id);}
+/* ================= APPROVALS ================= */
+function vApprovals(m){
+ const c=scoped().filter(x=>x.status==="Registered");
+ m.innerHTML='<div class="crumb">Home / Approvals</div><div class="h2">Approvals</div>'+
+ '<div class="pills"><span class="pill on">Pending<b>'+c.length+'</b></span></div>'+
+ '<div class="card">'+(c.length?c.map(x=>
+   '<div class="aitem" style="cursor:default;align-items:flex-start"><div style="flex:1.4"><b style="color:var(--ink)">'+x.id+'</b><br><span class="muted" style="font-size:12px">'+esc(x.applicant)+' ('+x.relation+')</span></div>'+
+   '<div style="flex:2.2;color:var(--text)">'+esc(x.memberName)+' &middot; '+x.command+' &middot; maintenance '+(x.maintenance||'-')+'</div>'+
+   '<div style="margin-left:auto;white-space:nowrap"><button class="btn ghost sm" onclick="caseAction(\''+x.id+'\',\'sendback\');go(\'approvals\')">Send back</button> '+
+   '<button class="btn prim sm" onclick="caseAction(\''+x.id+'\',\'approve\');go(\'approvals\')">Approve</button> '+
+   '<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">Open</span></div></div>').join(''):'<div class="muted" style="padding:16px 0">No cases pending your action.</div>')+'</div>';
+}
+/* ================= REPORTS ================= */
+function vReports(m){
+ m.innerHTML='<div class="crumb">Home / Reports</div><div class="h2">Reports</div>'+
+ '<div class="card" style="margin-bottom:16px"><div class="tools" style="margin:0">'+
+   '<select class="inp" id="rt" style="min-width:230px"><option value="summary">Case Summary Report</option><option value="cmd">Command-wise Report</option><option value="pending">Pending Approvals Report</option></select>'+
+   '<select class="inp" id="rcmd"><option value="">All Commands</option>'+COMMANDS.map(k=>'<option>'+k+'</option>').join('')+'</select>'+
+   '<select class="inp" id="rstat"><option value="">All Status</option>'+["Registered","Active","Sub-judice","Closed"].map(s=>'<option>'+s+'</option>').join('')+'</select>'+
+   '<div class="sp" style="flex:1"></div><button class="btn prim" onclick="genReport()">Generate</button>'+
+   '<button class="btn ghost" onclick="toast(\'Exported to CSV (demo)\')">Export CSV</button><button class="btn ghost" onclick="window.print()">Print</button></div></div>'+
+ '<div id="reportArea"></div>';genReport();
+}
+function genReport(){const type=document.getElementById('rt').value;let c=scoped();
+ const cmd=document.getElementById('rcmd').value,st=document.getElementById('rstat').value;
+ if(cmd)c=c.filter(x=>x.command===cmd);if(st)c=c.filter(x=>x.status===st);
+ if(type==='pending')c=c.filter(x=>x.status==="Registered");
+ const wm=(SESSION.name+' · ADG HR · CONFIDENTIAL · '+SESSION.ip+' · ').repeat(80);
+ const title=type==='cmd'?'Command-wise Report':type==='pending'?'Pending Approvals Report':'Case Summary Report';
+ document.getElementById('reportArea').innerHTML='<div class="card sheet"><div class="wm"><span>'+wm+'</span></div>'+
+   '<div class="rh"><b>Additional Directorate General of Human Rights</b><div>MAARK 2.0 &middot; '+title+' &middot; generated '+new Date().toLocaleDateString('en-IN')+'</div></div>'+
+   '<div class="tblwrap"><table class="tbl"><thead><tr><th>Case No</th><th>Applicant</th><th>Member</th><th>Command</th><th>Maintenance</th><th>Status</th></tr></thead><tbody>'+
+   (c.length?c.map(x=>'<tr><td>'+x.id+'</td><td>'+esc(x.applicant)+'</td><td>'+esc(x.memberName)+'</td><td>'+x.command+'</td><td>'+(x.maintenance||'-')+'</td><td>'+statTag(x.status)+'</td></tr>').join(''):'<tr><td colspan="6" class="muted" style="text-align:center;padding:20px">No records.</td></tr>')+
+   '</tbody></table></div><div style="text-align:center;color:#C6BEDA;font-size:12px;margin-top:14px;position:relative">Digitally watermarked with machine IP, user ID and timestamp</div></div>';
+ addAudit('GENERATE_REPORT',title);
+}
+/* ================= CMS ================= */
+function vCms(m){const s=STATE.cms;
+ m.innerHTML='<div class="crumb">Home / Content Management</div><div class="h2">Content Management System</div>'+
+ '<div class="row2"><div class="card" style="flex:1;min-width:280px"><div class="sech"><span class="b"></span>Web Settings</div>'+
+   '<div class="f"><label>Portal title</label><input id="cms_t" value="'+esc(s.portalTitle)+'"></div>'+
+   '<div class="f"><label>Home banner text</label><input id="cms_b" value="'+esc(s.banner)+'"></div>'+
+   '<div class="f"><label>Theme</label><select id="cms_th"><option '+(s.theme==='Light Green'?'selected':'')+'>Light Green</option><option '+(s.theme==='Dark Green'?'selected':'')+'>Dark Green</option><option '+(s.theme==='Violet'?'selected':'')+'>Violet</option></select></div>'+
+   '<div class="f"><label>Notice</label><textarea id="cms_n">'+esc(s.notice)+'</textarea></div>'+
+   '<button class="btn prim" onclick="saveCms()">Save Settings</button></div>'+
+ '<div class="card" style="flex:1;min-width:280px"><div class="sech"><span class="b"></span>Pages and Content</div>'+
+   s.pages.map(p=>'<div class="aitem" style="cursor:default">'+esc(p)+'<span class="act" style="margin-left:auto" onclick="toast(\'Editing '+esc(p)+' (demo)\')">Edit</span></div>').join('')+
+   '<button class="btn ghost sm" style="margin-top:12px" onclick="toast(\'Add page (demo)\')">+ Add page</button></div></div>'+
+ '<div class="muted" style="font-size:12.5px;margin-top:12px">Every content change is audit-logged. Access is limited to the Super Admin.</div>';
+}
+function saveCms(){STATE.cms.portalTitle=val('cms_t');STATE.cms.banner=val('cms_b');STATE.cms.theme=document.getElementById('cms_th').value;STATE.cms.notice=val('cms_n');DB.set(STATE);addAudit('CMS_UPDATE','Updated web settings');toast('Settings saved');}
+/* ================= AUDIT ================= */
+function vAudit(m){const a=STATE.audit;
+ m.innerHTML='<div class="crumb">Home / Audit Log</div><div class="h2">Audit Log</div>'+
+ '<div class="tools"><input class="inp search-i" id="auq" placeholder="Search action, user, detail" oninput="drawAudit()"><div class="sp" style="flex:1"></div><button class="btn ghost" onclick="toast(\'Exported (demo)\')">Export</button></div>'+
+ '<div id="audtable"></div>';drawAudit();
+}
+function drawAudit(){let a=STATE.audit;const q=(document.getElementById('auq')||{}).value;
+ if(q){const s=q.toLowerCase();a=a.filter(x=>(x.action+x.user+x.detail+x.role).toLowerCase().includes(s));}
+ document.getElementById('audtable').innerHTML='<div class="tblwrap"><table class="tbl"><thead><tr><th>Timestamp</th><th>User</th><th>Role</th><th>Action</th><th>Detail</th><th>IP</th></tr></thead><tbody>'+
+   a.map(x=>'<tr><td style="font-size:12.5px">'+esc(x.ts)+'</td><td>'+esc(x.user)+'</td><td><span class="stat s-Closed">'+esc(x.role)+'</span></td><td><b>'+esc(x.action)+'</b></td><td class="muted" style="font-size:12.5px">'+esc(x.detail)+'</td><td style="font-size:12.5px">'+esc(x.ip)+'</td></tr>').join('')+
+ '</tbody></table></div><div class="pager">Showing '+a.length+' events <span class="sp" style="flex:1"></span><span class="pg on">1</span></div>';}
+/* ================= AI ASSISTANT ================= */
+let chat=[{who:'bot',text:'Namaste. Ask me about eligibility, workflow, or the live case data. Try: "how many active cases?" or "show MNT/2026/0142".'}];
+function vAssistant(m){
+ m.innerHTML='<div class="crumb">Home / AI Assistant</div><div class="h2">AI Assistant</div>'+
+ '<div class="card"><div style="background:var(--lav);border-radius:8px;padding:9px 14px;font-size:12.5px;color:var(--v2);margin-bottom:14px">On-premise and offline. Answers from the policies and the case data you are permitted to see.</div>'+
+ '<div class="chat" id="chat">'+chat.map(c=>'<div class="msg '+c.who+'">'+c.text+'</div>').join('')+'</div>'+
+ '<div class="pills" style="margin:14px 0 12px">'+["How many active cases?","Pending approvals","Show MNT/2026/0142","Eligibility rules"].map(q=>'<span class="pill" onclick="askAi(\''+q.replace(/'/g,"")+'\')">'+q+'</span>').join('')+'</div>'+
+ '<div style="display:flex;gap:10px"><input class="inp" id="aiq" style="flex:1" placeholder="Ask a question..." onkeydown="if(event.key===\'Enter\')askAi(this.value)"><button class="btn prim" onclick="askAi(document.getElementById(\'aiq\').value)">Send</button></div></div>';
+ const ch=document.getElementById('chat');ch.scrollTop=ch.scrollHeight;
+}
+function askAi(q){q=(q||'').trim();if(!q)return;chat.push({who:'me',text:esc(q)});chat.push({who:'bot',text:aiAnswer(q)});
+ document.getElementById('aiq')&&(document.getElementById('aiq').value='');vAssistant(document.getElementById('main'));}
+function aiAnswer(q){const l=q.toLowerCase();const c=scoped();
+ const idm=q.toUpperCase().match(/MNT\/2026\/\d{4}/);
+ if(idm){const x=findCase(idm[0]);if(x)return '<b>'+x.id+'</b> &middot; '+esc(x.applicant)+' ('+x.relation+') &middot; '+x.command+' &middot; '+statTag(x.status)+'<br>Member '+esc(x.memberName)+' ('+x.armyNo+'); maintenance '+(x.maintenance||'-')+'.';return 'No case '+idm[0]+' in your scope.';}
+ if(l.includes('active'))return 'There are <b>'+c.filter(x=>x.status==="Active").length+' active cases</b> in your scope.';
+ if(l.includes('sub-judice')||l.includes('subjudice'))return '<b>'+c.filter(x=>x.status==="Sub-judice").length+'</b> cases are sub-judice.';
+ if(l.includes('closed'))return '<b>'+c.filter(x=>x.status==="Closed").length+'</b> cases are closed.';
+ if(l.includes('pending')||l.includes('approval'))return '<b>'+c.filter(x=>x.status==="Registered").length+'</b> cases are pending approval. Open the Approvals screen to action them.';
+ if(l.includes('how many')||l.includes('total'))return 'You have <b>'+c.length+' cases</b> in scope: '+["Registered","Active","Sub-judice","Closed"].map(s=>c.filter(x=>x.status===s).length+' '+s.toLowerCase()).join(', ')+'.';
+ if(l.includes('eligib')||l.includes('policy'))return 'Maintenance is payable to eligible dependents (wife, mother, child). The Army intervenes within 3 years; if the applicant is employable, maintenance is not allowed. A case is resolved within 180 days.';
+ if(l.includes('workflow')||l.includes('process'))return 'A unit files the case; the Brigade Commander approves; approval moves one level up; ADG HR has oversight. Notings are colour-coded: yellow is editable, green is frozen.';
+ if(l.includes('hello')||l.includes('hi')||l.includes('namaste'))return 'Namaste. Ask about eligibility, workflow, or the case data.';
+ return 'I can help with eligibility, workflow, security, and live case data (counts, filters, and case look-up by ID). Try "how many active cases?" or "show MNT/2026/0142".';
+}
+/* ================= SEARCH ================= */
+function globalSearch(v){v=(v||'').trim();if(!v){return;}const up=v.toUpperCase();
+ if(up.match(/MNT\/2026\/\d{4}/)&&findCase(up.match(/MNT\/2026\/\d{4}/)[0])){go('casedetail',up.match(/MNT\/2026\/\d{4}/)[0]);return;}
+ regFilter.q=v;regFilter.status='all';go('registered');}
+</script>
+</body>
+</html>
