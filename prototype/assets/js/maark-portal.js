@@ -51,9 +51,6 @@ let STATE=DB.get();
 let SESSION=null;
 
 /* ================= AUTH ================= */
-document.querySelectorAll('#rolepick .rolebtn').forEach(b=>b.onclick=()=>{
- document.querySelectorAll('#rolepick .rolebtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');
- document.getElementById('segHint').textContent=b.dataset.hint;});
 const EMAIL_RE=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 function emailGate(){document.getElementById('continueBtn').disabled=!EMAIL_RE.test(document.getElementById('loginEmail').value.trim());}
 function fErr(id,msg){const e=document.getElementById(id);e.textContent=msg||'';e.classList.toggle('on',!!msg);}
@@ -142,7 +139,7 @@ function doLogin(){
  const pw=document.getElementById('loginPwd');
  if(pw.value.length<4){fErr('pwdErr','Enter your password to continue');pw.focus();return;}
  fErr('pwdErr','');
- const role=document.querySelector('#rolepick .rolebtn.on').dataset.role;
+ const role="Super Admin";
  const map={"Super Admin":{name:"Col A. Verma",command:null},"Command Admin":{name:"Maj S. Rao",command:"Western"},"Unit User":{name:"Sub R. Kumar",command:"Western"}};
  const m=map[role];
  SESSION={role,name:m.name,command:m.command,since:new Date(),ip:"10.0."+(Math.floor(Math.random()*9)+1)+"."+(Math.floor(Math.random()*200)+10)};

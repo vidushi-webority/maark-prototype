@@ -33,13 +33,6 @@
           <div id="step1">
             <h2>Welcome back</h2>
             <p>Sign in to manage maintenance-allowance cases.</p>
-            <label class="slab">Continue as</label>
-            <div class="seg" id="rolepick">
-              <button class="rolebtn on" data-role="Super Admin" data-hint="Full visibility of all commands">Super Admin</button>
-              <button class="rolebtn" data-role="Command Admin" data-hint="Approves and manages cases in the command">Command Admin</button>
-              <button class="rolebtn" data-role="Unit User" data-hint="Registers and files cases">Unit User</button>
-            </div>
-            <div class="seghint" id="segHint">Full visibility of all commands</div>
             <div class="fld">
               <label for="loginEmail">Service Email</label>
               <input id="loginEmail" type="email" autocomplete="username" placeholder="Enter your email" oninput="emailGate()" onkeydown="if(event.key==='Enter')goPassword()">
