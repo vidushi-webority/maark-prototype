@@ -594,6 +594,8 @@ const SSEL_OPTS={state:typeof STATES!=='undefined'?STATES:[],district:typeof DIS
 
 /* empty state */
 
+/* table header cell (moved out of core.js so each app can style its own) */
+function th(k,label){const on=sortKey===k;return `<th class="sortable${on?' sorted':''}" data-k="${k}" onclick="setSort('${k}')">${label}<span class="caret">${on?(sortDir>0?'▲':'▼'):'▲'}</span></th>`;}
 /* pagination + sorting + selection (shared) */
 let sortKey="id",sortDir=1,page=1,perPage=10,selected=new Set();
 

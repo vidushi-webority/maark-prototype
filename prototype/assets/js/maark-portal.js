@@ -114,13 +114,14 @@ const BICONS={
  Profile:"<path d='M12 2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5Z'/><path opacity='.4' d='M17.08 14.15c-2.79-1.86-7.34-1.86-10.15 0-1.27.85-1.97 2-1.97 3.23s.7 2.37 1.96 3.21C8.32 21.53 10.16 22 12 22s3.68-.47 5.08-1.41c1.26-.85 1.96-1.99 1.96-3.23s-.7-2.37-1.96-3.21Z'/>",
  NoteText:"<path opacity='.4' d='M21 7v10c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V7c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z'/><path d='M16.5 8.75h-9a.75.75 0 0 1 0-1.5h9a.75.75 0 0 1 0 1.5ZM14.5 12.75h-7a.75.75 0 0 1 0-1.5h7a.75.75 0 0 1 0 1.5ZM11.5 16.75h-4a.75.75 0 0 1 0-1.5h4a.75.75 0 0 1 0 1.5Z'/>",
  Magicpen:"<path opacity='.4' d='M13.83 6.01 6.01 13.83c-.32.32-.63.94-.69 1.39l-.42 2.96c-.16 1.07.6 1.82 1.66 1.67l2.96-.42c.44-.06 1.06-.37 1.39-.69l7.82-7.82-4.9-4.91Z'/><path d='m20.4 7.7-1.24 1.24-4.9-4.9L15.5 2.8c1.02-1.02 2.14-.9 3.06.02l1.83 1.83c.93.92 1.04 2.04.01 3.05ZM4.4 6.85l.83.28c.19.06.33.2.39.39l.28.83c.7.22.39.22.46 0l.28-.83c.06-.19.2-.33.39-.39l.83-.28c.22-.7.22-.39 0-.46l-.83-.28a.62.62 0 0 1-.39-.39l-.28-.83c-.07-.22-.39-.22-.46 0l-.28.83c-.6.19-.2.33-.39.39l-.83.28c-.22.7-.22.39 0 .46Z'/>",
+ AiStar:"<path d='M11.05 3.4a1 1 0 0 1 1.9 0l1.53 4.12 4.12 1.53a1 1 0 0 1 0 1.9l-4.12 1.53-1.53 4.12a1 1 0 0 1-1.9 0l-1.53-4.12-4.12-1.53a1 1 0 0 1 0-1.9l4.12-1.53 1.53-4.12Z'/><path opacity='.4' d='M17.63 15.19a.6.6 0 0 1 1.14 0l.55 1.49 1.49.55a.6.6 0 0 1 0 1.14l-1.49.55-.55 1.49a.6.6 0 0 1-1.14 0l-.55-1.49-1.49-.55a.6.6 0 0 1 0-1.14l1.49-.55.55-1.49Z'/>",
  Element3:"<path d='M9 2H5C3.34 2 2 3.34 2 5v4c0 1.66 1.34 3 3 3h4c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3ZM19 12h-4c-1.66 0-3 1.34-3 3v4c0 1.66 1.34 3 3 3h4c1.66 0 3-1.34 3-3v-4c0-1.66-1.34-3-3-3Z'/><path opacity='.4' d='M19 2h-4c-1.66 0-3 1.34-3 3v4c0 1.66 1.34 3 3 3h4c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3ZM9 12H5c-1.66 0-3 1.34-3 3v4c0 1.66 1.34 3 3 3h4c1.66 0 3-1.34 3-3v-4c0-1.66-1.34-3-3-3Z'/>"
 };
 function bic(n,s){return '<svg class="ix bx" viewBox="0 0 24 24" width="'+(s||18)+'" height="'+(s||18)+'" fill="currentColor">'+(BICONS[n]||'')+'</svg>';}
 const EYE=ic('Eye',20),EYE_OFF=ic('EyeSlash',20);
 document.getElementById('searchIcon').innerHTML=ic('SearchNormal1',17);
 document.querySelectorAll('[data-pmic]').forEach(e=>{const k=e.dataset.pmic,z=e.classList.contains('pm-chev')?15:18;e.innerHTML=BICONS[k]?bic(k,z):ic(k,z);});
-document.getElementById('aiFab').innerHTML=bic('Magicpen',24);
+document.getElementById('aiFab').innerHTML=bic('AiStar',24);
 function toggleProfileMenu(ev){
  if(ev)ev.stopPropagation();
  const m=document.getElementById('pmenu'),open=m.classList.toggle('hidden');
@@ -130,10 +131,6 @@ function closeProfileMenu(){document.getElementById('pmenu').classList.add('hidd
 document.addEventListener('click',e=>{if(!e.target.closest('.uwrap'))closeProfileMenu();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProfileMenu();});
 function pmGo(v){closeProfileMenu();go(v);}
-function toggleDense(){
- const on=document.body.classList.toggle('dense');
- const b=document.getElementById('pmDense');b.classList.toggle('on',on);b.setAttribute('aria-checked',String(on));
-}
 function togglePwd(){
  const p=document.getElementById('loginPwd'),b=document.getElementById('peye');
  const show=p.type==='password';p.type=show?'text':'password';
@@ -148,7 +145,7 @@ function doLogin(){
  const role=document.querySelector('#rolepick .rolebtn.on').dataset.role;
  const map={"Super Admin":{name:"Col A. Verma",command:null},"Command Admin":{name:"Maj S. Rao",command:"Western"},"Unit User":{name:"Sub R. Kumar",command:"Western"}};
  const m=map[role];
- SESSION={role,name:m.name,command:m.command,ip:"10.0."+(Math.floor(Math.random()*9)+1)+"."+(Math.floor(Math.random()*200)+10)};
+ SESSION={role,name:m.name,command:m.command,since:new Date(),ip:"10.0."+(Math.floor(Math.random()*9)+1)+"."+(Math.floor(Math.random()*200)+10)};
  document.getElementById('loginView').classList.add('hidden');
  document.getElementById('appView').classList.remove('hidden');
  document.getElementById('uName').textContent=SESSION.name;
@@ -170,10 +167,14 @@ function addAudit(action,detail){STATE.audit.unshift({ts:fmtDT(new Date()),user:
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function emptyState(icon,title,sub){return '<div class="card"><div class="empty"><div class="eic">'+ic(icon,22)+'</div><b>'+title+'</b><span>'+sub+'</span></div></div>';}
 /* ---- Column sorting. One state per table namespace; th's carry the Iconsax glyph. ---- */
-const SORT={dash:{key:'updated',dir:-1},reg:{key:'updated',dir:-1}};
+const SORT={dash:{key:'updated',dir:-1},reg:{key:'updated',dir:-1},aud:{key:'ts',dir:-1},rep:{key:'id',dir:1},ap:{key:'wait',dir:-1}};
 function sortVal(x,k){
+ if(k==='wait')return waitDays(x);
  if(k==='updated')return (pdate(x.updated)||new Date(0)).getTime();
  if(k==='member')return String(x.memberName||'').toLowerCase();
+ if(k==='maintenance'){const n=parseFloat(String(x.maintenance||'').replace(/[^0-9.]/g,''));return isNaN(n)?-1:n;}
+ if(k==='ts'){const p=String(x.ts||'').split(',');const d=pdate(p[0].trim());const t=(p[1]||'').trim().split(':');
+   return (d?d.getTime():0)+((+t[0]||0)*60+(+t[1]||0))*60000;}
  return String(x[k]||'').toLowerCase();
 }
 function sortRows(ns,rows){const s=SORT[ns];if(!s||!s.key)return rows;
@@ -183,10 +184,17 @@ function th(ns,key,label,cls){const s=SORT[ns],on=s.key===key;
  return '<th class="sortable'+(cls?' '+cls:'')+(on?' sorted':'')+'" onclick="sortBy(&quot;'+ns+'&quot;,&quot;'+key+'&quot;)">'+label+
    '<span class="sic">'+ic(on?(s.dir>0?'ArrowUp2':'ArrowDown2'):'ArrowSwapVertical',14)+'</span></th>';}
 function sortBy(ns,key){const s=SORT[ns];if(s.key===key)s.dir=-s.dir;else{s.key=key;s.dir=1;}
- if(ns==='reg')drawReg();else go('dashboard');}
+ if(ns==='reg')drawReg();else if(ns==='aud')drawAudit();else if(ns==='rep')genReport();else if(ns==='ap')drawAp();else go('dashboard');}
 function statTag(s){return '<span class="stat s-'+s.replace(/\s/g,'-')+'">'+s+'</span>';}
 function toast(msg,type){const t=document.createElement('div');t.className='toast'+(type==='err'?' err':'');t.textContent=msg;document.getElementById('toastWrap').appendChild(t);setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.remove(),300)},2600);}
 function modal(title,bodyHtml,footHtml){document.getElementById('modalRoot').innerHTML='<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="mh"><h3>'+title+'</h3><button class="x" onclick="closeModal()">&times;</button></div><div class="mb">'+bodyHtml+'</div>'+(footHtml?'<div class="mf">'+footHtml+'</div>':'')+'</div></div>';}
+function successModal(title,line,detailHtml,footHtml){
+ document.getElementById('modalRoot').innerHTML='<div class="overlay" onclick="if(event.target===this)closeModal()">'+
+  '<div class="modal sokm"><button class="sx" onclick="closeModal()" title="Close">&times;</button>'+
+  '<div class="sok"><span class="sbadge">'+ic('TickCircle',36)+'</span>'+
+  '<h3>'+title+'</h3><p>'+line+'</p>'+(detailHtml||'')+'</div>'+
+  (footHtml?'<div class="mf">'+footHtml+'</div>':'')+'</div></div>';}
+function sokRow(k,v){return '<div class="sokid"><div class="k">'+k+'</div><div class="v">'+esc(v)+'</div></div>';}
 function closeModal(){document.getElementById('modalRoot').innerHTML='';}
 function downloadCsv(name,rows){const csv=rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);
@@ -196,7 +204,9 @@ function previewDoc(id,name){const wm=(SESSION.name+' · '+SESSION.ip+' · CONFI
  modal('Document preview',
   '<div class="muted" style="font-size:12.5px;margin-bottom:10px">'+esc(name)+' &middot; case '+id+'</div>'+
   '<div class="card sheet" style="min-height:300px"><div class="wm"><span>'+wm+'</span></div>'+
-   '<div class="rh"><b>Additional Directorate General of Human Rights</b><div>MAARK 2.0 &middot; secure document viewer</div></div>'+
+   '<div class="rh compact"><div class="rh-top"><div class="rh-brand"><span class="rh-mark">MAARK</span>'+
+     '<div><b>Additional Directorate General of Human Rights</b><small>MAARK 2.0 &middot; secure document viewer</small></div></div>'+
+     '<span class="rh-stamp">'+ic('ShieldTick',13)+'Confidential</span></div></div>'+
    '<div style="position:relative;font-size:13px;color:var(--text-2);line-height:1.6">This is a watermarked, read-only preview of <b>'+esc(name)+'</b>. In the live system the original PDF is decrypted on the server, stamped with the viewer\'s IP, user ID and timestamp, and streamed for viewing only; printing and download are controlled by role.</div></div>',
   '<button class="btn ghost" onclick="closeModal()">'+ic('CloseCircle',17)+'Close preview</button>');
  addAudit('VIEW_DOCUMENT','Previewed '+name+' on '+id);}
@@ -208,6 +218,34 @@ const NAV={
 };
 const NAVICON={dashboard:'Element3',registered:'DocumentText',newcase:'AddCircle',approvals:'ClipboardTick',reports:'Chart21',cms:'NoteText',audit:'ShieldTick',assistant:'Messages2'};
 let CURRENT="dashboard";
+/* Iconsax Bulk variant, used for the active sidebar item only.
+   d4 = soft body at 40 percent, d = solid shape, l = stroked detail. */
+const ICONS_BULK={
+ Element3:{d4:"M10.5 8.52V3.98C10.5 2.57 9.86 2 8.27 2H4.23C2.64 2 2 2.57 2 3.98v4.53c0 1.42.64 1.98 2.23 1.98h4.04c1.59.01 2.23-.56 2.23-1.97ZM22 19.77v-4.04c0-1.59-.64-2.23-2.23-2.23h-4.04c-1.59 0-2.23.64-2.23 2.23v4.04c0 1.59.64 2.23 2.23 2.23h4.04c1.59 0 2.23-.64 2.23-2.23Z",
+   d:"M22 8.52V3.98C22 2.57 21.36 2 19.77 2h-4.04c-1.59 0-2.23.57-2.23 1.98v4.53c0 1.42.64 1.98 2.23 1.98h4.04c1.59.01 2.23-.56 2.23-1.97ZM10.5 19.77v-4.04c0-1.59-.64-2.23-2.23-2.23H4.23c-1.59 0-2.23.64-2.23 2.23v4.04C2 21.36 2.64 22 4.23 22h4.04c1.59 0 2.23-.64 2.23-2.23Z"},
+ DocumentText:{d4:"M21 7v10c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V7c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z",
+   l:"M14.5 4.5v2c0 1.1.9 2 2 2h2M8 13h4M8 17h8"},
+ AddCircle:{d4:"M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10Z",
+   l:"M8 12h8M12 16V8"},
+ ClipboardTick:{d4:"M16 4.02c3.33.18 5 1.41 5 5.98v6c0 4-1 6-6 6H9c-5 0-6-2-6-6v-6c0-4.56 1.67-5.8 5-5.98Z",
+   d:"M10 6h4c2 0 2-1 2-2 0-2-1-2-2-2h-4C9 2 8 2 8 4s1 2 2 2Z",
+   l:"m9.31 14.7 1.5 1.5 4-4"},
+ Chart21:{d4:"M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7Z",
+   l:"M7 10.74v3.2M12 9v6.68M17 10.74v3.2"},
+ NoteText:{d4:"M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z",
+   l:"M8 2v3M16 2v3M8 11h8M8 16h4"},
+ ShieldTick:{d4:"M10.49 2.23 5.5 4.11c-1.15.43-2.09 1.79-2.09 3.01v7.43c0 1.18.78 2.73 1.73 3.44l4.3 3.21c1.41 1.06 3.73 1.06 5.14 0l4.3-3.21c.95-.71 1.73-2.26 1.73-3.44V7.12c0-1.23-.94-2.59-2.09-3.02l-4.99-1.87c-.85-.31-2.21-.31-3.04 0Z",
+   l:"m9.05 11.87 1.61 1.61 4.3-4.3"},
+ Messages2:{d4:"M18.47 16.83l.39 3.16c.1.83-.79 1.41-1.5.98l-4.19-2.49c-.46 0-.91-.03-1.35-.09A4.86 4.86 0 0 0 13 15.23c0-2.84-2.46-5.14-5.5-5.14-1.16 0-2.23.33-3.12.91-.03-.25-.04-.5-.04-.76C4.34 5.69 8.29 2 13.17 2S22 5.69 22 10.24c0 2.7-1.39 5.09-3.53 6.59Z",
+   d:"M13 15.23c0 1.19-.44 2.29-1.18 3.16-.99 1.2-2.56 1.97-4.32 1.97l-2.61 1.55c-.44.27-1-.1-.94-.61l.25-1.97C2.86 18.4 2 16.91 2 15.23c0-1.76.94-3.31 2.38-4.23.89-.58 1.96-.91 3.12-.91 3.04 0 5.5 2.3 5.5 5.14Z"}
+};
+function icB(n,s){const b=ICONS_BULK[n];if(!b)return ic(n,s);const z=s||18;
+ return '<svg class="ix" viewBox="0 0 24 24" width="'+z+'" height="'+z+'" fill="none">'+
+  (b.d4?'<path fill="currentColor" opacity=".4" d="'+b.d4+'"/>':'')+
+  (b.d?'<path fill="currentColor" d="'+b.d+'"/>':'')+
+  (b.l?'<path stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="'+b.l+'"/>':'')+
+ '</svg>';}
+function navIcon(k,on){return (on?icB:ic)(NAVICON[k]||'Element3',20);}
 function buildNav(){
  const s=document.getElementById('side');s.innerHTML='';
  NAV[SESSION.role].forEach(([k,label])=>{
@@ -219,16 +257,45 @@ function buildNav(){
 const VIEWS={dashboard:vDashboard,registered:vRegistered,newcase:vNewCase,casedetail:vCaseDetail,approvals:vApprovals,reports:vReports,cms:vCms,audit:vAudit,assistant:vAssistant,profile:vProfile};
 function vProfile(m){
  const mail=document.getElementById('pmMail').textContent;
- const row=(k,v)=>'<div class="f"><label>'+k+'</label><div style="font-size:13.5px;color:var(--text-1);padding-top:2px">'+esc(v)+'</div></div>';
+ const av=document.getElementById('uAv').textContent;
+ const since=SESSION.since?SESSION.since.toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'-';
+ const fld=(k,v,sub)=>'<div class="pf"><div class="pk">'+k+'</div><div class="pv">'+esc(v)+'</div>'+(sub?'<div class="ps">'+sub+'</div>':'')+'</div>';
  m.innerHTML='<div class="crumb">Home / My Profile</div>'+
-  '<div class="pagehead"><div><div class="h2">My Profile</div><div class="pagesub">Your account details for this session.</div></div></div>'+
-  '<div class="card" style="max-width:640px"><div class="grid2">'+
-   row('Name',SESSION.name)+row('Role',SESSION.role)+
-   row('Email',mail)+row('Command',SESSION.command||'All commands')+
-   row('Session IP',SESSION.ip)+row('Authentication','Army IAM (SAML 2.0) with 2FA')+
-  '</div></div>';
+  '<div class="pagehead"><div><div class="h2">My Profile</div><div class="pagesub">Your account, scope and session for this sign-in.</div></div></div>'+
+  '<div class="pgrid">'+
+   '<div class="card pid">'+
+     '<div class="pav">'+esc(av)+'</div>'+
+     '<div class="pname">'+esc(SESSION.name)+'</div>'+
+     '<span class="prole">'+esc(SESSION.role)+'</span>'+
+     '<div class="pline">'+ic('Messages2',15)+'<span>'+esc(mail)+'</span></div>'+
+     '<div class="pline">'+ic('Element3',15)+'<span>'+esc(SESSION.command||'All commands')+'</span></div>'+
+     '<div class="pline">'+ic('ShieldTick',15)+'<span>Signed in '+esc(since)+'</span></div>'+
+     '<div class="pquick">'+
+       '<button class="btn ghost sm" id="pfAudit">'+ic('ShieldTick',16)+'Audit trail</button>'+
+       '<button class="btn ghost sm" id="pfAi">'+ic('Magicpen',16)+'AI Assistant</button>'+
+     '</div>'+
+     '<button class="btn ghost sm pfout" id="pfOut">'+ic('LogoutCurve',16)+'Log out</button>'+
+   '</div>'+
+   '<div class="pcol">'+
+     '<div class="card"><h3>'+ic('Profile',18)+'Account details</h3><div class="pfgrid">'+
+       fld('Full name',SESSION.name)+fld('Role',SESSION.role,'Set by Army IAM, not editable here')+
+       fld('Command scope',SESSION.command||'All commands',SESSION.command?'You see cases of this command only':'You see cases across every command')+
+       fld('Email',mail)+
+     '</div></div>'+
+     '<div class="card"><h3>'+ic('ShieldTick',18)+'Session and security</h3><div class="pfgrid">'+
+       fld('Authentication','Army IAM (SAML 2.0) with 2FA')+fld('Session IP',SESSION.ip)+
+       fld('Signed in at',since)+fld('Session state','Active','Idle sessions are signed out automatically')+
+     '</div>'+
+     '<div class="pnote">'+ic('InfoCircle',16)+'<span>Passwords, roles and command scope are managed in Army IAM. Raise a request with your unit IT cell to change them.</span></div>'+
+     '</div>'+
+   '</div>'+
+  '</div>';
+ document.getElementById('pfAudit').onclick=()=>go('audit');
+ document.getElementById('pfAi').onclick=()=>go('assistant');
+ document.getElementById('pfOut').onclick=()=>logout();
 }
-function go(view,arg){CURRENT=view;document.querySelectorAll('#side .nav').forEach(a=>a.classList.toggle('on',a.dataset.k===view));
+function go(view,arg){CURRENT=view;{const fb=document.getElementById('aiFab');if(fb)fb.classList.toggle('hidden',view==='assistant');}document.querySelectorAll('#side .nav').forEach(a=>{const on=a.dataset.k===view;a.classList.toggle('on',on);
+   const slot=a.querySelector('.ic');if(slot)slot.innerHTML=navIcon(a.dataset.k,on);});
  /* breadcrumb only on inner pages, never on a top-level nav destination */
  document.body.classList.toggle('toplevel',(NAV[SESSION.role]||[]).some(n=>n[0]===view));
  const m=document.getElementById('main');m.scrollTop=0;(VIEWS[view]||vDashboard)(m,arg);}
@@ -247,11 +314,18 @@ function vDashboard(m){
    kpi("Closed",cnt("Closed"),"var(--text-3)","Closed","TickCircle")+
  '</div>'+
  '<div class="row2">'+
-   '<div class="card" style="flex:1.5;min-width:280px"><h3>Cases by Command</h3>'+
-     '<div class="barwrap">'+COMMANDS.map(k=>'<div class="bar" style="height:'+Math.round(byCmd[k]/maxB*100)+'%"><span>'+byCmd[k]+'</span></div>').join('')+'</div>'+
-     '<div class="barlbl">'+COMMANDS.map(k=>'<span>'+k.replace('South Western','SW')+'</span>').join('')+'</div></div>'+
-   '<div class="card" style="flex:1;min-width:240px"><h3>Pending Approvals</h3>'+
-     (pend.length?pend.slice(0,6).map(x=>'<div class="aitem" onclick="go(\'casedetail\',\''+x.id+'\')">'+x.id+' &middot; '+esc(x.applicant)+'<span class="lvl">Review &middot; 1 level up</span></div>').join(''):'<div class="empty" style="padding:22px 10px"><div class="eic">'+ic('ClipboardTick',20)+'</div><b>Nothing waiting on you</b><span>New submissions will show up here.</span></div>')+
+   '<div class="card" style="flex:1.5;min-width:300px"><div class="cardhead"><h3>Cases by Command</h3><span class="ch-sub">'+c.length+' case'+(c.length===1?'':'s')+' in scope</span></div>'+
+     '<div class="hbars">'+COMMANDS.slice().sort((a,b)=>(byCmd[b]||0)-(byCmd[a]||0)).map(k=>{
+       const v=byCmd[k]||0,pct=v?Math.max(Math.round(v/maxB*100),4):0;
+       return '<div class="hbar'+(v?'':' zero')+'" onclick="go(&quot;registered&quot;,{cmd:&quot;'+k+'&quot;})" title="Open '+k+' Command cases">'+
+         '<span class="hb-l">'+k+'</span><span class="hb-t"><i style="width:'+pct+'%"></i></span><b class="hb-v">'+v+'</b></div>';}).join('')+
+     '</div></div>'+
+   '<div class="card" style="flex:1;min-width:260px"><div class="cardhead"><h3>Pending Approvals</h3>'+
+     (pend.length?'<span class="ch-link" onclick="go(&quot;approvals&quot;)">View all'+ic('ArrowRight2',13)+'</span>':'')+'</div>'+
+     (pend.length?'<div class="alist">'+pend.slice(0,5).map(x=>'<div class="aitem" onclick="go(&quot;casedetail&quot;,&quot;'+x.id+'&quot;)">'+
+       '<span class="ai-main"><b>'+x.id+'</b><small>'+esc(x.applicant)+' &middot; '+x.command+'</small></span>'+
+       ageChip(x)+'<span class="ai-go">'+ic('ArrowRight2',14)+'</span></div>').join('')+'</div>'
+      :'<div class="empty" style="padding:22px 10px"><div class="eic">'+ic('ClipboardTick',20)+'</div><b>Nothing waiting on you</b><span>New submissions will show up here.</span></div>')+
    '</div>'+
  '</div>'+
  '<div class="card" style="margin-top:16px"><h3>Recent Cases</h3><div class="tblwrap"><table class="tbl"><thead><tr>'+
@@ -260,12 +334,12 @@ function vDashboard(m){
    sortRows('dash',c).slice(0,6).map(x=>'<tr style="cursor:pointer" onclick="go(\'casedetail\',\''+x.id+'\')"><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td>'+x.updated+'</td></tr>').join('')+
  '</tbody></table></div></div>';
 }
-function kpi(lbl,val,color,jump,icn){return '<div class="kpi" onclick="go(\'registered\',{status:\''+jump+'\'})"><div class="kico" style="background:color-mix(in srgb,'+color+' 12%,#fff);color:'+color+'">'+ic(icn,24)+'</div><div class="kbody"><div class="lbl">'+lbl+'</div><div class="val">'+val+'</div></div></div>';}
+function kpi(lbl,val,color,jump,icn){return '<div class="kpi" onclick="go(\'registered\',{status:\''+jump+'\'})"><div class="kico" style="background:color-mix(in srgb,'+color+' 12%,#fff);color:'+color+'">'+ic(icn,19)+'</div><div class="kbody"><div class="val">'+val+'</div><div class="lbl">'+lbl+'</div></div></div>';}
 function tblFoot(ns,page,per,total){
  const last=Math.max(1,Math.ceil(total/per));
  const from=total?((page-1)*per+1):0,to=Math.min(page*per,total);
  return '<div class="pager"><span class="rpp">Rows per page'+
-  '<select onchange="'+ns+'Per(this.value)">'+[10,25,50].map(n=>'<option'+(per===n?' selected':'')+'>'+n+'</option>').join('')+'</select></span>'+
+  dd('rpp_'+ns,[10,25,50].map(n=>({v:String(n),l:String(n)})),String(per),ns+'Per(v)','sm rpp-dd',String(per))+'</span>'+
   '<span class="range">'+from+' to '+to+' of '+total+'</span>'+
   '<span class="pgc'+(page<=1?' off':'')+'" onclick="'+ns+'Page('+(page-1)+')" title="Previous page">'+ic('ArrowLeft2',15)+'</span>'+
   '<span class="pgc'+(page>=last?' off':'')+'" onclick="'+ns+'Page('+(page+1)+')" title="Next page">'+ic('ArrowRight2',15)+'</span></div>';}
@@ -276,69 +350,108 @@ function regPage(n){const t=regRows().length,last=Math.max(1,Math.ceil(t/regFilt
 function regPer(v){regFilter.per=+v;regFilter.page=1;drawReg();}
 function vRegistered(m,arg){
  if(arg&&arg.status)regFilter.status=arg.status;
+ if(arg&&arg.cmd){regFilter.cmd=arg.cmd;regFilter.status='all';regFilter.page=1;}
  const canNew=true;
  const c=scoped();const cnt=s=>c.filter(x=>x.status===s).length;
  m.innerHTML='<div class="crumb">Home / Registered Cases</div>'+
  '<div class="pagehead"><div><div class="h2">Registered Cases</div><div class="pagesub">Every case you can see, across '+(SESSION.command||'all commands')+'.</div></div>'+
    '<div class="acts">'+(canNew?'<button class="btn prim" onclick="go(\'newcase\')">'+ic('AddCircle',17)+'Register new case</button>':'')+'</div></div>'+
  '<div class="tools"><span class="fieldwrap"><span class="fic">'+ic('SearchNormal1',16)+'</span><input class="inp search-i" id="regq" placeholder="Search cases" value="'+esc(regFilter.q)+'" oninput="regFilter.q=this.value;regFilter.page=1;drawReg()"></span>'+
-   '<select class="inp" onchange="regFilter.cmd=this.value;regFilter.page=1;drawReg()"><option value="">All Commands</option>'+COMMANDS.map(k=>'<option'+(regFilter.cmd===k?' selected':'')+'>'+k+'</option>').join('')+'</select>'+
+   dd('regcmd',[{v:'',l:'All Commands'}].concat(COMMANDS),'All Commands','regFilter.cmd=v;regFilter.page=1;drawReg()','sm',regFilter.cmd)+
    '</div>'+
- '<div class="pills" id="regpills">'+
-   ['all','Registered','Active','Sub-judice','Closed'].map(s=>'<span class="pill'+(regFilter.status===s?' on':'')+'" onclick="regFilter.page=1;regFilter.status=\''+s+'\';drawReg()">'+(s==='all'?'All':s)+'<b>'+(s==='all'?c.length:cnt(s))+'</b></span>').join('')+'</div>'+
  '<div id="regtable"></div>';
  drawReg();
 }
 function regRows(){let c=scoped();if(regFilter.status!=='all')c=c.filter(x=>x.status===regFilter.status);
  if(regFilter.cmd)c=c.filter(x=>x.command===regFilter.cmd);
  if(regFilter.q){const q=regFilter.q.toLowerCase();c=c.filter(x=>(x.id+x.applicant+x.armyNo+x.command).toLowerCase().includes(q));}return c;}
+function regTabs(){const c=scoped();const cnt=st=>c.filter(x=>x.status===st).length;
+ return '<div class="ltabs">'+['all','Registered','Active','Sub-judice','Closed'].map(st=>
+   '<span class="ltab'+(regFilter.status===st?' on':'')+'" onclick="regFilter.page=1;regFilter.status=&quot;'+st+'&quot;;drawReg()">'+
+   (st==='all'?'All':st)+'<b>'+(st==='all'?c.length:cnt(st))+'</b></span>').join('')+'</div>';}
 function drawReg(){const all=sortRows('reg',regRows());const canEdit=SESSION.role!=="Super Admin";
  const last=Math.max(1,Math.ceil(all.length/regFilter.per));if(regFilter.page>last)regFilter.page=last;
  const c=pageSlice(all,regFilter.page,regFilter.per);
- document.getElementById('regtable').innerHTML=all.length?'<div class="tblwrap"><table class="tbl"><thead><tr>'+
+ document.getElementById('regtable').innerHTML='<div class="card tblcard">'+regTabs()+(all.length?'<div class="tblwrap"><table class="tbl"><thead><tr>'+
    th('reg','id','Case No')+th('reg','applicant','Applicant')+th('reg','member','Member')+th('reg','command','Command')+th('reg','status','Status')+th('reg','updated','Updated','num')+
    '<th>Actions</th></tr></thead><tbody>'+
    c.map(x=>'<tr><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+esc(x.memberName)+' <span class="muted">('+x.armyNo+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td class="num">'+x.updated+'</td><td><span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">'+ic('Eye',15)+'View case</span>'+(canEdit?'<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">'+ic('Edit2',15)+'Open and edit</span>':'')+'</td></tr>').join('')+
- '</tbody></table></div>'+tblFoot('reg',regFilter.page,regFilter.per,all.length):emptyState('DocumentText','No cases match these filters','Clear a filter or change the search term to see more results.');}
+ '</tbody></table></div>'+tblFoot('reg',regFilter.page,regFilter.per,all.length)
+   :emptyState('DocumentText','No cases match these filters','Clear a filter or change the search term to see more results.'))+'</div>';}
 /* ================= NEW CASE ================= */
 function vNewCase(m){
  m.innerHTML='<div class="crumb">Home / New Case</div>'+
  '<div class="pagehead"><div><div class="h2" style="margin:0">Register a new case</div><div class="pagesub">Fields marked with an asterisk are required. You can save a draft at any point.</div></div></div>'+
- '<div class="card" style="margin-bottom:16px"><div class="sech">Service Personnel</div><div class="grid3">'+
-   f("Army number","nc_army","text","e.g. IC-50231",true,'Enter the Army number, then fetch the service record. Try IC-50231.','<button class="btn ghost sm" style="margin-top:8px" onclick="fetchSvc()">'+ic('SearchNormal1',16)+'Fetch service record</button>')+
-   ro("Rank","nc_rank")+ro("Name of member","nc_mname")+ro("Unit","nc_unit")+ro("Command","nc_cmd")+ro("Monthly salary","nc_salary")+
- '</div></div>'+
- '<div class="card" style="margin-bottom:16px"><div class="sech">Applicant Details</div><div class="grid3">'+
-   f("Applicant name","nc_app","text","Full name",true)+
-   sel("Relation to member","nc_rel",["Wife","Mother","Child"],true)+
-   f("Age now","nc_agenow","number","Years")+f("Age at time of filing","nc_agefile","number","Years")+
-   f("Contact number","nc_contact","text","10-digit mobile",true)+f("Aadhaar number","nc_aadhaar","text","Validated")+
-   '<div class="f full"><label>Correspondence address</label><input id="nc_addr" placeholder="Enter correspondence address"></div>'+
- '</div></div>'+
- '<div class="card" style="margin-bottom:16px"><div class="sech">Case Details</div><div class="grid3">'+
-   sel("Case category","nc_cat",["Maintenance","Spouse allowance"],true)+
-   sel("Case type","nc_type",["Spouse maintenance","Mother maintenance","Child maintenance","Other"])+
-   f("Maintenance sought","nc_maint","text","Amount or percentage")+
-   f("Application date","nc_appdate","date","",true)+f("Filed date","nc_filedate","date")+
-   '<div class="f"><label>Status on submission</label><div class="rovalue">'+statTag('Registered')+'</div></div>'+
- '</div></div>'+
- '<div class="card" style="margin-bottom:16px"><div class="sech">Dependents and Cards</div><div class="grid3">'+
-   f("Guardian name","nc_guard","text","In addition to parent")+f("Parent name","nc_parent")+
-   sel("Estranged spouse employment","nc_emp",["Unemployed","Employed","Other"])+
-   f("Dependent card number","nc_dep")+f("CSD card number","nc_csd")+sel("Employability","nc_ability",["No","Yes"])+
- '</div></div>'+
- '<div class="card"><div class="sech">Documents</div><div class="grid3">'+
-   '<div class="f"><label>Proof of marriage <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Proof-of-marriage.pdf\')">Click to upload PDF</div></div>'+
-   '<div class="f"><label>Affidavit <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Affidavit.pdf\')">Click to upload PDF</div></div>'+
-   '<div class="f"><label>Supporting documents</label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Supporting-documents.pdf\')">Click to upload one or more PDFs</div></div>'+
- '</div></div>'+
+ '<div class="card formcard">'+
+   '<section class="fsec"><div class="sech">Service Personnel</div><div class="grid3">'+
+     f("Army number","nc_army","text","e.g. IC-50231",true,'Enter the Army number, then fetch the service record. Try IC-50231.','<button class="btn ghost sm" style="margin-top:8px" onclick="fetchSvc()">'+ic('SearchNormal1',16)+'Fetch service record</button>')+
+     ro("Rank","nc_rank")+ro("Name of member","nc_mname")+ro("Unit","nc_unit")+ro("Command","nc_cmd")+ro("Monthly salary","nc_salary")+
+   '</div></section>'+
+   '<section class="fsec"><div class="sech">Applicant Details</div><div class="grid3">'+
+     f("Applicant name","nc_app","text","Full name",true)+
+     sel("Relation to member","nc_rel",["Wife","Mother","Child"],true)+
+     f("Age now","nc_agenow","number","Years")+f("Age at time of filing","nc_agefile","number","Years")+
+     f("Contact number","nc_contact","text","10-digit mobile",true)+f("Aadhaar number","nc_aadhaar","text","Validated")+
+     '<div class="f full"><label>Correspondence address</label><input id="nc_addr" placeholder="Enter correspondence address"></div>'+
+   '</div></section>'+
+   '<section class="fsec"><div class="sech">Case Details</div><div class="grid3">'+
+     sel("Case category","nc_cat",["Maintenance","Spouse allowance"],true)+
+     sel("Case type","nc_type",["Spouse maintenance","Mother maintenance","Child maintenance","Other"])+
+     f("Maintenance sought","nc_maint","text","Amount or percentage")+
+     f("Application date","nc_appdate","date","",true)+f("Filed date","nc_filedate","date")+
+     '<div class="f"><label>Status on submission</label><div class="rovalue">'+statTag('Registered')+'</div></div>'+
+   '</div></section>'+
+   '<section class="fsec"><div class="sech">Dependents and Cards</div><div class="grid3">'+
+     f("Guardian name","nc_guard","text","In addition to parent")+f("Parent name","nc_parent")+
+     sel("Estranged spouse employment","nc_emp",["Unemployed","Employed","Other"])+
+     f("Dependent card number","nc_dep")+f("CSD card number","nc_csd")+sel("Employability","nc_ability",["No","Yes"])+
+   '</div></section>'+
+   '<section class="fsec"><div class="sech">Documents</div><div class="grid3">'+
+     '<div class="f"><label>Proof of marriage <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Proof-of-marriage.pdf\')">Click to upload PDF</div></div>'+
+     '<div class="f"><label>Affidavit <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Affidavit.pdf\')">Click to upload PDF</div></div>'+
+     '<div class="f"><label>Supporting documents</label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Supporting-documents.pdf\')">Click to upload one or more PDFs</div></div>'+
+   '</div></section>'+
+ '</div>'+
  '<div class="formbar"><span class="formbar-note">A draft stays with your unit until you submit it.</span>'+
    '<button class="btn ghost" onclick="submitCase(true)">'+ic('NoteText',17)+'Save as draft</button>'+
    '<button class="btn prim" onclick="submitCase(false)">'+ic('Send2',17)+'Submit case for approval</button></div>';
 }
 function f(label,id,type,ph,req,hint,extra){const g=(type==='date')?'':'Enter '+label.toLowerCase();return '<div class="f"><label>'+label+(req?' <span class="req">*</span>':'')+'</label><input id="'+id+'" type="'+(type||'text')+'" placeholder="'+g+'">'+(hint?'<div class="hint">'+hint+'</div>':'')+(extra||'')+'</div>';}
 function ro(label,id){return '<div class="f"><label>'+label+'</label><input id="'+id+'" class="isro" readonly placeholder="Auto-filled"></div>';}
-function sel(label,id,opts,req){return '<div class="f"><label>'+label+(req?' <span class="req">*</span>':'')+'</label><select id="'+id+'"><option value="">Select</option>'+opts.map(o=>'<option>'+o+'</option>').join('')+'</select></div>';}
+function sel(label,id,opts,req){return '<div class="f"><label>'+label+(req?' <span class="req">*</span>':'')+'</label>'+dd(id,opts,'Select')+'</div>';}
+/* Custom dropdown. Keeps a hidden input under the same id, so every existing
+   getElementById(id).value read keeps working. opts take 'Text' or {v,l}. */
+function dd(id,opts,ph,cb,cls,cur){cur=cur||'';
+ const o=opts.map(x=>(typeof x==='object')?x:{v:x,l:x});
+ const hit=o.filter(x=>x.v===cur)[0];
+ return '<div class="dd'+(cls?' '+cls:'')+'"'+(cb?' data-cb="'+cb.replace(/"/g,'&quot;')+'"':'')+'>'+
+  '<input type="hidden" id="'+id+'" value="'+esc(cur)+'">'+
+  '<button type="button" class="ddt" onclick="ddToggle(this)" onkeydown="ddKey(event,this)" aria-haspopup="listbox" aria-expanded="false">'+
+   '<span class="ddv'+(hit?'':' ph')+'">'+esc(hit?hit.l:ph)+'</span><span class="ddc">'+ic('ArrowDown2',16)+'</span></button>'+
+  '<div class="ddp" role="listbox">'+o.map(x=>'<div class="ddo'+(x.v===cur?' on':'')+'" role="option" tabindex="-1" data-v="'+esc(x.v)+'" onclick="ddPick(this)" onkeydown="ddKey(event,this)">'+
+   '<span>'+esc(x.l)+'</span>'+(x.v===cur?'<span class="ddk">'+ic('TickCircle',16)+'</span>':'')+'</div>').join('')+'</div></div>';}
+function ddClose(except){document.querySelectorAll('.dd.open').forEach(d=>{if(d!==except){d.classList.remove('open');const b=d.querySelector('.ddt');if(b)b.setAttribute('aria-expanded','false');}});}
+function ddToggle(btn){const d=btn.parentNode,was=d.classList.contains('open');ddClose(d);
+ d.classList.toggle('open',!was);btn.setAttribute('aria-expanded',String(!was));
+ if(!was){const on=d.querySelector('.ddo.on')||d.querySelector('.ddo');if(on)on.focus();}}
+function ddPick(el){const d=el.parentNode.parentNode,v=el.dataset.v,l=el.querySelector('span').textContent;
+ d.querySelector('input').value=v;
+ const lab=d.querySelector('.ddv');lab.textContent=v?l:lab.textContent;lab.classList.toggle('ph',!v);
+ if(!v)lab.textContent=l;
+ d.querySelectorAll('.ddo').forEach(o=>{o.classList.toggle('on',o===el);const k=o.querySelector('.ddk');if(k)k.remove();});
+ el.insertAdjacentHTML('beforeend','<span class="ddk">'+ic('TickCircle',16)+'</span>');
+ d.classList.remove('open');const b=d.querySelector('.ddt');b.setAttribute('aria-expanded','false');b.focus();
+ if(d.dataset.cb)new Function('v',d.dataset.cb)(v);}
+function ddKey(e,el){const d=el.parentNode.classList.contains('dd')?el.parentNode:el.parentNode.parentNode;
+ const items=Array.prototype.slice.call(d.querySelectorAll('.ddo'));
+ if(e.key==='Escape'){d.classList.remove('open');d.querySelector('.ddt').focus();return;}
+ if(e.key==='Enter'||e.key===' '){if(el.classList.contains('ddo')){e.preventDefault();ddPick(el);}return;}
+ if(e.key!=='ArrowDown'&&e.key!=='ArrowUp')return;
+ e.preventDefault();
+ if(!d.classList.contains('open')){ddToggle(d.querySelector('.ddt'));return;}
+ const i=items.indexOf(el),n=e.key==='ArrowDown'?i+1:i-1;
+ if(items[n])items[n].focus();}
+document.addEventListener('click',e=>{if(!e.target.closest('.dd'))ddClose();});
 function fetchSvc(){const a=(document.getElementById('nc_army').value||'').trim().toUpperCase();const o=OFFICERS[a];
  if(!o){toast('No record for that Army number. Try IC-50231.','err');return;}
  document.getElementById('nc_rank').value=o.rank;document.getElementById('nc_mname').value=o.name;
@@ -358,7 +471,16 @@ function submitCase(draft){
    csdCard:val('nc_csd'),employability:val('nc_ability'),docs:["Proof of marriage.pdf","Affidavit.pdf"],
    notings:[],history:[{stage:"Unit filed",by:SESSION.name,when:fmtDate(new Date())}],updated:fmtDate(new Date())};
  STATE.cases.unshift(cse);DB.set(STATE);addAudit('CREATE_CASE','Registered '+id);
- toast((draft?'Draft saved: ':'Case submitted: ')+id);go('casedetail',id);
+ if(draft){successModal('Draft saved',
+   'The draft stays with your unit until you submit it. You can pick it up again from Registered Cases.',
+   sokRow('Case number',id),
+   '<button class="btn ghost" onclick="closeModal();go(\'registered\')">Back to cases</button>'+
+   '<button class="btn prim" onclick="closeModal();go(\'casedetail\',\''+id+'\')">'+ic('ArrowRight2',17)+'Open the draft</button>');
+ }else{successModal('Case submitted for approval',
+   'The case is with Command for review. You can follow its progress on the case page at any time.',
+   sokRow('Case number',id)+sokRow('Applicant',cse.applicant+' ('+cse.relation+')'),
+   '<button class="btn ghost" onclick="closeModal();go(\'newcase\')">'+ic('AddCircle',17)+'Register another</button>'+
+   '<button class="btn prim" onclick="closeModal();go(\'casedetail\',\''+id+'\')">'+ic('ArrowRight2',17)+'Open the case</button>');}
 }
 /* ================= CASE DETAIL ================= */
 let cdTab="Details";
@@ -383,15 +505,15 @@ function vCaseDetail(m,id){
  const meta=(k,v)=>'<div><div class="k">'+k+'</div><div class="v">'+v+'</div></div>';
  const counts={Details:0,Notings:x.notings.length,Documents:x.docs.length,History:x.history.length};
  m.innerHTML='<div class="crumb">Home / Registered Cases / '+id+'</div>'+
- '<div class="chero"><div class="ctop"><span class="no">'+id+'</span>'+statTag(x.status)+slaChip(x)+
+ '<div class="chero"><div class="cback" onclick="go(\'registered\')">'+ic('ArrowLeft2',15)+'Back to registered cases</div><div class="ctop"><span class="no">'+id+'</span>'+statTag(x.status)+slaChip(x)+
    '<span class="cacts">'+(acts||'<span class="muted" style="font-size:12.5px">No decision is open on this case</span>')+'</span></div>'+
    '<div class="cmeta">'+
      meta('Applicant',esc(x.applicant)+' <span class="muted" style="font-weight:500">('+x.relation+')</span>')+
      meta('Service member',esc(x.memberName)+' <span class="muted" style="font-weight:500">'+(x.rank||'')+' &middot; '+x.armyNo+'</span>')+
      meta('Command and unit',x.command+' <span class="muted" style="font-weight:500">&middot; '+esc(x.unit||'-')+'</span>')+
      meta('Maintenance sought',esc(x.maintenance||'-'))+
-   '</div>'+cdRail(x)+'</div>'+
- '<div class="tabs">'+["Details","Notings","Documents","History"].map(t=>'<div class="tab'+(cdTab===t?' on':'')+'" onclick="cdTab=\''+t+'\';go(\'casedetail\',\''+id+'\')">'+t+(counts[t]?'<span class="cnt">'+counts[t]+'</span>':'')+'</div>').join('')+'</div>'+
+   '</div>'+cdRail(x)+
+   '<div class="tabs">'+["Details","Notings","Documents","History"].map(t=>'<div class="tab'+(cdTab===t?' on':'')+'" onclick="cdTab=\''+t+'\';go(\'casedetail\',\''+id+'\')">'+t+(counts[t]?'<span class="cnt">'+counts[t]+'</span>':'')+'</div>').join('')+'</div>'+'</div>'+
  '<div class="cols"><div class="lcol">'+cdBody(x)+'</div><div class="rcol">'+
    '<div class="card" style="margin-bottom:14px"><h3>Case summary</h3>'+
      kv("Category",x.category)+kv("Case type",x.type||'-')+kv("Maintenance sought",x.maintenance||'-')+
@@ -475,7 +597,10 @@ let apSel=[];
 function apList(){let c=scoped().filter(x=>x.status==="Registered");
  if(apq.cmd)c=c.filter(x=>x.command===apq.cmd);
  if(apq.q){const q=apq.q.toLowerCase();c=c.filter(x=>(x.id+x.applicant+x.memberName+x.armyNo+x.command).toLowerCase().includes(q));}
- return c.slice().sort((a,b)=>waitDays(b)-waitDays(a));}
+ return sortRows('ap',c);}
+let apPg={page:1,per:10};
+function apPage(n){const t=apList().length,last=Math.max(1,Math.ceil(t/apPg.per));apPg.page=Math.min(Math.max(1,n),last);drawAp();}
+function apPer(v){apPg.per=+v;apPg.page=1;drawAp();}
 function vApprovals(m){
  apSel=[];
  const all=scoped().filter(x=>x.status==="Registered");
@@ -490,36 +615,46 @@ function vApprovals(m){
    tile('ShieldTick',cmds,cmds===1?'Command involved':'Commands involved')+
  '</div>'+
  '<div class="tools"><span class="fieldwrap"><span class="fic">'+ic('SearchNormal1',16)+'</span>'+
-   '<input class="inp search-i" id="apqq" placeholder="Search by case number, applicant or member" value="'+esc(apq.q)+'" oninput="apq.q=this.value;drawAp()"></span>'+
-   '<select class="inp" onchange="apq.cmd=this.value;apSel=[];drawAp()"><option value="">All Commands</option>'+COMMANDS.map(k=>'<option'+(apq.cmd===k?' selected':'')+'>'+k+'</option>').join('')+'</select>'+
+   '<input class="inp search-i" id="apqq" placeholder="Search by case number, applicant or member" value="'+esc(apq.q)+'" oninput="apq.q=this.value;apPg.page=1;drawAp()"></span>'+
+   dd('apcmd',[{v:'',l:'All Commands'}].concat(COMMANDS),'All Commands','apq.cmd=v;apSel=[];apPg.page=1;drawAp()','sm',apq.cmd)+
    '<label class="selall"><input type="checkbox" id="apall" onclick="apToggleAll(this.checked)"> Select all</label>'+
  '</div><div id="apqlist"></div>';
  drawAp();
 }
-function drawAp(){const c=apList();
+function drawAp(){const all=apList();
+ const last=Math.max(1,Math.ceil(all.length/apPg.per));if(apPg.page>last)apPg.page=last;
+ const c=pageSlice(all,apPg.page,apPg.per);
  const bulk=apSel.length?'<div class="bulkbar">'+ic('TickCircle',17)+apSel.length+' case'+(apSel.length===1?'':'s')+' selected<span class="sp"></span>'+
    '<button class="btn ghost sm" onclick="apSel=[];drawAp()">Clear selection</button>'+
    '<button class="btn prim sm" onclick="apBulkApprove()">'+ic('TickCircle',16)+'Approve selected</button></div>':'';
- const cell=(k,v)=>'<div><div class="k">'+k+'</div><div class="v">'+v+'</div></div>';
- document.getElementById('apqlist').innerHTML=bulk+(c.length?'<div class="apq">'+c.map(x=>{const on=apSel.indexOf(x.id)>-1;
-   return '<div class="apc'+(on?' sel':'')+'">'+
-   '<input type="checkbox" class="cbx"'+(on?' checked':'')+' onclick="apToggle(\''+x.id+'\')" aria-label="Select case '+x.id+'">'+
-   '<div class="body"><div class="top"><span class="no">'+x.id+'</span>'+statTag(x.status)+ageChip(x)+'</div>'+
-   '<div class="apmeta">'+
-     cell('Applicant',esc(x.applicant)+' ('+x.relation+')')+
-     cell('Service member',esc(x.memberName)+' &middot; '+x.armyNo)+
-     cell('Command and unit',x.command+' &middot; '+esc(x.unit))+
-     cell('Maintenance sought',esc(x.maintenance||'-'))+
-   '</div></div>'+
-   '<div class="side2"><button class="btn prim sm" onclick="apApprove(\''+x.id+'\')">'+ic('TickCircle',16)+'Approve case</button>'+
-     '<button class="btn ghost sm" onclick="apSendBack(\''+x.id+'\')">'+ic('ArrowLeft2',16)+'Send back to unit</button>'+
-     '<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">'+ic('ArrowRight2',15)+'Open full case</span></div></div>';}).join('')+'</div>'
+ document.getElementById('apqlist').innerHTML=bulk+(all.length?'<div class="card tblcard">'+
+   '<div class="tblhead">Pending Cases<b>'+all.length+'</b></div>'+
+   '<div class="tblwrap"><table class="tbl"><thead><tr>'+
+   '<th class="cbxcol"><input type="checkbox" class="cbx" id="apallth" onclick="apToggleAll(this.checked)" aria-label="Select every case on this page"></th>'+
+   th('ap','id','Case No')+th('ap','applicant','Applicant')+th('ap','member','Service member')+th('ap','command','Command and unit')+
+   th('ap','maintenance','Maintenance','num')+th('ap','wait','Waiting')+'<th>Actions</th>'+
+ '</tr></thead><tbody>'+
+   c.map(x=>{const on=apSel.indexOf(x.id)>-1;
+   return '<tr'+(on?' class="sel"':'')+'>'+
+     '<td class="cbxcol"><input type="checkbox" class="cbx"'+(on?' checked':'')+' onclick="apToggle(&quot;'+x.id+'&quot;)" aria-label="Select case '+x.id+'"></td>'+
+     '<td><b>'+x.id+'</b></td>'+
+     '<td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td>'+
+     '<td>'+esc(x.memberName)+' <span class="muted">('+x.armyNo+')</span></td>'+
+     '<td>'+x.command+' <span class="muted">&middot; '+esc(x.unit)+'</span></td>'+
+     '<td class="num">'+esc(x.maintenance||'-')+'</td>'+
+     '<td>'+ageChip(x)+'</td>'+
+     '<td class="nowrap"><button class="btn prim sm" onclick="apApprove(&quot;'+x.id+'&quot;)">'+ic('TickCircle',15)+'Approve</button>'+
+       '<span class="act" onclick="go(&quot;casedetail&quot;,&quot;'+x.id+'&quot;)">'+ic('Eye',15)+'View case</span></td>'+
+   '</tr>';}).join('')+
+ '</tbody></table></div>'+tblFoot('ap',apPg.page,apPg.per,all.length)+'</div>'
   :(apq.q||apq.cmd?emptyState('SearchNormal1','No cases match these filters','Clear the search or choose a different command to see more.')
    :emptyState('ClipboardTick','Nothing waiting on you','Cases appear here when a unit submits them for approval.')));
- const a=document.getElementById('apall');if(a)a.checked=c.length>0&&apSel.length===c.length;
+ const done=c.length>0&&c.every(x=>apSel.indexOf(x.id)>-1);
+ const a=document.getElementById('apall');if(a)a.checked=done;
+ const t=document.getElementById('apallth');if(t)t.checked=done;
 }
 function apToggle(id){const i=apSel.indexOf(id);if(i>-1)apSel.splice(i,1);else apSel.push(id);drawAp();}
-function apToggleAll(on){apSel=on?apList().map(x=>x.id):[];drawAp();}
+function apToggleAll(on){apSel=on?pageSlice(apList(),apPg.page,apPg.per).map(x=>x.id):[];drawAp();}
 function apApprove(id){const x=findCase(id);
  modal('Approve this case',
   '<div class="pagesub" style="margin:0 0 14px">The case moves to Active, the unit is notified and the decision is written to the audit log.</div>'+
@@ -554,9 +689,9 @@ function apBulkGo(){const ids=apSel.slice();closeModal();
 function vReports(m){
  m.innerHTML='<div class="crumb">Home / Reports</div><div class="pagehead"><div><div class="h2">Reports</div><div class="pagesub">Build a filtered report, then export or print it.</div></div></div>'+
  '<div class="card" style="margin-bottom:16px"><div class="tools" style="margin:0">'+
-   '<select class="inp" id="rt" style="min-width:230px"><option value="summary">Case Summary Report</option><option value="cmd">Command-wise Report</option><option value="pending">Pending Approvals Report</option></select>'+
-   '<select class="inp" id="rcmd"><option value="">All Commands</option>'+COMMANDS.map(k=>'<option>'+k+'</option>').join('')+'</select>'+
-   '<select class="inp" id="rstat"><option value="">All Status</option>'+["Registered","Active","Sub-judice","Closed"].map(s=>'<option>'+s+'</option>').join('')+'</select>'+
+   dd('rt',[{v:'summary',l:'Case Summary Report'},{v:'cmd',l:'Command-wise Report'},{v:'pending',l:'Pending Approvals Report'}],'Case Summary Report','','sm rt-dd','summary')+
+   dd('rcmd',[{v:'',l:'All Commands'}].concat(COMMANDS),'All Commands','','sm')+
+   dd('rstat',[{v:'',l:'All Status'}].concat(["Registered","Active","Sub-judice","Closed"]),'All Status','','sm')+
    '<div class="sp" style="flex:1"></div><button class="btn prim" onclick="genReport()">'+ic('Chart21',17)+'Generate report</button>'+
    '<button class="btn ghost" onclick="exportReportCsv()">'+ic('DocumentDownload',17)+'Export to CSV</button><button class="btn ghost" onclick="window.print()">'+ic('Printer',17)+'Print report</button></div></div>'+
  '<div id="reportArea"></div>';genReport();
@@ -571,12 +706,25 @@ function exportReportCsv(){const{c,title}=reportData();
  const rows=[['Case No','Applicant','Relation','Member','Army No','Command','Maintenance','Status']]
    .concat(c.map(x=>[x.id,x.applicant,x.relation,x.memberName,x.armyNo,x.command,x.maintenance||'-',x.status]));
  downloadCsv('MAARK-'+title.replace(/\s+/g,'-')+'.csv',rows);addAudit('EXPORT_REPORT',title+' exported to CSV');toast('Report exported to CSV ('+c.length+' rows)');}
+function rptHead(title,c){
+ const cmd=(document.getElementById('rcmd')||{}).value||'All commands';
+ const st=(document.getElementById('rstat')||{}).value||'All statuses';
+ const meta=(k,v)=>'<div><span class="k">'+k+'</span><span class="v">'+esc(v)+'</span></div>';
+ return '<div class="rh">'+
+  '<div class="rh-top"><div class="rh-brand"><span class="rh-mark">MAARK</span>'+
+   '<div><b>Additional Directorate General of Human Rights</b><small>MAARK 2.0 &middot; maintenance allowance case system</small></div></div>'+
+   '<span class="rh-stamp">'+ic('ShieldTick',13)+'Confidential</span></div>'+
+  '<div class="rh-title"><h4>'+title+'</h4><span class="rh-count">'+c.length+(c.length===1?' record':' records')+'</span></div>'+
+  '<div class="rh-meta">'+meta('Generated on',fmtDate(new Date()))+meta('Generated by',SESSION.name+' ('+SESSION.role+')')+
+   meta('Command',cmd)+meta('Status',st)+'</div></div>';}
 function genReport(){const{c,title}=reportData();
  const wm=(SESSION.name+' · ADG HR · CONFIDENTIAL · '+SESSION.ip+' · ').repeat(80);
  document.getElementById('reportArea').innerHTML='<div class="card sheet"><div class="wm"><span>'+wm+'</span></div>'+
-   '<div class="rh"><b>Additional Directorate General of Human Rights</b><div>MAARK 2.0 &middot; '+title+' &middot; generated '+fmtDate(new Date())+'</div></div>'+
-   '<div class="tblwrap"><table class="tbl"><thead><tr><th>Case No</th><th>Applicant</th><th>Member</th><th>Command</th><th class="num">Maintenance</th><th>Status</th></tr></thead><tbody>'+
-   (c.length?c.map(x=>'<tr><td>'+x.id+'</td><td>'+esc(x.applicant)+'</td><td>'+esc(x.memberName)+'</td><td>'+x.command+'</td><td class="num">'+(x.maintenance||'-')+'</td><td>'+statTag(x.status)+'</td></tr>').join(''):'<tr><td colspan="6" class="muted" style="text-align:center;padding:20px">No records.</td></tr>')+
+   rptHead(title,c)+
+   '<div class="tblwrap"><table class="tbl"><thead><tr>'+
+   th('rep','id','Case No')+th('rep','applicant','Applicant')+th('rep','member','Member')+th('rep','command','Command')+th('rep','maintenance','Maintenance','num')+th('rep','status','Status')+
+   '</tr></thead><tbody>'+
+   (c.length?sortRows('rep',c).map(x=>'<tr><td>'+x.id+'</td><td>'+esc(x.applicant)+'</td><td>'+esc(x.memberName)+'</td><td>'+x.command+'</td><td class="num">'+(x.maintenance||'-')+'</td><td>'+statTag(x.status)+'</td></tr>').join(''):'<tr><td colspan="6" class="muted" style="text-align:center;padding:20px">No records.</td></tr>')+
    '</tbody></table></div><div style="text-align:center;color:var(--text-4);font-size:12px;margin-top:14px;position:relative">Digitally watermarked with machine IP, user ID and timestamp</div></div>';
  addAudit('GENERATE_REPORT',title);
 }
@@ -586,7 +734,7 @@ function vCms(m){const s=STATE.cms;
  '<div class="row2"><div class="card" style="flex:1;min-width:280px"><div class="sech">Web Settings</div>'+
    '<div class="f"><label>Portal title</label><input id="cms_t" value="'+esc(s.portalTitle)+'"></div>'+
    '<div class="f"><label>Home banner text</label><input id="cms_b" value="'+esc(s.banner)+'"></div>'+
-   '<div class="f"><label>Theme</label><select id="cms_th"><option '+(s.theme==='Light Green'?'selected':'')+'>Light Green</option><option '+(s.theme==='Dark Green'?'selected':'')+'>Dark Green</option><option '+(s.theme==='Violet'?'selected':'')+'>Violet</option></select></div>'+
+   '<div class="f"><label>Theme</label>'+dd('cms_th',["Light Green","Dark Green","Violet"],'Select','','',s.theme)+'</div>'+
    '<div class="f"><label>Notice</label><textarea id="cms_n">'+esc(s.notice)+'</textarea></div>'+
    '<button class="btn prim" onclick="saveCms()">'+ic('TickCircle',17)+'Save Settings</button></div>'+
  '<div class="card" style="flex:1;min-width:280px"><div class="sech">Pages and Content</div>'+
@@ -616,25 +764,74 @@ function deletePageIdx(i){const name=STATE.cms.pages[i];
 function confirmDeletePage(i){const name=STATE.cms.pages[i];STATE.cms.pages.splice(i,1);if(STATE.cms.content)delete STATE.cms.content[name];
  DB.set(STATE);addAudit('CMS_PAGE','Removed page: '+name);closeModal();toast('Page removed');go('cms');}
 /* ================= AUDIT ================= */
-function vAudit(m){const a=STATE.audit;
- m.innerHTML='<div class="crumb">Home / Audit Log</div><div class="pagehead"><div><div class="h2">Audit Log</div><div class="pagesub">Every action taken in the portal, with user, role and time.</div></div></div>'+
- '<div class="tools"><span class="fieldwrap"><span class="fic">'+ic('SearchNormal1',16)+'</span><input class="inp search-i" id="auq" placeholder="Search the log" oninput="audPg.page=1;drawAudit()"></span><div class="sp" style="flex:1"></div><button class="btn ghost" onclick="exportAudit()">'+ic('DocumentDownload',17)+'Export to CSV</button></div>'+
- '<div id="audtable"></div>';drawAudit();
+const AUD_META={
+ LOGIN:{l:'Signed in',g:'access',ic:'Profile',c:'info'},
+ VIEW_DOCUMENT:{l:'Document viewed',g:'access',ic:'Eye',c:'info'},
+ CREATE_CASE:{l:'Case registered',g:'case',ic:'AddCircle',c:'primary'},
+ ADD_NOTING:{l:'Noting added',g:'case',ic:'NoteText',c:'primary'},
+ FREEZE_NOTING:{l:'Noting frozen',g:'case',ic:'ShieldTick',c:'primary'},
+ APPROVE_CASE:{l:'Case approved',g:'approval',ic:'TickCircle',c:'success'},
+ SENDBACK:{l:'Sent back',g:'approval',ic:'ArrowLeft2',c:'warning'},
+ SUBJUDICE:{l:'Marked sub-judice',g:'approval',ic:'Judge',c:'warning'},
+ CLOSE_CASE:{l:'Case closed',g:'approval',ic:'CloseCircle',c:'muted'},
+ GENERATE_REPORT:{l:'Report generated',g:'report',ic:'Chart21',c:'info'},
+ EXPORT_REPORT:{l:'Report exported',g:'report',ic:'DocumentDownload',c:'info'},
+ CMS_UPDATE:{l:'Settings changed',g:'content',ic:'Setting2',c:'primary'},
+ CMS_PAGE:{l:'Page changed',g:'content',ic:'NoteText',c:'primary'}};
+const AUD_GROUPS=[['all','All events'],['access','Access'],['case','Cases'],['approval','Approvals'],['report','Reports'],['content','Content']];
+function audMeta(a){return AUD_META[a]||{l:String(a||'').replace(/_/g,' ').toLowerCase().replace(/^./,m=>m.toUpperCase()),g:'other',ic:'InfoCircle',c:'muted'};}
+let audPg={page:1,per:10,q:'',grp:'all'};
+function vAudit(m){
+ m.innerHTML='<div class="crumb">Home / Audit Log</div>'+
+ '<div class="pagehead"><div><div class="h2">Audit Log</div><div class="pagesub">Every portal action with the user, role, time and source address. Append only.</div></div>'+
+  '<div class="acts"><button class="btn ghost" onclick="exportAudit()">'+ic('DocumentDownload',17)+'Export to CSV</button></div></div>'+
+ '<div class="kpis" id="audkpis"></div>'+
+ '<div class="tools"><span class="fieldwrap"><span class="fic">'+ic('SearchNormal1',16)+'</span>'+
+   '<input class="inp search-i" id="auq" placeholder="Search by user, action, detail or address" value="'+esc(audPg.q)+'" oninput="audSearch(this.value)"></span>'+
+ '</div>'+
+ '<div id="audtable"></div>';
+ drawAudit();
 }
-function exportAudit(){const rows=[['Timestamp','User','Role','Action','Detail','IP']].concat(STATE.audit.map(x=>[x.ts,x.user,x.role,x.action,x.detail,x.ip]));
- downloadCsv('MAARK-Audit-Log.csv',rows);toast('Audit log exported to CSV ('+STATE.audit.length+' events)');}
-let audPg={page:1,per:10};
+function audSearch(v){audPg.q=v;audPg.page=1;drawAudit();}
+function audGroup(g){audPg.grp=g;audPg.page=1;drawAudit();}
+function audCount(g){if(g==='all')return STATE.audit.length;return STATE.audit.filter(x=>audMeta(x.action).g===g).length;}
 function audPage(n){const t=audRows().length,last=Math.max(1,Math.ceil(t/audPg.per));audPg.page=Math.min(Math.max(1,n),last);drawAudit();}
 function audPer(v){audPg.per=+v;audPg.page=1;drawAudit();}
-function audRows(){let a=STATE.audit;const q=(document.getElementById('auq')||{}).value;
- if(q){const s=q.toLowerCase();a=a.filter(x=>(x.action+x.user+x.detail+x.role).toLowerCase().includes(s));}return a;}
-function drawAudit(){const all=audRows();
- if(!all.length){document.getElementById('audtable').innerHTML=emptyState('ShieldTick','No matching events','Try a different search term, or clear the search to see the full log.');return;}
+function audRows(){let a=STATE.audit;
+ if(audPg.grp!=='all')a=a.filter(x=>audMeta(x.action).g===audPg.grp);
+ const q=audPg.q;
+ if(q){const s=q.toLowerCase();a=a.filter(x=>(x.action+x.user+x.detail+x.role+x.ip+audMeta(x.action).l).toLowerCase().includes(s));}
+ return a;}
+function exportAudit(){const rows=[['Timestamp','User','Role','Action','Action code','Detail','IP']].concat(
+  STATE.audit.map(x=>[x.ts,x.user,x.role,audMeta(x.action).l,x.action,x.detail,x.ip]));
+ downloadCsv('MAARK-Audit-Log.csv',rows);toast('Audit log exported to CSV ('+STATE.audit.length+' events)');}
+function audKpis(){const a=STATE.audit,g=k=>a.filter(x=>audMeta(x.action).g===k).length;
+ const today=fmtDate(new Date()),users=new Set(a.map(x=>x.user)).size;
+ const box=document.getElementById('audkpis');if(!box)return;
+ const card=(lbl,val,color,icn,grp)=>'<div class="kpi" onclick="audGroup(\''+grp+'\')"><div class="kico" style="background:color-mix(in srgb,'+color+' 12%,#fff);color:'+color+'">'+ic(icn,19)+'</div><div class="kbody"><div class="val">'+val+'</div><div class="lbl">'+lbl+'</div></div></div>';
+ box.innerHTML=card('Events logged',a.length,'var(--primary)','ShieldTick','all')+
+  card('Events today',a.filter(x=>String(x.ts).indexOf(today)===0).length,'var(--info)','Clock','all')+
+  card('Approval actions',g('approval'),'var(--success-active)','ClipboardTick','approval')+
+  card('Report actions',g('report'),'var(--warning-active)','Chart21','report')+
+  card('Users active',users,'var(--text-2)','Profile','all');
+}
+function drawAudit(){audKpis();const all=sortRows('aud',audRows());const box=document.getElementById('audtable');if(!box)return;
+ const head='<div class="tblhead">'+ic('ShieldTick',18)+'Event trail<b>'+all.length+'</b><span class="thsub">Newest first. Times are IST.</span></div>'+
+  '<div class="tabs linetabs">'+AUD_GROUPS.map(g=>'<div class="tab'+(audPg.grp===g[0]?' on':'')+'" onclick="audGroup(\''+g[0]+'\')">'+g[1]+
+   '<span class="cnt">'+audCount(g[0])+'</span></div>').join('')+'</div>';
+ if(!all.length){box.innerHTML='<div class="card tblcard">'+head+'<div class="empty"><div class="eic">'+ic('SearchNormal1',22)+'</div><b>No matching events</b><span>Try a different search term, or pick All events to see the full log.</span></div></div>';return;}
  const last=Math.max(1,Math.ceil(all.length/audPg.per));if(audPg.page>last)audPg.page=last;
  const a=pageSlice(all,audPg.page,audPg.per);
- document.getElementById('audtable').innerHTML='<div class="tblwrap"><table class="tbl"><thead><tr><th>Timestamp</th><th>User</th><th>Role</th><th>Action</th><th>Detail</th><th class="num">IP</th></tr></thead><tbody>'+
-   a.map(x=>'<tr><td style="font-size:12.5px">'+esc(x.ts)+'</td><td>'+esc(x.user)+'</td><td><span class="stat s-Closed">'+esc(x.role)+'</span></td><td><b>'+esc(x.action)+'</b></td><td class="muted" style="font-size:12.5px">'+esc(x.detail)+'</td><td class="num" style="font-size:12.5px">'+esc(x.ip)+'</td></tr>').join('')+
- '</tbody></table></div>'+tblFoot('aud',audPg.page,audPg.per,all.length);}
+ box.innerHTML='<div class="card tblcard">'+head+'<div class="tblwrap"><table class="tbl"><thead><tr>'+
+   th('aud','ts','Timestamp')+th('aud','user','User')+th('aud','action','Action')+
+   '<th>Detail</th><th class="num">Source address</th></tr></thead><tbody>'+
+   a.map(x=>{const p=String(x.ts||'').split(','),mt=audMeta(x.action);
+    return '<tr><td class="tstamp"><b>'+esc(p[0]||x.ts)+'</b><span>'+esc((p[1]||'').trim())+'</span></td>'+
+     '<td class="ucell"><span class="uav">'+esc(String(x.user||'-').replace(/[^A-Za-z ]/g,'').trim().slice(0,1)||'-')+'</span><span class="ub"><b>'+esc(x.user)+'</b><span>'+esc(x.role)+'</span></span></td>'+
+     '<td><span class="achip a-'+mt.c+'" title="'+esc(x.action)+'">'+ic(mt.ic,14)+esc(mt.l)+'</span></td>'+
+     '<td class="muted" style="font-size:13px">'+esc(x.detail)+'</td>'+
+     '<td class="num ipc">'+esc(x.ip)+'</td></tr>';}).join('')+
+ '</tbody></table></div>'+tblFoot('aud',audPg.page,audPg.per,all.length)+'</div>';}
 /* ================= AI ASSISTANT ================= */
 const AI_STARTERS=[
  {cat:'Case data',ic:'Chart21',q:'How many active cases?'},
@@ -654,7 +851,7 @@ let chat=[],aiBusy=false;
 function aiTime(){return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});}
 function vAssistant(m){const c=scoped();
  m.innerHTML='<div class="crumb">Home / AI Assistant</div>'+
- '<div class="pagehead"><div><div class="h2">AI Assistant</div><div class="pagesub">Ask about case counts, status rules, policy or how to complete a step. Answers use only the data your role is cleared to see.</div></div></div>'+
+ '<div class="pagehead"><div><div class="h2">AI Assistant</div><div class="pagesub">Ask about cases, rules or policy. Answers stay within the data your role can see.</div></div></div>'+
  '<div class="aiwrap">'+
   '<div class="aicol">'+
    '<div class="aihead"><div class="av">'+ic('Messages2',20)+'</div>'+
@@ -668,17 +865,18 @@ function vAssistant(m){const c=scoped();
    '</div><div class="comphint"><span><kbd>Enter</kbd> to send</span><span><kbd>Shift</kbd> + <kbd>Enter</kbd> for a new line</span><span style="margin-left:auto">Answers are guidance, not an order. Verify against the file.</span></div></div>'+
   '</div>'+
   '<div class="airail">'+
-   '<div class="rcard"><h4>Your scope</h4>'+
+   '<div class="rcard"><h4>'+ic('ShieldTick',14)+'Your scope</h4>'+
     '<div class="scoperow"><span class="k">Role</span><span class="v">'+esc(SESSION.role)+'</span></div>'+
     '<div class="scoperow"><span class="k">Command</span><span class="v">'+esc(SESSION.command||'All commands')+'</span></div>'+
-    '<div class="scoperow"><span class="k">Cases in scope</span><span class="v">'+c.length+'</span></div>'+
-    '<div class="scoperow"><span class="k">Active</span><span class="v">'+c.filter(x=>x.status==='Active').length+'</span></div>'+
-    '<div class="scoperow"><span class="k">Awaiting approval</span><span class="v">'+c.filter(x=>x.status==='Registered').length+'</span></div>'+
-   '</div>'+
-   '<div class="rcard"><h4>Suggested questions</h4><div class="qlist">'+
-     AI_RAIL.map(x=>'<div class="qi" onclick="askAi('+aiArg(x.q)+')"><span class="qc">'+ic(x.ic,16)+'</span><span>'+x.q+'</span></div>').join('')+
+    '<div class="scopestats">'+
+      '<div class="ss"><b>'+c.length+'</b><span>In scope</span></div>'+
+      '<div class="ss ok"><b>'+c.filter(x=>x.status==='Active').length+'</b><span>Active</span></div>'+
+      '<div class="ss warn"><b>'+c.filter(x=>x.status==='Registered').length+'</b><span>Awaiting</span></div>'+
+    '</div></div>'+
+   '<div class="rcard"><h4>'+ic('Magicpen',14)+'Suggested questions</h4><div class="qlist">'+
+     AI_RAIL.map(x=>'<div class="qi" onclick="askAi('+aiArg(x.q)+')"><span class="qc">'+ic(x.ic,16)+'</span><span class="qt">'+x.q+'</span><span class="qg">'+ic('ArrowRight2',14)+'</span></div>').join('')+
    '</div></div>'+
-   '<div class="railnote">The assistant reads the policy set and the case records inside your command only. It cannot open a case for you, change a status or approve anything. Every look-up is written to the audit log.</div>'+
+   '<div class="railnote"><span class="rn-ic">'+ic('InfoCircle',15)+'</span><span>The assistant reads the policy set and the case records inside your command only. It cannot open a case for you, change a status or approve anything. Every look-up is written to the audit log.</span></div>'+
   '</div>'+
  '</div>';
  drawChat();
@@ -691,7 +889,8 @@ function drawChat(){const s=document.getElementById('aistream');if(!s)return;
   s.innerHTML='<div class="aiblank"><div class="bic">'+ic('Messages2',24)+'</div>'+
    '<b>Namaste, '+esc((SESSION.name||'').split(' ').slice(-1)[0]||'there')+'</b>'+
    '<p>Ask a question in plain English, or start with one of these.</p>'+
-   '<div class="startgrid">'+AI_STARTERS.map(x=>'<div class="startc" onclick="askAi('+aiArg(x.q)+')"><span>'+ic(x.ic,14)+x.cat+'</span><b>'+x.q+'</b></div>').join('')+'</div></div>';
+   '<div class="startgrid">'+AI_STARTERS.map(x=>'<div class="startc" onclick="askAi('+aiArg(x.q)+')"><span class="sic">'+ic(x.ic,17)+'</span>'+
+   '<span class="scat">'+x.cat+'</span><b>'+x.q+'</b><span class="sgo">'+ic('ArrowRight2',15)+'</span></div>').join('')+'</div></div>';
   return;}
  s.innerHTML=chat.map(c=>{
   if(c.who==='me')return '<div class="ml me"><div class="mav">'+esc((SESSION.name||'U').replace(/[^A-Za-z ]/g,'').trim().slice(0,1))+'</div><div class="mbody"><div class="msg">'+c.text+'</div><div class="mmeta">'+c.ts+'</div></div></div>';

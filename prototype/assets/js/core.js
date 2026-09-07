@@ -288,7 +288,6 @@ function submitSingle(){
 function hydrateIcons(scope){(scope||document).querySelectorAll("[data-ico]").forEach(el=>{el.innerHTML=svgIco(el.dataset.ico,+el.dataset.sz||14);});}
 function svgIco(k,sz){sz=sz||17;return '<svg viewBox="0 0 24 24" style="width:'+sz+'px;height:'+sz+'px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round">'+(ICONS[k]||'')+'</svg>';}
 function syncChkAll(){const ca=document.getElementById('chkAll');if(ca){const sl=pageSlice();ca.checked=sl.length>0&&sl.every(x=>selected.has(x.id));}}
-function th(k,label){const on=sortKey===k;return `<th class="sortable${on?' sorted':''}" data-k="${k}" onclick="setSort('${k}')">${label}<span class="caret">${on?(sortDir>0?'▲':'▼'):'▲'}</span></th>`;}
 function toast(msg,type){
   const t=document.createElement("div");t.className="toast"+(type==="err"?" err":"");t.innerHTML=msg;
   document.getElementById("toastWrap").appendChild(t);

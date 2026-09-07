@@ -539,6 +539,10 @@ function botAnswer(q){
    UI ENHANCEMENT HELPERS (icons, prefs, charts, tables, forms)
    ========================================================== */
 const ICONS={
+ /* Iconsax Linear, table sorting */
+ sort:'<path d="M9.57 5.93 6.14 2.5 2.71 5.93M6.14 21.5v-19M14.43 18.07l3.43 3.43 3.43-3.43M17.86 2.5v19"/>',
+ sortUp:'<path d="M19.92 15.05l-6.52-6.52c-.77-.77-2.03-.77-2.8 0l-6.52 6.52"/>',
+ sortDown:'<path d="M19.92 8.95l-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"/>',
  /* shared chrome, Iconsax */
  lock:'<path d="M6 10V8c0-3.31 1-6 6-6s6 2.69 6 6v2M17 22H7c-4 0-5-1-5-5v-2c0-4 1-5 5-5h10c4 0 5 1 5 5v2c0 4-1 5-5 5Z"/><path d="M15.996 16h.01M11.995 16h.01M7.995 16h.008"/>',
  /* shared chrome, Iconsax */
@@ -591,6 +595,9 @@ const SSEL_OPTS={state:typeof STATES!=='undefined'?STATES:[],district:typeof DIS
 
 /* empty state */
 
+/* table header cell (moved out of core.js so each app can style its own) */
+function th(k,label){const on=sortKey===k;
+  return `<th class="sortable${on?' sorted':''}" data-k="${k}" onclick="setSort('${k}')">${label}<span class="sic">${svgIco(on?(sortDir>0?'sortUp':'sortDown'):'sort',14)}</span></th>`;}
 /* pagination + sorting + selection (shared) */
 let sortKey="id",sortDir=1,page=1,perPage=10,selected=new Set();
 
