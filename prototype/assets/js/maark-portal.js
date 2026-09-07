@@ -1,5 +1,5 @@
 /* ================= DATA ================= */
-const KEY="maark_portal_v2";
+const KEY="maark_portal_v3";
 const COMMANDS=["Northern","Western","Central","Eastern","Southern","South Western"];
 const OFFICERS={
  "IC-50231":{rank:"Maj",name:"S. Rao",unit:"12 RAJRIF",command:"Western",salary:128000},
@@ -17,25 +17,25 @@ function seed(){
      command:o.command||command, salary:o.salary, category, type:"Spouse maintenance", maintenance:maint,
      appDate:"10-Aug-2026", filedDate:"12-Aug-2026", status, guardian:"", parent:"Smt. Kamla Devi",
      spouseEmployment:"Unemployed", dependentCard:"DC-"+id.slice(-4), csdCard:"CSD-"+id.slice(-4), employability:"No",
-     docs:["Proof of marriage.pdf","Affidavit.pdf"], notings:notings||[], history:[{stage:"Unit filed",by:"Unit clerk",when:"12 Aug"}],
-     updated:new Date(now-daysAgo*864e5).toLocaleDateString('en-IN')};
+     docs:["Proof of marriage.pdf","Affidavit.pdf"], notings:notings||[], history:[{stage:"Unit filed",by:"Unit clerk",when:"12-Aug-2026"}],
+     updated:fmtDate(new Date(now-daysAgo*864e5))};
  };
  const cases=[
    mk("MNT/2026/0142","Smt. A. Devi","Wife","IC-50231","Maintenance","25%","Active","Western",
-     [{by:"Brigade Headquarters",role:"Approver",text:"Verification complete. Marriage proof and affidavit are in order.",colour:"green",frozen:true,when:"28 Aug 2026"},
-      {by:"Command (Western)",role:"Admin",text:"Recommend approval. Maintenance proposed at 25 percent of salary.",colour:"yellow",frozen:false,when:"1 Sep 2026"}],5),
+     [{by:"Brigade Headquarters",role:"Approver",text:"Verification complete. Marriage proof and affidavit are in order.",colour:"green",frozen:true,when:"28-Aug-2026"},
+      {by:"Command (Western)",role:"Admin",text:"Recommend approval. Maintenance proposed at 25 percent of salary.",colour:"yellow",frozen:false,when:"01-Sep-2026"}],5),
    mk("MNT/2026/0139","Smt. K. Bai","Mother","JC-330219","Maintenance","₹ 9,000","Registered","Central",[],5),
    mk("MNT/2026/0137","Smt. R. Kaur","Wife","IC-61144","Maintenance","₹ 12,000","Sub-judice","Northern",
-     [{by:"Brigade Headquarters",role:"Approver",text:"Matter is before the civil court; hold pending order.",colour:"green",frozen:true,when:"30 Aug 2026"}],6),
+     [{by:"Brigade Headquarters",role:"Approver",text:"Matter is before the civil court; hold pending order.",colour:"green",frozen:true,when:"30-Aug-2026"}],6),
    mk("MNT/2026/0131","Smt. P. Yadav","Wife","JC-441027","Maintenance","20%","Registered","Eastern",[],7),
    mk("MNT/2026/0128","Smt. L. Bai","Mother","IC-58890","Maintenance","20%","Closed","Southern",
-     [{by:"ADG HR",role:"Super Admin",text:"Approved and disbursed. Case closed.",colour:"green",frozen:true,when:"25 Aug 2026"}],13),
+     [{by:"ADG HR",role:"Super Admin",text:"Approved and disbursed. Case closed.",colour:"green",frozen:true,when:"25-Aug-2026"}],13),
    mk("MNT/2026/0124","Smt. S. Devi","Wife","IC-58890","Maintenance","15%","Closed","Southern",[],16)
  ];
  const audit=[
-   {ts:"7 Sep 2026, 11:42",user:"Maj S. Rao",role:"Command Admin",action:"APPROVE_CASE",detail:"Approved MNT/2026/0139",ip:"10.0.4.21"},
-   {ts:"7 Sep 2026, 11:20",user:"Sub R. Kumar",role:"Unit User",action:"CREATE_CASE",detail:"Registered MNT/2026/0142",ip:"10.0.7.14"},
-   {ts:"6 Sep 2026, 17:03",user:"Col A. Verma",role:"Super Admin",action:"GENERATE_REPORT",detail:"Case Summary Report",ip:"10.0.1.9"}
+   {ts:"07-Sep-2026, 11:42",user:"Maj S. Rao",role:"Command Admin",action:"APPROVE_CASE",detail:"Approved MNT/2026/0139",ip:"10.0.4.21"},
+   {ts:"07-Sep-2026, 11:20",user:"Sub R. Kumar",role:"Unit User",action:"CREATE_CASE",detail:"Registered MNT/2026/0142",ip:"10.0.7.14"},
+   {ts:"06-Sep-2026, 17:03",user:"Col A. Verma",role:"Super Admin",action:"GENERATE_REPORT",detail:"Case Summary Report",ip:"10.0.1.9"}
  ];
  const cms={portalTitle:"MAARK 2.0",banner:"Maintenance allowance, digitised",theme:"Light Green",notice:"Cases are to be resolved within 180 days.",
    pages:["Home","About ADG HR","Policy and eligibility","Contact","FAQ"]};
@@ -76,6 +76,9 @@ function backToEmail(){
 /* ===== Iconsax (Linear) icon set - paths inlined, no CDN ===== */
 const ICONS={
  AddCircle:"<path d='M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10ZM8 12h8M12 16V8'/>",
+ ArrowSwapVertical:"<path d='M9.57 5.93 6.14 2.5 2.71 5.93M6.14 21.5v-19M14.43 18.07l3.43 3.43 3.43-3.43M17.86 2.5v19'/>",
+ ArrowUp2:"<path d='M19.92 15.05l-6.52-6.52c-.77-.77-2.03-.77-2.8 0l-6.52 6.52'/>",
+ ArrowDown2:"<path d='M19.92 8.95l-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95'/>",
  ArrowRight2:"<path d='M8.91 19.92l6.52-6.52c.77-.77.77-2.03 0-2.8L8.91 4.08'/>",
  ArrowLeft2:"<path d='M15 19.92L8.48 13.4c-.77-.77-.77-2.03 0-2.8L15 4.08'/>",
  Chart21:"<path d='M7 10.74v3.2M12 9v6.68M17 10.74v3.2M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7Z'/>",
@@ -163,9 +166,24 @@ function logout(){SESSION=null;location.reload();}
 /* ================= SCOPE / HELPERS ================= */
 function scoped(){const c=STATE.cases;if(!SESSION||SESSION.role==="Super Admin")return c;return c.filter(x=>x.command===SESSION.command);}
 function findCase(id){return STATE.cases.find(x=>x.id===id);}
-function addAudit(action,detail){STATE.audit.unshift({ts:new Date().toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}),user:SESSION?SESSION.name:'-',role:SESSION?SESSION.role:'-',action,detail,ip:SESSION?SESSION.ip:'-'});DB.set(STATE);}
+function addAudit(action,detail){STATE.audit.unshift({ts:fmtDT(new Date()),user:SESSION?SESSION.name:'-',role:SESSION?SESSION.role:'-',action,detail,ip:SESSION?SESSION.ip:'-'});DB.set(STATE);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function emptyState(icon,title,sub){return '<div class="card"><div class="empty"><div class="eic">'+ic(icon,22)+'</div><b>'+title+'</b><span>'+sub+'</span></div></div>';}
+/* ---- Column sorting. One state per table namespace; th's carry the Iconsax glyph. ---- */
+const SORT={dash:{key:'updated',dir:-1},reg:{key:'updated',dir:-1}};
+function sortVal(x,k){
+ if(k==='updated')return (pdate(x.updated)||new Date(0)).getTime();
+ if(k==='member')return String(x.memberName||'').toLowerCase();
+ return String(x[k]||'').toLowerCase();
+}
+function sortRows(ns,rows){const s=SORT[ns];if(!s||!s.key)return rows;
+ return rows.slice().sort((a,b)=>{const va=sortVal(a,s.key),vb=sortVal(b,s.key);
+   return (va<vb?-1:va>vb?1:0)*s.dir;});}
+function th(ns,key,label,cls){const s=SORT[ns],on=s.key===key;
+ return '<th class="sortable'+(cls?' '+cls:'')+(on?' sorted':'')+'" onclick="sortBy(&quot;'+ns+'&quot;,&quot;'+key+'&quot;)">'+label+
+   '<span class="sic">'+ic(on?(s.dir>0?'ArrowUp2':'ArrowDown2'):'ArrowSwapVertical',14)+'</span></th>';}
+function sortBy(ns,key){const s=SORT[ns];if(s.key===key)s.dir=-s.dir;else{s.key=key;s.dir=1;}
+ if(ns==='reg')drawReg();else go('dashboard');}
 function statTag(s){return '<span class="stat s-'+s.replace(/\s/g,'-')+'">'+s+'</span>';}
 function toast(msg,type){const t=document.createElement('div');t.className='toast'+(type==='err'?' err':'');t.textContent=msg;document.getElementById('toastWrap').appendChild(t);setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.remove(),300)},2600);}
 function modal(title,bodyHtml,footHtml){document.getElementById('modalRoot').innerHTML='<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="mh"><h3>'+title+'</h3><button class="x" onclick="closeModal()">&times;</button></div><div class="mb">'+bodyHtml+'</div>'+(footHtml?'<div class="mf">'+footHtml+'</div>':'')+'</div></div>';}
@@ -191,12 +209,12 @@ const NAV={
 const NAVICON={dashboard:'Element3',registered:'DocumentText',newcase:'AddCircle',approvals:'ClipboardTick',reports:'Chart21',cms:'NoteText',audit:'ShieldTick',assistant:'Messages2'};
 let CURRENT="dashboard";
 function buildNav(){
- const s=document.getElementById('side');s.innerHTML='<div class="grp">Main Menu</div>';
+ const s=document.getElementById('side');s.innerHTML='';
  NAV[SESSION.role].forEach(([k,label])=>{
    /* build the group header as a node: innerHTML+= would re-parse #side and
       strip the onclick handlers already set on the items above it */
    if(k==='_a'){const g=document.createElement('div');g.className='grp';g.textContent=label;s.appendChild(g);return;}
-   const a=document.createElement('div');a.className='nav';a.dataset.k=k;a.innerHTML='<span class="ic">'+ic(NAVICON[k]||'Element3',18)+'</span>'+label;a.onclick=()=>go(k);s.appendChild(a);});
+   const a=document.createElement('div');a.className='nav';a.dataset.k=k;a.innerHTML='<span class="ic">'+ic(NAVICON[k]||'Element3',20)+'</span>'+label;a.onclick=()=>go(k);s.appendChild(a);});
 }
 const VIEWS={dashboard:vDashboard,registered:vRegistered,newcase:vNewCase,casedetail:vCaseDetail,approvals:vApprovals,reports:vReports,cms:vCms,audit:vAudit,assistant:vAssistant,profile:vProfile};
 function vProfile(m){
@@ -211,6 +229,8 @@ function vProfile(m){
   '</div></div>';
 }
 function go(view,arg){CURRENT=view;document.querySelectorAll('#side .nav').forEach(a=>a.classList.toggle('on',a.dataset.k===view));
+ /* breadcrumb only on inner pages, never on a top-level nav destination */
+ document.body.classList.toggle('toplevel',(NAV[SESSION.role]||[]).some(n=>n[0]===view));
  const m=document.getElementById('main');m.scrollTop=0;(VIEWS[view]||vDashboard)(m,arg);}
 /* ================= DASHBOARD ================= */
 function vDashboard(m){
@@ -227,20 +247,33 @@ function vDashboard(m){
    kpi("Closed",cnt("Closed"),"var(--text-3)","Closed","TickCircle")+
  '</div>'+
  '<div class="row2">'+
-   '<div class="card" style="flex:1.5;min-width:280px"><h3><span class="b"></span>Cases by Command</h3>'+
+   '<div class="card" style="flex:1.5;min-width:280px"><h3>Cases by Command</h3>'+
      '<div class="barwrap">'+COMMANDS.map(k=>'<div class="bar" style="height:'+Math.round(byCmd[k]/maxB*100)+'%"><span>'+byCmd[k]+'</span></div>').join('')+'</div>'+
      '<div class="barlbl">'+COMMANDS.map(k=>'<span>'+k.replace('South Western','SW')+'</span>').join('')+'</div></div>'+
-   '<div class="card" style="flex:1;min-width:240px"><h3><span class="b"></span>Pending Approvals</h3>'+
+   '<div class="card" style="flex:1;min-width:240px"><h3>Pending Approvals</h3>'+
      (pend.length?pend.slice(0,6).map(x=>'<div class="aitem" onclick="go(\'casedetail\',\''+x.id+'\')">'+x.id+' &middot; '+esc(x.applicant)+'<span class="lvl">Review &middot; 1 level up</span></div>').join(''):'<div class="empty" style="padding:22px 10px"><div class="eic">'+ic('ClipboardTick',20)+'</div><b>Nothing waiting on you</b><span>New submissions will show up here.</span></div>')+
    '</div>'+
  '</div>'+
- '<div class="card" style="margin-top:16px"><h3><span class="b"></span>Recent Cases</h3><div class="tblwrap"><table class="tbl"><thead><tr><th>Case No</th><th>Applicant</th><th>Command</th><th>Status</th><th>Updated</th></tr></thead><tbody>'+
-   c.slice(0,6).map(x=>'<tr style="cursor:pointer" onclick="go(\'casedetail\',\''+x.id+'\')"><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td>'+x.updated+'</td></tr>').join('')+
+ '<div class="card" style="margin-top:16px"><h3>Recent Cases</h3><div class="tblwrap"><table class="tbl"><thead><tr>'+
+   th('dash','id','Case No')+th('dash','applicant','Applicant')+th('dash','command','Command')+th('dash','status','Status')+th('dash','updated','Updated')+
+ '</tr></thead><tbody>'+
+   sortRows('dash',c).slice(0,6).map(x=>'<tr style="cursor:pointer" onclick="go(\'casedetail\',\''+x.id+'\')"><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td>'+x.updated+'</td></tr>').join('')+
  '</tbody></table></div></div>';
 }
 function kpi(lbl,val,color,jump,icn){return '<div class="kpi" onclick="go(\'registered\',{status:\''+jump+'\'})"><div class="kico" style="background:color-mix(in srgb,'+color+' 12%,#fff);color:'+color+'">'+ic(icn,24)+'</div><div class="kbody"><div class="lbl">'+lbl+'</div><div class="val">'+val+'</div></div></div>';}
+function tblFoot(ns,page,per,total){
+ const last=Math.max(1,Math.ceil(total/per));
+ const from=total?((page-1)*per+1):0,to=Math.min(page*per,total);
+ return '<div class="pager"><span class="rpp">Rows per page'+
+  '<select onchange="'+ns+'Per(this.value)">'+[10,25,50].map(n=>'<option'+(per===n?' selected':'')+'>'+n+'</option>').join('')+'</select></span>'+
+  '<span class="range">'+from+' to '+to+' of '+total+'</span>'+
+  '<span class="pgc'+(page<=1?' off':'')+'" onclick="'+ns+'Page('+(page-1)+')" title="Previous page">'+ic('ArrowLeft2',15)+'</span>'+
+  '<span class="pgc'+(page>=last?' off':'')+'" onclick="'+ns+'Page('+(page+1)+')" title="Next page">'+ic('ArrowRight2',15)+'</span></div>';}
+function pageSlice(rows,page,per){return rows.slice((page-1)*per,page*per);}
 /* ================= REGISTERED ================= */
-let regFilter={q:"",status:"all"};
+let regFilter={q:"",status:"all",cmd:"",page:1,per:10};
+function regPage(n){const t=regRows().length,last=Math.max(1,Math.ceil(t/regFilter.per));regFilter.page=Math.min(Math.max(1,n),last);drawReg();}
+function regPer(v){regFilter.per=+v;regFilter.page=1;drawReg();}
 function vRegistered(m,arg){
  if(arg&&arg.status)regFilter.status=arg.status;
  const canNew=true;
@@ -248,49 +281,53 @@ function vRegistered(m,arg){
  m.innerHTML='<div class="crumb">Home / Registered Cases</div>'+
  '<div class="pagehead"><div><div class="h2">Registered Cases</div><div class="pagesub">Every case you can see, across '+(SESSION.command||'all commands')+'.</div></div>'+
    '<div class="acts">'+(canNew?'<button class="btn prim" onclick="go(\'newcase\')">'+ic('AddCircle',17)+'Register new case</button>':'')+'</div></div>'+
- '<div class="tools"><span class="fieldwrap"><span class="fic">'+ic('SearchNormal1',16)+'</span><input class="inp search-i" id="regq" placeholder="Search cases" value="'+esc(regFilter.q)+'" oninput="regFilter.q=this.value;drawReg()"></span>'+
-   '<select class="inp" onchange="regFilter.cmd=this.value;drawReg()"><option value="">All Commands</option>'+COMMANDS.map(k=>'<option'+(regFilter.cmd===k?' selected':'')+'>'+k+'</option>').join('')+'</select>'+
+ '<div class="tools"><span class="fieldwrap"><span class="fic">'+ic('SearchNormal1',16)+'</span><input class="inp search-i" id="regq" placeholder="Search cases" value="'+esc(regFilter.q)+'" oninput="regFilter.q=this.value;regFilter.page=1;drawReg()"></span>'+
+   '<select class="inp" onchange="regFilter.cmd=this.value;regFilter.page=1;drawReg()"><option value="">All Commands</option>'+COMMANDS.map(k=>'<option'+(regFilter.cmd===k?' selected':'')+'>'+k+'</option>').join('')+'</select>'+
    '</div>'+
  '<div class="pills" id="regpills">'+
-   ['all','Registered','Active','Sub-judice','Closed'].map(s=>'<span class="pill'+(regFilter.status===s?' on':'')+'" onclick="regFilter.status=\''+s+'\';drawReg()">'+(s==='all'?'All':s)+'<b>'+(s==='all'?c.length:cnt(s))+'</b></span>').join('')+'</div>'+
+   ['all','Registered','Active','Sub-judice','Closed'].map(s=>'<span class="pill'+(regFilter.status===s?' on':'')+'" onclick="regFilter.page=1;regFilter.status=\''+s+'\';drawReg()">'+(s==='all'?'All':s)+'<b>'+(s==='all'?c.length:cnt(s))+'</b></span>').join('')+'</div>'+
  '<div id="regtable"></div>';
  drawReg();
 }
 function regRows(){let c=scoped();if(regFilter.status!=='all')c=c.filter(x=>x.status===regFilter.status);
  if(regFilter.cmd)c=c.filter(x=>x.command===regFilter.cmd);
  if(regFilter.q){const q=regFilter.q.toLowerCase();c=c.filter(x=>(x.id+x.applicant+x.armyNo+x.command).toLowerCase().includes(q));}return c;}
-function drawReg(){const c=regRows();const canEdit=SESSION.role!=="Super Admin";
- document.getElementById('regtable').innerHTML=c.length?'<div class="tblwrap"><table class="tbl"><thead><tr><th>Case No</th><th>Applicant</th><th>Member</th><th>Command</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead><tbody>'+
-   c.map(x=>'<tr><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+esc(x.memberName)+' <span class="muted">('+x.armyNo+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td>'+x.updated+'</td><td><span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">'+ic('Eye',15)+'View case</span>'+(canEdit?'<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">'+ic('Edit2',15)+'Open and edit</span>':'')+'</td></tr>').join('')+
- '</tbody></table></div><div class="pager">Showing '+c.length+' of '+scoped().length+' cases<span style="flex:1"></span><span class="pg">Previous</span><span class="pg on">1</span><span class="pg">Next</span></div>':emptyState('DocumentText','No cases match these filters','Clear a filter or change the search term to see more results.');}
+function drawReg(){const all=sortRows('reg',regRows());const canEdit=SESSION.role!=="Super Admin";
+ const last=Math.max(1,Math.ceil(all.length/regFilter.per));if(regFilter.page>last)regFilter.page=last;
+ const c=pageSlice(all,regFilter.page,regFilter.per);
+ document.getElementById('regtable').innerHTML=all.length?'<div class="tblwrap"><table class="tbl"><thead><tr>'+
+   th('reg','id','Case No')+th('reg','applicant','Applicant')+th('reg','member','Member')+th('reg','command','Command')+th('reg','status','Status')+th('reg','updated','Updated','num')+
+   '<th>Actions</th></tr></thead><tbody>'+
+   c.map(x=>'<tr><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+esc(x.memberName)+' <span class="muted">('+x.armyNo+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td class="num">'+x.updated+'</td><td><span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">'+ic('Eye',15)+'View case</span>'+(canEdit?'<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">'+ic('Edit2',15)+'Open and edit</span>':'')+'</td></tr>').join('')+
+ '</tbody></table></div>'+tblFoot('reg',regFilter.page,regFilter.per,all.length):emptyState('DocumentText','No cases match these filters','Clear a filter or change the search term to see more results.');}
 /* ================= NEW CASE ================= */
 function vNewCase(m){
  m.innerHTML='<div class="crumb">Home / New Case</div>'+
  '<div class="pagehead"><div><div class="h2" style="margin:0">Register a new case</div><div class="pagesub">Fields marked with an asterisk are required. You can save a draft at any point.</div></div></div>'+
- '<div class="card" style="margin-bottom:16px"><div class="sech"><span class="b"></span>Service Personnel</div><div class="grid3">'+
+ '<div class="card" style="margin-bottom:16px"><div class="sech">Service Personnel</div><div class="grid3">'+
    f("Army number","nc_army","text","e.g. IC-50231",true,'Enter the Army number, then fetch the service record. Try IC-50231.','<button class="btn ghost sm" style="margin-top:8px" onclick="fetchSvc()">'+ic('SearchNormal1',16)+'Fetch service record</button>')+
    ro("Rank","nc_rank")+ro("Name of member","nc_mname")+ro("Unit","nc_unit")+ro("Command","nc_cmd")+ro("Monthly salary","nc_salary")+
  '</div></div>'+
- '<div class="card" style="margin-bottom:16px"><div class="sech"><span class="b"></span>Applicant Details</div><div class="grid3">'+
+ '<div class="card" style="margin-bottom:16px"><div class="sech">Applicant Details</div><div class="grid3">'+
    f("Applicant name","nc_app","text","Full name",true)+
    sel("Relation to member","nc_rel",["Wife","Mother","Child"],true)+
    f("Age now","nc_agenow","number","Years")+f("Age at time of filing","nc_agefile","number","Years")+
    f("Contact number","nc_contact","text","10-digit mobile",true)+f("Aadhaar number","nc_aadhaar","text","Validated")+
    '<div class="f full"><label>Correspondence address</label><input id="nc_addr" placeholder="Enter correspondence address"></div>'+
  '</div></div>'+
- '<div class="card" style="margin-bottom:16px"><div class="sech"><span class="b"></span>Case Details</div><div class="grid3">'+
+ '<div class="card" style="margin-bottom:16px"><div class="sech">Case Details</div><div class="grid3">'+
    sel("Case category","nc_cat",["Maintenance","Spouse allowance"],true)+
    sel("Case type","nc_type",["Spouse maintenance","Mother maintenance","Child maintenance","Other"])+
    f("Maintenance sought","nc_maint","text","Amount or percentage")+
    f("Application date","nc_appdate","date","",true)+f("Filed date","nc_filedate","date")+
    '<div class="f"><label>Status on submission</label><div class="rovalue">'+statTag('Registered')+'</div></div>'+
  '</div></div>'+
- '<div class="card" style="margin-bottom:16px"><div class="sech"><span class="b"></span>Dependents and Cards</div><div class="grid3">'+
+ '<div class="card" style="margin-bottom:16px"><div class="sech">Dependents and Cards</div><div class="grid3">'+
    f("Guardian name","nc_guard","text","In addition to parent")+f("Parent name","nc_parent")+
    sel("Estranged spouse employment","nc_emp",["Unemployed","Employed","Other"])+
    f("Dependent card number","nc_dep")+f("CSD card number","nc_csd")+sel("Employability","nc_ability",["No","Yes"])+
  '</div></div>'+
- '<div class="card"><div class="sech"><span class="b"></span>Documents</div><div class="grid3">'+
+ '<div class="card"><div class="sech">Documents</div><div class="grid3">'+
    '<div class="f"><label>Proof of marriage <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Proof-of-marriage.pdf\')">Click to upload PDF</div></div>'+
    '<div class="f"><label>Affidavit <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Affidavit.pdf\')">Click to upload PDF</div></div>'+
    '<div class="f"><label>Supporting documents</label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Supporting-documents.pdf\')">Click to upload one or more PDFs</div></div>'+
@@ -316,10 +353,10 @@ function submitCase(draft){
  const cse={id,applicant:app||"(draft)",relation:rel||"Wife",ageNow:val('nc_agenow'),ageFiling:val('nc_agefile'),
    contact:val('nc_contact'),aadhaar:val('nc_aadhaar'),address:val('nc_addr'),armyNo:army,rank:o.rank,memberName:o.name,
    unit:o.unit,command:o.command,salary:o.salary,category:val('nc_cat')||"Maintenance",type:val('nc_type')||"Spouse maintenance",
-   maintenance:val('nc_maint'),appDate:val('nc_appdate'),filedDate:val('nc_filedate'),status:draft?"Registered":"Registered",
+   maintenance:val('nc_maint'),appDate:fmtDate(val('nc_appdate')),filedDate:fmtDate(val('nc_filedate')),status:draft?"Registered":"Registered",
    guardian:val('nc_guard'),parent:val('nc_parent'),spouseEmployment:val('nc_emp'),dependentCard:val('nc_dep'),
    csdCard:val('nc_csd'),employability:val('nc_ability'),docs:["Proof of marriage.pdf","Affidavit.pdf"],
-   notings:[],history:[{stage:"Unit filed",by:SESSION.name,when:new Date().toLocaleDateString('en-IN')}],updated:new Date().toLocaleDateString('en-IN')};
+   notings:[],history:[{stage:"Unit filed",by:SESSION.name,when:fmtDate(new Date())}],updated:fmtDate(new Date())};
  STATE.cases.unshift(cse);DB.set(STATE);addAudit('CREATE_CASE','Registered '+id);
  toast((draft?'Draft saved: ':'Case submitted: ')+id);go('casedetail',id);
 }
@@ -356,17 +393,17 @@ function vCaseDetail(m,id){
    '</div>'+cdRail(x)+'</div>'+
  '<div class="tabs">'+["Details","Notings","Documents","History"].map(t=>'<div class="tab'+(cdTab===t?' on':'')+'" onclick="cdTab=\''+t+'\';go(\'casedetail\',\''+id+'\')">'+t+(counts[t]?'<span class="cnt">'+counts[t]+'</span>':'')+'</div>').join('')+'</div>'+
  '<div class="cols"><div class="lcol">'+cdBody(x)+'</div><div class="rcol">'+
-   '<div class="card" style="margin-bottom:14px"><h3><span class="b"></span>Case summary</h3>'+
+   '<div class="card" style="margin-bottom:14px"><h3>Case summary</h3>'+
      kv("Category",x.category)+kv("Case type",x.type||'-')+kv("Maintenance sought",x.maintenance||'-')+
      kv("Application date",x.appDate||'-')+kv("Filed date",x.filedDate||'-')+kv("Last updated",x.updated||'-')+'</div>'+
-   '<div class="card"><h3><span class="b"></span>Approval history</h3><div class="htl">'+
+   '<div class="card"><h3>Approval history</h3><div class="htl">'+
      x.history.map(h=>'<div class="hi"><div class="hs">'+esc(h.stage)+'</div><div class="hm">'+esc(h.by||'-')+' &middot; '+h.when+'</div></div>').join('')+
      (x.status==="Registered"?'<div class="hi pend"><div class="hs">Command review</div><div class="hm">waiting on you</div></div>':'')+
    '</div></div>'+
  '</div></div>';
 }
 function kv(k,v){return '<div class="kv"><span class="k">'+k+'</span><span class="v">'+esc(v)+'</span></div>';}
-function cdSection(title,rows){return '<div class="card" style="margin-bottom:14px"><div class="sech"><span class="b"></span>'+title+'</div><div class="kvgrid">'+rows+'</div></div>';}
+function cdSection(title,rows){return '<div class="card" style="margin-bottom:14px"><div class="sech">'+title+'</div><div class="kvgrid">'+rows+'</div></div>';}
 function cdBody(x){
  if(cdTab==="Details"){return ''+
    cdSection('Applicant',
@@ -381,19 +418,19 @@ function cdBody(x){
    cdSection('Eligibility and entitlement',
      kv("Estranged spouse employment",x.spouseEmployment||'-')+kv("Employability",x.employability||'-')+
      kv("Dependent card",x.dependentCard||'-')+kv("CSD card",x.csdCard||'-'));}
- if(cdTab==="Documents"){return '<div class="card"><h3><span class="b"></span>Documents on file</h3>'+
+ if(cdTab==="Documents"){return '<div class="card"><h3>Documents on file</h3>'+
    (x.docs.length?x.docs.map(d=>'<div class="doc"><span class="dic">'+ic('DocumentText',19)+'</span>'+
      '<div style="flex:1;min-width:0"><div class="dn">'+esc(d)+'</div><div class="dm">PDF &middot; uploaded by the unit &middot; read only</div></div>'+
      '<span class="act" onclick="previewDoc(\''+x.id+'\',\''+d.replace(/'/g,"")+'\')">'+ic('Eye',15)+'Preview</span></div>').join('')
     :'<div class="empty"><div class="eic">'+ic('DocumentText',22)+'</div><b>No documents yet</b><span>Proof of marriage and the affidavit are attached by the unit.</span></div>')+'</div>';}
- if(cdTab==="History"){return '<div class="card"><h3><span class="b"></span>Case history</h3><div class="htl">'+
+ if(cdTab==="History"){return '<div class="card"><h3>Case history</h3><div class="htl">'+
    x.history.map(h=>'<div class="hi'+(h.stage==="Sent back"?' pend':'')+'"><div class="hs">'+esc(h.stage)+'</div>'+
      '<div class="hm">'+esc(h.by||'-')+' &middot; '+h.when+'</div>'+
      (h.note?'<div class="hn">'+esc(h.note)+'</div>':'')+'</div>').join('')+'</div></div>';}
  return '<div>'+
    (x.notings.length?x.notings.map((n,i)=>note(x.id,n,i)).join('')
     :'<div class="card" style="margin-bottom:14px"><div class="empty"><div class="eic">'+ic('NoteText',22)+'</div><b>No notings yet</b><span>Add the first noting below. Yellow notings can be edited, green notings are frozen.</span></div></div>')+
-   (x.status==="Closed"?'':'<div class="composer"><div class="sech" style="margin-bottom:10px"><span class="b"></span>Add a noting</div>'+
+   (x.status==="Closed"?'':'<div class="composer"><div class="sech" style="margin-bottom:10px">Add a noting</div>'+
      '<textarea id="newnote" placeholder="Record your observation, recommendation or direction"></textarea>'+
      '<div class="cfoot"><span class="stat" style="background:var(--warning-10);color:var(--warning-active)">Yellow &middot; editable</span>'+
      '<label class="chk"><input type="checkbox" id="confmove"> Confirm and move forward, which freezes this noting green</label>'+
@@ -406,17 +443,23 @@ function note(id,n,i){return '<div class="note '+n.colour+'"><div class="top"><s
  (!n.frozen&&SESSION.role!=="Unit User"?'<span class="freeze" onclick="freezeNote(\''+id+'\','+i+')">Freeze (turn green)</span>':'')+'</div></div>';}
 function addNote(id){const x=findCase(id);const t=(document.getElementById('newnote').value||'').trim();if(!t){toast('Type a noting first','err');return;}
  const conf=document.getElementById('confmove').checked;
- x.notings.push({by:SESSION.name+" ("+SESSION.role+")",role:SESSION.role,text:t,colour:conf?'green':'yellow',frozen:conf,when:new Date().toLocaleDateString('en-IN')});
- x.updated=new Date().toLocaleDateString('en-IN');DB.set(STATE);addAudit('ADD_NOTING',(conf?'Frozen noting on ':'Noting on ')+id);toast('Noting saved');go('casedetail',id);}
+ x.notings.push({by:SESSION.name+" ("+SESSION.role+")",role:SESSION.role,text:t,colour:conf?'green':'yellow',frozen:conf,when:fmtDate(new Date())});
+ x.updated=fmtDate(new Date());DB.set(STATE);addAudit('ADD_NOTING',(conf?'Frozen noting on ':'Noting on ')+id);toast('Noting saved');go('casedetail',id);}
 function freezeNote(id,i){const x=findCase(id);const n=x.notings[i];n.colour='green';n.frozen=true;DB.set(STATE);addAudit('FREEZE_NOTING','Froze a noting on '+id);toast('Noting frozen (green). It can no longer be changed.');go('casedetail',id);}
 function caseAction(id,action,reason){const x=findCase(id);
- if(action==='approve'){x.status="Active";x.history.push({stage:"Command approved",by:SESSION.name,when:new Date().toLocaleDateString('en-IN')});addAudit('APPROVE_CASE','Approved '+id);toast('Case approved and set Active');}
- if(action==='sendback'){x.history.push({stage:"Sent back",by:SESSION.name,when:new Date().toLocaleDateString('en-IN'),note:reason||''});addAudit('SENDBACK','Sent back '+id+(reason?': '+reason:''));toast('Case sent back to the unit');}
- if(action==='subjudice'){x.status="Sub-judice";x.history.push({stage:"Marked sub-judice",by:SESSION.name,when:new Date().toLocaleDateString('en-IN')});addAudit('SUBJUDICE','Marked '+id+' sub-judice');toast('Case marked sub-judice');}
- if(action==='close'){x.status="Closed";x.history.push({stage:"Case closed",by:SESSION.name,when:new Date().toLocaleDateString('en-IN')});addAudit('CLOSE_CASE','Closed '+id);toast('Case closed');}
- x.updated=new Date().toLocaleDateString('en-IN');DB.set(STATE);go('casedetail',id);}
+ if(action==='approve'){x.status="Active";x.history.push({stage:"Command approved",by:SESSION.name,when:fmtDate(new Date())});addAudit('APPROVE_CASE','Approved '+id);toast('Case approved and set Active');}
+ if(action==='sendback'){x.history.push({stage:"Sent back",by:SESSION.name,when:fmtDate(new Date()),note:reason||''});addAudit('SENDBACK','Sent back '+id+(reason?': '+reason:''));toast('Case sent back to the unit');}
+ if(action==='subjudice'){x.status="Sub-judice";x.history.push({stage:"Marked sub-judice",by:SESSION.name,when:fmtDate(new Date())});addAudit('SUBJUDICE','Marked '+id+' sub-judice');toast('Case marked sub-judice');}
+ if(action==='close'){x.status="Closed";x.history.push({stage:"Case closed",by:SESSION.name,when:fmtDate(new Date())});addAudit('CLOSE_CASE','Closed '+id);toast('Case closed');}
+ x.updated=fmtDate(new Date());DB.set(STATE);go('casedetail',id);}
 /* ================= APPROVALS ================= */
 const MONS={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+/* Dates are shown DD-MMM-YYYY everywhere (Indian convention); pdate() reads that back. */
+function fmtDate(d){if(!d)return '';const x=(d instanceof Date)?d:(pdate(d)||new Date(d));if(isNaN(x))return String(d);
+ const MM=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+ return String(x.getDate()).padStart(2,'0')+'-'+MM[x.getMonth()]+'-'+x.getFullYear();}
+function fmtDT(d){const x=(d instanceof Date)?d:new Date(d);
+ return fmtDate(x)+', '+x.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false});}
 function pdate(s){if(!s)return null;s=String(s).trim();let m;
  if((m=s.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/)))return new Date(+m[3],MONS[m[2].toLowerCase()],+m[1]);
  if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)))return new Date(+m[1],+m[2]-1,+m[3]);
@@ -504,8 +547,8 @@ function apBulkApprove(){const ids=apSel.slice();
   '<button class="btn prim" onclick="apBulkGo()">'+ic('TickCircle',17)+'Approve all '+ids.length+'</button>');}
 function apBulkGo(){const ids=apSel.slice();closeModal();
  ids.forEach(i=>{const x=findCase(i);if(!x||x.status!=="Registered")return;
-   x.status="Active";x.history.push({stage:"Command approved",by:SESSION.name,when:new Date().toLocaleDateString('en-IN')});
-   x.updated=new Date().toLocaleDateString('en-IN');addAudit('APPROVE_CASE','Approved '+i);});
+   x.status="Active";x.history.push({stage:"Command approved",by:SESSION.name,when:fmtDate(new Date())});
+   x.updated=fmtDate(new Date());addAudit('APPROVE_CASE','Approved '+i);});
  DB.set(STATE);apSel=[];toast(ids.length+' cases approved and set Active');go('approvals');}
 /* ================= REPORTS ================= */
 function vReports(m){
@@ -531,22 +574,22 @@ function exportReportCsv(){const{c,title}=reportData();
 function genReport(){const{c,title}=reportData();
  const wm=(SESSION.name+' · ADG HR · CONFIDENTIAL · '+SESSION.ip+' · ').repeat(80);
  document.getElementById('reportArea').innerHTML='<div class="card sheet"><div class="wm"><span>'+wm+'</span></div>'+
-   '<div class="rh"><b>Additional Directorate General of Human Rights</b><div>MAARK 2.0 &middot; '+title+' &middot; generated '+new Date().toLocaleDateString('en-IN')+'</div></div>'+
-   '<div class="tblwrap"><table class="tbl"><thead><tr><th>Case No</th><th>Applicant</th><th>Member</th><th>Command</th><th>Maintenance</th><th>Status</th></tr></thead><tbody>'+
-   (c.length?c.map(x=>'<tr><td>'+x.id+'</td><td>'+esc(x.applicant)+'</td><td>'+esc(x.memberName)+'</td><td>'+x.command+'</td><td>'+(x.maintenance||'-')+'</td><td>'+statTag(x.status)+'</td></tr>').join(''):'<tr><td colspan="6" class="muted" style="text-align:center;padding:20px">No records.</td></tr>')+
+   '<div class="rh"><b>Additional Directorate General of Human Rights</b><div>MAARK 2.0 &middot; '+title+' &middot; generated '+fmtDate(new Date())+'</div></div>'+
+   '<div class="tblwrap"><table class="tbl"><thead><tr><th>Case No</th><th>Applicant</th><th>Member</th><th>Command</th><th class="num">Maintenance</th><th>Status</th></tr></thead><tbody>'+
+   (c.length?c.map(x=>'<tr><td>'+x.id+'</td><td>'+esc(x.applicant)+'</td><td>'+esc(x.memberName)+'</td><td>'+x.command+'</td><td class="num">'+(x.maintenance||'-')+'</td><td>'+statTag(x.status)+'</td></tr>').join(''):'<tr><td colspan="6" class="muted" style="text-align:center;padding:20px">No records.</td></tr>')+
    '</tbody></table></div><div style="text-align:center;color:var(--text-4);font-size:12px;margin-top:14px;position:relative">Digitally watermarked with machine IP, user ID and timestamp</div></div>';
  addAudit('GENERATE_REPORT',title);
 }
 /* ================= CMS ================= */
 function vCms(m){const s=STATE.cms;
  m.innerHTML='<div class="crumb">Home / Content Management</div><div class="pagehead"><div><div class="h2">Content Management System</div><div class="pagesub">Text and pages shown to unit users inside the portal.</div></div></div>'+
- '<div class="row2"><div class="card" style="flex:1;min-width:280px"><div class="sech"><span class="b"></span>Web Settings</div>'+
+ '<div class="row2"><div class="card" style="flex:1;min-width:280px"><div class="sech">Web Settings</div>'+
    '<div class="f"><label>Portal title</label><input id="cms_t" value="'+esc(s.portalTitle)+'"></div>'+
    '<div class="f"><label>Home banner text</label><input id="cms_b" value="'+esc(s.banner)+'"></div>'+
    '<div class="f"><label>Theme</label><select id="cms_th"><option '+(s.theme==='Light Green'?'selected':'')+'>Light Green</option><option '+(s.theme==='Dark Green'?'selected':'')+'>Dark Green</option><option '+(s.theme==='Violet'?'selected':'')+'>Violet</option></select></div>'+
    '<div class="f"><label>Notice</label><textarea id="cms_n">'+esc(s.notice)+'</textarea></div>'+
    '<button class="btn prim" onclick="saveCms()">'+ic('TickCircle',17)+'Save Settings</button></div>'+
- '<div class="card" style="flex:1;min-width:280px"><div class="sech"><span class="b"></span>Pages and Content</div>'+
+ '<div class="card" style="flex:1;min-width:280px"><div class="sech">Pages and Content</div>'+
    s.pages.map((p,i)=>'<div class="aitem" style="cursor:default">'+esc(p)+'<span class="act" style="margin-left:auto" onclick="editPageIdx('+i+')">'+ic('Edit2',15)+'Edit content</span><span class="act" onclick="deletePageIdx('+i+')">'+ic('Trash',15)+'Remove page</span></div>').join('')+
    '<button class="btn ghost sm" style="margin-top:12px" onclick="addPage()">'+ic('AddCircle',16)+'Add new page</button></div></div>'+
  '<div class="muted" style="font-size:12.5px;margin-top:12px">Every content change is audit-logged. Access is limited to the Super Admin.</div>';
@@ -575,17 +618,23 @@ function confirmDeletePage(i){const name=STATE.cms.pages[i];STATE.cms.pages.spli
 /* ================= AUDIT ================= */
 function vAudit(m){const a=STATE.audit;
  m.innerHTML='<div class="crumb">Home / Audit Log</div><div class="pagehead"><div><div class="h2">Audit Log</div><div class="pagesub">Every action taken in the portal, with user, role and time.</div></div></div>'+
- '<div class="tools"><span class="fieldwrap"><span class="fic">'+ic('SearchNormal1',16)+'</span><input class="inp search-i" id="auq" placeholder="Search the log" oninput="drawAudit()"></span><div class="sp" style="flex:1"></div><button class="btn ghost" onclick="exportAudit()">'+ic('DocumentDownload',17)+'Export to CSV</button></div>'+
+ '<div class="tools"><span class="fieldwrap"><span class="fic">'+ic('SearchNormal1',16)+'</span><input class="inp search-i" id="auq" placeholder="Search the log" oninput="audPg.page=1;drawAudit()"></span><div class="sp" style="flex:1"></div><button class="btn ghost" onclick="exportAudit()">'+ic('DocumentDownload',17)+'Export to CSV</button></div>'+
  '<div id="audtable"></div>';drawAudit();
 }
 function exportAudit(){const rows=[['Timestamp','User','Role','Action','Detail','IP']].concat(STATE.audit.map(x=>[x.ts,x.user,x.role,x.action,x.detail,x.ip]));
  downloadCsv('MAARK-Audit-Log.csv',rows);toast('Audit log exported to CSV ('+STATE.audit.length+' events)');}
-function drawAudit(){let a=STATE.audit;const q=(document.getElementById('auq')||{}).value;
- if(q){const s=q.toLowerCase();a=a.filter(x=>(x.action+x.user+x.detail+x.role).toLowerCase().includes(s));}
- if(!a.length){document.getElementById('audtable').innerHTML=emptyState('ShieldTick','No matching events','Try a different search term, or clear the search to see the full log.');return;}
- document.getElementById('audtable').innerHTML='<div class="tblwrap"><table class="tbl"><thead><tr><th>Timestamp</th><th>User</th><th>Role</th><th>Action</th><th>Detail</th><th>IP</th></tr></thead><tbody>'+
-   a.map(x=>'<tr><td style="font-size:12.5px">'+esc(x.ts)+'</td><td>'+esc(x.user)+'</td><td><span class="stat s-Closed">'+esc(x.role)+'</span></td><td><b>'+esc(x.action)+'</b></td><td class="muted" style="font-size:12.5px">'+esc(x.detail)+'</td><td style="font-size:12.5px">'+esc(x.ip)+'</td></tr>').join('')+
- '</tbody></table></div><div class="pager">Showing '+a.length+' events<span style="flex:1"></span><span class="pg">Previous</span><span class="pg on">1</span><span class="pg">Next</span></div>';}
+let audPg={page:1,per:10};
+function audPage(n){const t=audRows().length,last=Math.max(1,Math.ceil(t/audPg.per));audPg.page=Math.min(Math.max(1,n),last);drawAudit();}
+function audPer(v){audPg.per=+v;audPg.page=1;drawAudit();}
+function audRows(){let a=STATE.audit;const q=(document.getElementById('auq')||{}).value;
+ if(q){const s=q.toLowerCase();a=a.filter(x=>(x.action+x.user+x.detail+x.role).toLowerCase().includes(s));}return a;}
+function drawAudit(){const all=audRows();
+ if(!all.length){document.getElementById('audtable').innerHTML=emptyState('ShieldTick','No matching events','Try a different search term, or clear the search to see the full log.');return;}
+ const last=Math.max(1,Math.ceil(all.length/audPg.per));if(audPg.page>last)audPg.page=last;
+ const a=pageSlice(all,audPg.page,audPg.per);
+ document.getElementById('audtable').innerHTML='<div class="tblwrap"><table class="tbl"><thead><tr><th>Timestamp</th><th>User</th><th>Role</th><th>Action</th><th>Detail</th><th class="num">IP</th></tr></thead><tbody>'+
+   a.map(x=>'<tr><td style="font-size:12.5px">'+esc(x.ts)+'</td><td>'+esc(x.user)+'</td><td><span class="stat s-Closed">'+esc(x.role)+'</span></td><td><b>'+esc(x.action)+'</b></td><td class="muted" style="font-size:12.5px">'+esc(x.detail)+'</td><td class="num" style="font-size:12.5px">'+esc(x.ip)+'</td></tr>').join('')+
+ '</tbody></table></div>'+tblFoot('aud',audPg.page,audPg.per,all.length);}
 /* ================= AI ASSISTANT ================= */
 const AI_STARTERS=[
  {cat:'Case data',ic:'Chart21',q:'How many active cases?'},
