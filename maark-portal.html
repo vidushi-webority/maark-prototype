@@ -220,7 +220,7 @@ a{color:inherit}
     <div class="brand" onclick="go('dashboard')">MAARK<small>2.0 &middot; ADG HR</small></div>
     <input class="search" id="globalSearch" placeholder="Search case number, applicant, Army number" oninput="globalSearch(this.value)">
     <div class="sp"></div>
-    <div class="chip2" onclick="go('assistant')">Assistant</div>
+    <div class="chip2" onclick="go('assistant')">Ask AI Assistant</div>
     <div class="chip2"><span class="dot" id="uAv">A</span><span id="uName">User</span></div>
     <button class="lo" onclick="logout()">Logout</button>
   </div>
@@ -316,6 +316,20 @@ function addAudit(action,detail){STATE.audit.unshift({ts:new Date().toLocaleStri
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function statTag(s){return '<span class="stat s-'+s.replace(/\s/g,'-')+'">'+s+'</span>';}
 function toast(msg,type){const t=document.createElement('div');t.className='toast'+(type==='err'?' err':'');t.textContent=msg;document.getElementById('toastWrap').appendChild(t);setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.remove(),300)},2600);}
+function modal(title,bodyHtml,footHtml){document.getElementById('modalRoot').innerHTML='<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="mh"><h3>'+title+'</h3><button class="x" onclick="closeModal()">&times;</button></div><div class="mb">'+bodyHtml+'</div>'+(footHtml?'<div class="mf">'+footHtml+'</div>':'')+'</div></div>';}
+function closeModal(){document.getElementById('modalRoot').innerHTML='';}
+function downloadCsv(name,rows){const csv=rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+ const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+function uploadDemo(el,name){el.innerHTML='&#10003; '+name+' attached';el.style.color='var(--ok)';el.style.borderColor='var(--ok)';el.style.background='var(--ok-bg)';}
+function previewDoc(id,name){const wm=(SESSION.name+' · '+SESSION.ip+' · CONFIDENTIAL · ').repeat(60);
+ modal('Document preview',
+  '<div class="muted" style="font-size:12.5px;margin-bottom:10px">'+esc(name)+' &middot; case '+id+'</div>'+
+  '<div class="card sheet" style="min-height:300px"><div class="wm"><span>'+wm+'</span></div>'+
+   '<div class="rh"><b>Additional Directorate General of Human Rights</b><div>MAARK 2.0 &middot; secure document viewer</div></div>'+
+   '<div style="position:relative;font-size:13px;color:var(--text);line-height:1.6">This is a watermarked, read-only preview of <b>'+esc(name)+'</b>. In the live system the original PDF is decrypted on the server, stamped with the viewer\'s IP, user ID and timestamp, and streamed for viewing only; printing and download are controlled by role.</div></div>',
+  '<button class="btn ghost" onclick="closeModal()">Close preview</button>');
+ addAudit('VIEW_DOCUMENT','Previewed '+name+' on '+id);}
 /* ================= NAV / ROUTER ================= */
 const NAV={
  "Super Admin":[["dashboard","Dashboard"],["registered","Registered Cases"],["approvals","Approvals"],["reports","Reports"],["_a","Administration"],["cms","Content Management"],["audit","Audit Log"],["assistant","AI Assistant"]],
@@ -351,7 +365,7 @@ function vDashboard(m){
      '<div class="barwrap">'+COMMANDS.map(k=>'<div class="bar" style="height:'+Math.round(byCmd[k]/maxB*100)+'%"><span>'+byCmd[k]+'</span></div>').join('')+'</div>'+
      '<div class="barlbl">'+COMMANDS.map(k=>'<span>'+k.replace('South Western','SW')+'</span>').join('')+'</div></div>'+
    '<div class="card" style="flex:1;min-width:240px"><h3><span class="b"></span>Pending Approvals</h3>'+
-     (pend.length?pend.slice(0,6).map(x=>'<div class="aitem" onclick="go(\'casedetail\',\''+x.id+'\')">'+x.id+' &middot; '+esc(x.applicant)+'<span class="lvl">1 up</span></div>').join(''):'<div class="muted" style="padding:10px 0">No cases pending your action.</div>')+
+     (pend.length?pend.slice(0,6).map(x=>'<div class="aitem" onclick="go(\'casedetail\',\''+x.id+'\')">'+x.id+' &middot; '+esc(x.applicant)+'<span class="lvl">Review &middot; 1 level up</span></div>').join(''):'<div class="muted" style="padding:10px 0">No cases pending your action.</div>')+
    '</div>'+
  '</div>'+
  '<div class="card" style="margin-top:16px"><h3><span class="b"></span>Recent Cases</h3><div class="tblwrap"><table class="tbl"><thead><tr><th>Case No</th><th>Applicant</th><th>Command</th><th>Status</th><th>Updated</th></tr></thead><tbody>'+
@@ -368,7 +382,7 @@ function vRegistered(m,arg){
  m.innerHTML='<div class="crumb">Home / Registered Cases</div><div class="h2">Registered Cases</div>'+
  '<div class="tools"><input class="inp search-i" id="regq" placeholder="Search case number, applicant, Army number" value="'+esc(regFilter.q)+'" oninput="regFilter.q=this.value;drawReg()">'+
    '<select class="inp" onchange="regFilter.cmd=this.value;drawReg()"><option value="">All Commands</option>'+COMMANDS.map(k=>'<option'+(regFilter.cmd===k?' selected':'')+'>'+k+'</option>').join('')+'</select>'+
-   '<div class="sp" style="flex:1"></div>'+(canNew?'<button class="btn prim" onclick="go(\'newcase\')">+ New Case</button>':'')+'</div>'+
+   '<div class="sp" style="flex:1"></div>'+(canNew?'<button class="btn prim" onclick="go(\'newcase\')">+ Register new case</button>':'')+'</div>'+
  '<div class="pills" id="regpills">'+
    ['all','Registered','Active','Sub-judice','Closed'].map(s=>'<span class="pill'+(regFilter.status===s?' on':'')+'" onclick="regFilter.status=\''+s+'\';drawReg()">'+(s==='all'?'All':s)+'<b>'+(s==='all'?c.length:cnt(s))+'</b></span>').join('')+'</div>'+
  '<div id="regtable"></div>';
@@ -379,15 +393,15 @@ function regRows(){let c=scoped();if(regFilter.status!=='all')c=c.filter(x=>x.st
  if(regFilter.q){const q=regFilter.q.toLowerCase();c=c.filter(x=>(x.id+x.applicant+x.armyNo+x.command).toLowerCase().includes(q));}return c;}
 function drawReg(){const c=regRows();const canEdit=SESSION.role!=="Super Admin";
  document.getElementById('regtable').innerHTML=c.length?'<div class="tblwrap"><table class="tbl"><thead><tr><th>Case No</th><th>Applicant</th><th>Member</th><th>Command</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead><tbody>'+
-   c.map(x=>'<tr><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+esc(x.memberName)+' <span class="muted">('+x.armyNo+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td>'+x.updated+'</td><td><span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">View</span>'+(canEdit?'<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">Edit</span>':'')+'</td></tr>').join('')+
+   c.map(x=>'<tr><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+esc(x.memberName)+' <span class="muted">('+x.armyNo+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td>'+x.updated+'</td><td><span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">View case</span>'+(canEdit?'<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">Open and edit</span>':'')+'</td></tr>').join('')+
  '</tbody></table></div><div class="pager">Showing '+c.length+' of '+scoped().length+' cases <span class="sp" style="flex:1"></span><span class="pg on">1</span></div>':'<div class="card muted" style="text-align:center;padding:30px">No matching cases.</div>';}
 /* ================= NEW CASE ================= */
 function vNewCase(m){
  m.innerHTML='<div class="crumb">Home / New Case</div>'+
  '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px"><div class="h2" style="margin:0">New Case &middot; Data Entry</div><div class="sp" style="flex:1"></div>'+
-   '<button class="btn ghost" onclick="submitCase(true)">Save Draft</button><button class="btn prim" onclick="submitCase(false)">Submit for Approval</button></div>'+
+   '<button class="btn ghost" onclick="submitCase(true)">Save as draft</button><button class="btn prim" onclick="submitCase(false)">Submit case for approval</button></div>'+
  '<div class="card" style="margin-bottom:16px"><div class="sech"><span class="b"></span>Service Personnel (fetched by Army number)</div><div class="grid3">'+
-   f("Army number","nc_army","text","e.g. IC-50231",true,'Enter and click Fetch','<button class="btn ghost sm" style="margin-top:8px" onclick="fetchSvc()">Fetch details</button>')+
+   f("Army number","nc_army","text","e.g. IC-50231",true,'Enter the Army number, then fetch the service record','<button class="btn ghost sm" style="margin-top:8px" onclick="fetchSvc()">Fetch service record</button>')+
    f("Rank","nc_rank")+f("Name of member","nc_mname")+f("Unit","nc_unit")+f("Command","nc_cmd")+f("Monthly salary","nc_salary")+
  '</div></div>'+
  '<div class="card" style="margin-bottom:16px"><div class="sech"><span class="b"></span>Applicant Details</div><div class="grid3">'+
@@ -410,9 +424,9 @@ function vNewCase(m){
    f("Dependent card number","nc_dep")+f("CSD card number","nc_csd")+sel("Employability","nc_ability",["No","Yes"])+
  '</div></div>'+
  '<div class="card"><div class="sech"><span class="b"></span>Documents (PDF, multiple, size limited)</div><div class="grid3">'+
-   '<div class="f"><label>Proof of marriage <span class="req">*</span></label><div class="up">Upload PDF</div></div>'+
-   '<div class="f"><label>Affidavit <span class="req">*</span></label><div class="up">Upload PDF</div></div>'+
-   '<div class="f"><label>Supporting documents</label><div class="up">Upload multiple PDF</div></div>'+
+   '<div class="f"><label>Proof of marriage <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Proof-of-marriage.pdf\')">Click to upload PDF</div></div>'+
+   '<div class="f"><label>Affidavit <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Affidavit.pdf\')">Click to upload PDF</div></div>'+
+   '<div class="f"><label>Supporting documents</label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Supporting-documents.pdf\')">Click to upload one or more PDFs</div></div>'+
  '</div></div>';
 }
 function f(label,id,type,ph,req,hint,extra){return '<div class="f"><label>'+label+(req?' <span class="req">*</span>':'')+'</label><input id="'+id+'" type="'+(type||'text')+'" placeholder="'+(ph||'')+'">'+(hint?'<div class="hint">'+hint+'</div>':'')+(extra||'')+'</div>';}
@@ -446,8 +460,8 @@ function vCaseDetail(m,id){
  m.innerHTML='<div class="crumb">Home / Registered Cases / '+id+'</div>'+
  '<div class="chead"><div class="no">'+id+'</div>'+statTag(x.status)+'<div class="sp"></div>'+
    (x.status!=="Closed"?'<div class="timer">SLA: 172 days left</div>':'')+
-   (canAct&&x.status==="Registered"?'<button class="btn ghost sm" onclick="caseAction(\''+id+'\',\'sendback\')">Send back</button> <button class="btn prim sm" onclick="caseAction(\''+id+'\',\'approve\')">Approve</button>':'')+
-   (canAct&&x.status==="Active"?'<button class="btn ghost sm" onclick="caseAction(\''+id+'\',\'subjudice\')">Mark sub-judice</button> <button class="btn prim sm" onclick="caseAction(\''+id+'\',\'close\')">Close case</button>':'')+
+   (canAct&&x.status==="Registered"?'<button class="btn ghost sm" onclick="caseAction(\''+id+'\',\'sendback\')">Send back to unit</button> <button class="btn prim sm" onclick="caseAction(\''+id+'\',\'approve\')">Approve case</button>':'')+
+   (canAct&&x.status==="Active"?'<button class="btn ghost sm" onclick="caseAction(\''+id+'\',\'subjudice\')">Mark as sub-judice</button> <button class="btn prim sm" onclick="caseAction(\''+id+'\',\'close\')">Close case</button>':'')+
    (canAct&&x.status==="Sub-judice"?'<button class="btn prim sm" onclick="caseAction(\''+id+'\',\'close\')">Close case</button>':'')+
  '</div>'+
  '<div class="metaline">Applicant: <b>'+esc(x.applicant)+' ('+x.relation+')</b> &middot; Member: <b>'+esc(x.memberName)+' ('+x.armyNo+')</b> &middot; Command: <b>'+x.command+'</b></div>'+
@@ -471,7 +485,7 @@ function cdBody(x){
    kv("Guardian / Parent",(x.guardian||'-')+" / "+(x.parent||'-'))+kv("Estranged spouse employment",x.spouseEmployment||'-')+
    kv("Dependent card / CSD",(x.dependentCard||'-')+" / "+(x.csdCard||'-'))+kv("Employability",x.employability||'-')+'</div>';}
  if(cdTab==="Documents"){return '<div class="card"><h3><span class="b"></span>Documents</h3>'+
-   x.docs.map(d=>'<div class="aitem" style="cursor:default">'+esc(d)+'<span class="act" style="margin-left:auto" onclick="toast(\'Watermarked preview (demo)\')">Preview</span></div>').join('')+'</div>';}
+   x.docs.map(d=>'<div class="aitem" style="cursor:default">'+esc(d)+'<span class="act" style="margin-left:auto" onclick="previewDoc(\''+x.id+'\',\''+d.replace(/'/g,"")+'\')">Preview document</span></div>').join('')+'</div>';}
  if(cdTab==="History"){return '<div class="card"><h3><span class="b"></span>Case history</h3>'+
    x.history.map(h=>'<div class="aitem" style="cursor:default"><b style="color:var(--ink)">'+esc(h.stage)+'</b><span class="muted" style="margin-left:auto">'+esc(h.by)+' &middot; '+h.when+'</span></div>').join('')+'</div>';}
  // Notings
@@ -505,9 +519,9 @@ function vApprovals(m){
  '<div class="card">'+(c.length?c.map(x=>
    '<div class="aitem" style="cursor:default;align-items:flex-start"><div style="flex:1.4"><b style="color:var(--ink)">'+x.id+'</b><br><span class="muted" style="font-size:12px">'+esc(x.applicant)+' ('+x.relation+')</span></div>'+
    '<div style="flex:2.2;color:var(--text)">'+esc(x.memberName)+' &middot; '+x.command+' &middot; maintenance '+(x.maintenance||'-')+'</div>'+
-   '<div style="margin-left:auto;white-space:nowrap"><button class="btn ghost sm" onclick="caseAction(\''+x.id+'\',\'sendback\');go(\'approvals\')">Send back</button> '+
-   '<button class="btn prim sm" onclick="caseAction(\''+x.id+'\',\'approve\');go(\'approvals\')">Approve</button> '+
-   '<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">Open</span></div></div>').join(''):'<div class="muted" style="padding:16px 0">No cases pending your action.</div>')+'</div>';
+   '<div style="margin-left:auto;white-space:nowrap"><button class="btn ghost sm" onclick="caseAction(\''+x.id+'\',\'sendback\');go(\'approvals\')">Send back to unit</button> '+
+   '<button class="btn prim sm" onclick="caseAction(\''+x.id+'\',\'approve\');go(\'approvals\')">Approve case</button> '+
+   '<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">Open full case</span></div></div>').join(''):'<div class="muted" style="padding:16px 0">No cases pending your action.</div>')+'</div>';
 }
 /* ================= REPORTS ================= */
 function vReports(m){
@@ -516,16 +530,22 @@ function vReports(m){
    '<select class="inp" id="rt" style="min-width:230px"><option value="summary">Case Summary Report</option><option value="cmd">Command-wise Report</option><option value="pending">Pending Approvals Report</option></select>'+
    '<select class="inp" id="rcmd"><option value="">All Commands</option>'+COMMANDS.map(k=>'<option>'+k+'</option>').join('')+'</select>'+
    '<select class="inp" id="rstat"><option value="">All Status</option>'+["Registered","Active","Sub-judice","Closed"].map(s=>'<option>'+s+'</option>').join('')+'</select>'+
-   '<div class="sp" style="flex:1"></div><button class="btn prim" onclick="genReport()">Generate</button>'+
-   '<button class="btn ghost" onclick="toast(\'Exported to CSV (demo)\')">Export CSV</button><button class="btn ghost" onclick="window.print()">Print</button></div></div>'+
+   '<div class="sp" style="flex:1"></div><button class="btn prim" onclick="genReport()">Generate report</button>'+
+   '<button class="btn ghost" onclick="exportReportCsv()">Export to CSV</button><button class="btn ghost" onclick="window.print()">Print report</button></div></div>'+
  '<div id="reportArea"></div>';genReport();
 }
-function genReport(){const type=document.getElementById('rt').value;let c=scoped();
+function reportData(){const type=document.getElementById('rt').value;let c=scoped();
  const cmd=document.getElementById('rcmd').value,st=document.getElementById('rstat').value;
  if(cmd)c=c.filter(x=>x.command===cmd);if(st)c=c.filter(x=>x.status===st);
  if(type==='pending')c=c.filter(x=>x.status==="Registered");
- const wm=(SESSION.name+' · ADG HR · CONFIDENTIAL · '+SESSION.ip+' · ').repeat(80);
  const title=type==='cmd'?'Command-wise Report':type==='pending'?'Pending Approvals Report':'Case Summary Report';
+ return {c,title};}
+function exportReportCsv(){const{c,title}=reportData();
+ const rows=[['Case No','Applicant','Relation','Member','Army No','Command','Maintenance','Status']]
+   .concat(c.map(x=>[x.id,x.applicant,x.relation,x.memberName,x.armyNo,x.command,x.maintenance||'-',x.status]));
+ downloadCsv('MAARK-'+title.replace(/\s+/g,'-')+'.csv',rows);addAudit('EXPORT_REPORT',title+' exported to CSV');toast('Report exported to CSV ('+c.length+' rows)');}
+function genReport(){const{c,title}=reportData();
+ const wm=(SESSION.name+' · ADG HR · CONFIDENTIAL · '+SESSION.ip+' · ').repeat(80);
  document.getElementById('reportArea').innerHTML='<div class="card sheet"><div class="wm"><span>'+wm+'</span></div>'+
    '<div class="rh"><b>Additional Directorate General of Human Rights</b><div>MAARK 2.0 &middot; '+title+' &middot; generated '+new Date().toLocaleDateString('en-IN')+'</div></div>'+
    '<div class="tblwrap"><table class="tbl"><thead><tr><th>Case No</th><th>Applicant</th><th>Member</th><th>Command</th><th>Maintenance</th><th>Status</th></tr></thead><tbody>'+
@@ -543,17 +563,39 @@ function vCms(m){const s=STATE.cms;
    '<div class="f"><label>Notice</label><textarea id="cms_n">'+esc(s.notice)+'</textarea></div>'+
    '<button class="btn prim" onclick="saveCms()">Save Settings</button></div>'+
  '<div class="card" style="flex:1;min-width:280px"><div class="sech"><span class="b"></span>Pages and Content</div>'+
-   s.pages.map(p=>'<div class="aitem" style="cursor:default">'+esc(p)+'<span class="act" style="margin-left:auto" onclick="toast(\'Editing '+esc(p)+' (demo)\')">Edit</span></div>').join('')+
-   '<button class="btn ghost sm" style="margin-top:12px" onclick="toast(\'Add page (demo)\')">+ Add page</button></div></div>'+
+   s.pages.map((p,i)=>'<div class="aitem" style="cursor:default">'+esc(p)+'<span class="act" style="margin-left:auto" onclick="editPageIdx('+i+')">Edit content</span><span class="act" onclick="deletePageIdx('+i+')">Remove page</span></div>').join('')+
+   '<button class="btn ghost sm" style="margin-top:12px" onclick="addPage()">+ Add new page</button></div></div>'+
  '<div class="muted" style="font-size:12.5px;margin-top:12px">Every content change is audit-logged. Access is limited to the Super Admin.</div>';
 }
-function saveCms(){STATE.cms.portalTitle=val('cms_t');STATE.cms.banner=val('cms_b');STATE.cms.theme=document.getElementById('cms_th').value;STATE.cms.notice=val('cms_n');DB.set(STATE);addAudit('CMS_UPDATE','Updated web settings');toast('Settings saved');}
+function saveCms(){STATE.cms.portalTitle=val('cms_t');STATE.cms.banner=val('cms_b');STATE.cms.theme=document.getElementById('cms_th').value;STATE.cms.notice=val('cms_n');DB.set(STATE);addAudit('CMS_UPDATE','Updated web settings');toast('Web settings saved');}
+function editPageIdx(i){const name=STATE.cms.pages[i];const content=(STATE.cms.content&&STATE.cms.content[name])||('Draft content for the '+name+' page.');
+ modal('Edit page: '+esc(name),
+  '<div class="f"><label>Page title</label><input id="pg_t" value="'+esc(name)+'"></div>'+
+  '<div class="f"><label>Page content</label><textarea id="pg_c" style="height:150px">'+esc(content)+'</textarea></div>',
+  '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" onclick="savePageIdx('+i+')">Save page</button>');}
+function savePageIdx(i){const old=STATE.cms.pages[i];const nt=(val('pg_t')||old);const c=document.getElementById('pg_c').value;
+ STATE.cms.content=STATE.cms.content||{};STATE.cms.pages[i]=nt;if(old!==nt)delete STATE.cms.content[old];STATE.cms.content[nt]=c;
+ DB.set(STATE);addAudit('CMS_PAGE','Edited page: '+nt);closeModal();toast('Page saved');go('cms');}
+function addPage(){modal('Add new page',
+  '<div class="f"><label>Page title</label><input id="pg_nt" placeholder="e.g. Grievance redressal"></div>'+
+  '<div class="f"><label>Page content</label><textarea id="pg_nc" style="height:120px" placeholder="Page text..."></textarea></div>',
+  '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" onclick="createPage()">Add page</button>');}
+function createPage(){const t=val('pg_nt');if(!t){toast('Enter a page title','err');return;}
+ STATE.cms.content=STATE.cms.content||{};STATE.cms.pages.push(t);STATE.cms.content[t]=document.getElementById('pg_nc').value;
+ DB.set(STATE);addAudit('CMS_PAGE','Added page: '+t);closeModal();toast('Page added');go('cms');}
+function deletePageIdx(i){const name=STATE.cms.pages[i];
+ modal('Remove page','<p style="font-size:14px;color:var(--text)">Remove the page <b>'+esc(name)+'</b>? This is audit-logged.</p>',
+  '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" style="background:#B3261E" onclick="confirmDeletePage('+i+')">Remove page</button>');}
+function confirmDeletePage(i){const name=STATE.cms.pages[i];STATE.cms.pages.splice(i,1);if(STATE.cms.content)delete STATE.cms.content[name];
+ DB.set(STATE);addAudit('CMS_PAGE','Removed page: '+name);closeModal();toast('Page removed');go('cms');}
 /* ================= AUDIT ================= */
 function vAudit(m){const a=STATE.audit;
  m.innerHTML='<div class="crumb">Home / Audit Log</div><div class="h2">Audit Log</div>'+
- '<div class="tools"><input class="inp search-i" id="auq" placeholder="Search action, user, detail" oninput="drawAudit()"><div class="sp" style="flex:1"></div><button class="btn ghost" onclick="toast(\'Exported (demo)\')">Export</button></div>'+
+ '<div class="tools"><input class="inp search-i" id="auq" placeholder="Search action, user, detail" oninput="drawAudit()"><div class="sp" style="flex:1"></div><button class="btn ghost" onclick="exportAudit()">Export to CSV</button></div>'+
  '<div id="audtable"></div>';drawAudit();
 }
+function exportAudit(){const rows=[['Timestamp','User','Role','Action','Detail','IP']].concat(STATE.audit.map(x=>[x.ts,x.user,x.role,x.action,x.detail,x.ip]));
+ downloadCsv('MAARK-Audit-Log.csv',rows);toast('Audit log exported to CSV ('+STATE.audit.length+' events)');}
 function drawAudit(){let a=STATE.audit;const q=(document.getElementById('auq')||{}).value;
  if(q){const s=q.toLowerCase();a=a.filter(x=>(x.action+x.user+x.detail+x.role).toLowerCase().includes(s));}
  document.getElementById('audtable').innerHTML='<div class="tblwrap"><table class="tbl"><thead><tr><th>Timestamp</th><th>User</th><th>Role</th><th>Action</th><th>Detail</th><th>IP</th></tr></thead><tbody>'+
@@ -566,7 +608,7 @@ function vAssistant(m){
  '<div class="card"><div style="background:var(--lav);border-radius:8px;padding:9px 14px;font-size:12.5px;color:var(--v2);margin-bottom:14px">On-premise and offline. Answers from the policies and the case data you are permitted to see.</div>'+
  '<div class="chat" id="chat">'+chat.map(c=>'<div class="msg '+c.who+'">'+c.text+'</div>').join('')+'</div>'+
  '<div class="pills" style="margin:14px 0 12px">'+["How many active cases?","Pending approvals","Show MNT/2026/0142","Eligibility rules"].map(q=>'<span class="pill" onclick="askAi(\''+q.replace(/'/g,"")+'\')">'+q+'</span>').join('')+'</div>'+
- '<div style="display:flex;gap:10px"><input class="inp" id="aiq" style="flex:1" placeholder="Ask a question..." onkeydown="if(event.key===\'Enter\')askAi(this.value)"><button class="btn prim" onclick="askAi(document.getElementById(\'aiq\').value)">Send</button></div></div>';
+ '<div style="display:flex;gap:10px"><input class="inp" id="aiq" style="flex:1" placeholder="Ask a question..." onkeydown="if(event.key===\'Enter\')askAi(this.value)"><button class="btn prim" onclick="askAi(document.getElementById(\'aiq\').value)">Send question</button></div></div>';
  const ch=document.getElementById('chat');ch.scrollTop=ch.scrollHeight;
 }
 function askAi(q){q=(q||'').trim();if(!q)return;chat.push({who:'me',text:esc(q)});chat.push({who:'bot',text:aiAnswer(q)});
