@@ -1,5 +1,6 @@
 /* ================= DATA ================= */
-const KEY="maark_portal_v3";
+const KEY="maark_portal_v6";
+const STATUSES=["Draft","In Progress","Resolved","Closed"];
 const COMMANDS=["Northern","Western","Central","Eastern","Southern","South Western"];
 const OFFICERS={
  "IC-50231":{rank:"Maj",name:"S. Rao",unit:"12 RAJRIF",command:"Western",salary:128000},
@@ -10,27 +11,42 @@ const OFFICERS={
 };
 function seed(){
  const now=Date.now();
- const mk=(id,applicant,relation,armyNo,category,maint,status,command,notings,daysAgo)=>{
+ const mk=(id,applicant,relation,armyNo,category,maint,status,command,notings,daysAgo,extra)=>{
    const o=OFFICERS[armyNo]||{rank:"",name:"",unit:"",command:command,salary:0};
-   return {id,applicant,relation,ageNow:"48",ageFiling:"46",contact:"98765xxxxx",aadhaar:"XXXX-XXXX-1234",
+   return Object.assign({id,applicant,relation,ageNow:"48",ageFiling:"46",contact:"98765xxxxx",aadhaar:"XXXX-XXXX-1234",
      address:"Village & PO, District, State", armyNo, rank:o.rank, memberName:o.name, unit:o.unit,
      command:o.command||command, salary:o.salary, category, type:"Spouse maintenance", maintenance:maint,
      appDate:"10-Aug-2026", filedDate:"12-Aug-2026", status, guardian:"", parent:"Smt. Kamla Devi",
      spouseEmployment:"Unemployed", dependentCard:"DC-"+id.slice(-4), csdCard:"CSD-"+id.slice(-4), employability:"No",
      docs:["Proof of marriage.pdf","Affidavit.pdf"], notings:notings||[], history:[{stage:"Unit filed",by:"Unit clerk",when:"12-Aug-2026"}],
-     updated:fmtDate(new Date(now-daysAgo*864e5))};
+     approved:false, subJudice:false, court:null, resolution:null,
+     updated:fmtDate(new Date(now-daysAgo*864e5))},extra||{});
  };
  const cases=[
-   mk("MNT/2026/0142","Smt. A. Devi","Wife","IC-50231","Maintenance","25%","Active","Western",
-     [{by:"Brigade Headquarters",role:"Approver",text:"Verification complete. Marriage proof and affidavit are in order.",colour:"green",frozen:true,when:"28-Aug-2026"},
-      {by:"Command (Western)",role:"Admin",text:"Recommend approval. Maintenance proposed at 25 percent of salary.",colour:"yellow",frozen:false,when:"01-Sep-2026"}],5),
-   mk("MNT/2026/0139","Smt. K. Bai","Mother","JC-330219","Maintenance","₹ 9,000","Registered","Central",[],5),
-   mk("MNT/2026/0137","Smt. R. Kaur","Wife","IC-61144","Maintenance","₹ 12,000","Sub-judice","Northern",
-     [{by:"Brigade Headquarters",role:"Approver",text:"Matter is before the civil court; hold pending order.",colour:"green",frozen:true,when:"30-Aug-2026"}],6),
-   mk("MNT/2026/0131","Smt. P. Yadav","Wife","JC-441027","Maintenance","20%","Registered","Eastern",[],7),
+   mk("MNT/2026/0142","Smt. A. Devi","Wife","IC-50231","Maintenance","25%","In Progress","Western",
+     [{by:"Brigade Commander",role:"Approver",hq:false,text:"Verification complete. Marriage proof and affidavit are in order.",colour:"yellow",when:"28-Aug-2026"},
+      {by:"Command (Western)",role:"Command Admin",hq:false,text:"Recommend approval. Maintenance proposed at 25 percent of salary.",colour:"yellow",when:"01-Sep-2026"}],5,
+     {approved:true,history:[{stage:"Unit filed",by:"Unit clerk",when:"12-Aug-2026"},{stage:"Command approved",by:"Col A. Verma",when:"28-Aug-2026"}]}),
+   mk("MNT/2026/0139","Smt. K. Bai","Mother","JC-330219","Maintenance","₹ 9,000","In Progress","Central",[],5),
+   mk("MNT/2026/0137","Smt. R. Kaur","Wife","IC-61144","Maintenance","₹ 12,000","In Progress","Northern",
+     [{by:"Brigade Commander",role:"Approver",hq:false,text:"Matter is before the civil court, hold pending order.",colour:"yellow",when:"30-Aug-2026"}],6,
+     {approved:true,subJudice:true,
+      court:{court:"High Court",courtName:"High Court, Punjab and Haryana",caseNo:"CRM/88/2026",since:"18-Aug-2026",lastHearing:"02-Sep-2026",nextHearing:"24-Sep-2026",disposed:false,judgedOn:"",finalOrder:"",
+       events:[{kind:"referred",when:"18-Aug-2026",court:"District Court",courtName:"District Court, Jalandhar",by:"Col A. Verma",note:"Court case number MC/412/2026."},
+        {kind:"hearing",when:"26-Aug-2026",court:"District Court",courtName:"District Court, Jalandhar",by:"Col A. Verma",note:"Notice issued to the service member. Reply sought on the maintenance claim."},
+        {kind:"hearing",when:"02-Sep-2026",court:"District Court",courtName:"District Court, Jalandhar",by:"Col A. Verma",note:"Reply taken on record. Matter listed for arguments."},
+        {kind:"transfer",when:"04-Sep-2026",court:"High Court",courtName:"High Court, Punjab and Haryana",by:"Col A. Verma",note:"Moved from District Court, Jalandhar. Transfer petition allowed on the applicant's plea."}]},
+      history:[{stage:"Unit filed",by:"Unit clerk",when:"12-Aug-2026"},{stage:"Command approved",by:"Col A. Verma",when:"26-Aug-2026"},{stage:"Marked sub-judice",by:"Col A. Verma",when:"30-Aug-2026",note:"District Court, Jalandhar"}]}),
+   mk("MNT/2026/0131","Smt. P. Yadav","Wife","JC-441027","Maintenance","20%","In Progress","Eastern",[],7),
    mk("MNT/2026/0128","Smt. L. Bai","Mother","IC-58890","Maintenance","20%","Closed","Southern",
-     [{by:"ADG HR",role:"Super Admin",text:"Approved and disbursed. Case closed.",colour:"green",frozen:true,when:"25-Aug-2026"}],13),
-   mk("MNT/2026/0124","Smt. S. Devi","Wife","IC-58890","Maintenance","15%","Closed","Southern",[],16)
+     [{by:"Command (Southern)",role:"Command Admin",hq:false,text:"Entitlement verified at 20 percent. Recommended for sanction.",colour:"green",when:"21-Aug-2026"},
+      {by:"ADG HR",role:"Super Admin",hq:true,text:"Approved and disbursed. Case closed.",colour:"green",when:"25-Aug-2026"}],13,
+     {approved:true,resolution:{outcome:"Closed",reason:"Maintenance approved at 20 percent and disbursed in full. Nothing further is due to the applicant.",by:"Col A. Verma",when:"25-Aug-2026"},
+      history:[{stage:"Unit filed",by:"Unit clerk",when:"12-Aug-2026"},{stage:"Command approved",by:"Col A. Verma",when:"20-Aug-2026"},{stage:"Case closed",by:"Col A. Verma",when:"25-Aug-2026",note:"Maintenance approved at 20 percent and disbursed in full."}]}),
+   mk("MNT/2026/0124","Smt. S. Devi","Wife","IC-58890","Maintenance","15%","Resolved","Southern",[],16,
+     {approved:true,resolution:{outcome:"Resolved",reason:"Entitlement settled at 15 percent of salary. The disbursement order is issued and the first credit is awaited before closure.",by:"Col A. Verma",when:"22-Aug-2026"},
+      history:[{stage:"Unit filed",by:"Unit clerk",when:"12-Aug-2026"},{stage:"Command approved",by:"Col A. Verma",when:"18-Aug-2026"},{stage:"Case resolved",by:"Col A. Verma",when:"22-Aug-2026",note:"Entitlement settled at 15 percent of salary."}]}),
+   mk("MNT/2026/0121","Smt. M. Devi","Mother","IC-61144","Maintenance","","Draft","Northern",[],1)
  ];
  const audit=[
    {ts:"07-Sep-2026, 11:42",user:"Maj S. Rao",role:"Command Admin",action:"APPROVE_CASE",detail:"Approved MNT/2026/0139",ip:"10.0.4.21"},
@@ -182,6 +198,7 @@ function th(ns,key,label,cls){const s=SORT[ns],on=s.key===key;
    '<span class="sic">'+ic(on?(s.dir>0?'ArrowUp2':'ArrowDown2'):'ArrowSwapVertical',14)+'</span></th>';}
 function sortBy(ns,key){const s=SORT[ns];if(s.key===key)s.dir=-s.dir;else{s.key=key;s.dir=1;}
  if(ns==='reg')drawReg();else if(ns==='aud')drawAudit();else if(ns==='rep')genReport();else if(ns==='ap')drawAp();else go('dashboard');}
+function pendingCase(x){return x.status==="In Progress"&&!x.approved;}
 function statTag(s){return '<span class="stat s-'+s.replace(/\s/g,'-')+'">'+s+'</span>';}
 function toast(msg,type){const t=document.createElement('div');t.className='toast'+(type==='err'?' err':'');t.textContent=msg;document.getElementById('toastWrap').appendChild(t);setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.remove(),300)},2600);}
 function modal(title,bodyHtml,footHtml){document.getElementById('modalRoot').innerHTML='<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="mh"><h3>'+title+'</h3><button class="x" onclick="closeModal()">&times;</button></div><div class="mb">'+bodyHtml+'</div>'+(footHtml?'<div class="mf">'+footHtml+'</div>':'')+'</div></div>';}
@@ -197,19 +214,29 @@ function downloadCsv(name,rows){const csv=rows.map(r=>r.map(c=>'"'+String(c==nul
  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);
  const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 function uploadDemo(el,name){el.innerHTML='&#10003; '+name+' attached';el.style.color='var(--success-active)';el.style.borderColor='var(--success-active)';el.style.background='var(--success-10)';}
-function previewDoc(id,name){const wm=(SESSION.name+' · '+SESSION.ip+' · CONFIDENTIAL · ').repeat(60);
- modal('Document preview',
+/* One diagonal tile, repeated. A tile covers the sheet evenly however long the
+   page runs, which a single rotated block of text does not. textLength pins the
+   line to the tile so a long user name cannot spill out of it. */
+function wmTile(mark){
+ const t=esc('CONFIDENTIAL · '+mark);
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" width="380" height="220">'+
+  '<text x="190" y="110" text-anchor="middle" textLength="330" lengthAdjust="spacingAndGlyphs" '+
+  'transform="rotate(-30 190 110)" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" '+
+  'font-weight="700" letter-spacing="2" fill="#184A2C" fill-opacity=".08">'+t+'</text></svg>';
+ return "background-image:url('data:image/svg+xml,"+encodeURIComponent(svg)+"')";}
+function previewDoc(id,name){const wm=wmTile(SESSION.name+' · '+SESSION.role+' · '+SESSION.ip);
+ modal('Document Preview',
   '<div class="muted" style="font-size:12.5px;margin-bottom:10px">'+esc(name)+' &middot; case '+id+'</div>'+
-  '<div class="card sheet" style="min-height:300px"><div class="wm"><span>'+wm+'</span></div>'+
+  '<div class="card sheet" style="min-height:300px"><div class="wm" style="'+wm+'"></div>'+
    '<div class="rh compact"><div class="rh-top"><div class="rh-brand"><span class="rh-mark">MAARK</span>'+
      '<div><b>Additional Directorate General of Human Rights</b><small>MAARK 2.0 &middot; secure document viewer</small></div></div>'+
      '<span class="rh-stamp">'+ic('ShieldTick',13)+'Confidential</span></div></div>'+
    '<div style="position:relative;font-size:13px;color:var(--text-2);line-height:1.6">This is a watermarked, read-only preview of <b>'+esc(name)+'</b>. In the live system the original PDF is decrypted on the server, stamped with the viewer\'s IP, user ID and timestamp, and streamed for viewing only; printing and download are controlled by role.</div></div>',
-  '<button class="btn ghost" onclick="closeModal()">'+ic('CloseCircle',17)+'Close preview</button>');
+  '<button class="btn ghost" onclick="closeModal()">'+ic('CloseCircle',17)+'Close Preview</button>');
  addAudit('VIEW_DOCUMENT','Previewed '+name+' on '+id);}
 /* ================= NAV / ROUTER ================= */
 const NAV={
- "Super Admin":[["dashboard","Dashboard"],["registered","Registered Cases"],["newcase","New Case"],["approvals","Approvals"],["reports","Reports"]],
+ "Super Admin":[["dashboard","Dashboard"],["registered","Registered Cases"],["newcase","New Case"],["approvals","Approvals"],["reports","Reports"],["audit","Audit Log"]],
  "Command Admin":[["dashboard","Dashboard"],["registered","Registered Cases"],["newcase","New Case"],["approvals","Approvals"],["reports","Reports"]],
  "Unit User":[["dashboard","Dashboard"],["registered","Registered Cases"],["newcase","New Case"],["reports","Reports"]]
 };
@@ -268,18 +295,18 @@ function vProfile(m){
      '<div class="pline">'+ic('Element3',15)+'<span>'+esc(SESSION.command||'All commands')+'</span></div>'+
      '<div class="pline">'+ic('ShieldTick',15)+'<span>Signed in '+esc(since)+'</span></div>'+
      '<div class="pquick">'+
-       '<button class="btn ghost sm" id="pfAudit">'+ic('ShieldTick',16)+'Audit trail</button>'+
+       '<button class="btn ghost sm" id="pfAudit">'+ic('ShieldTick',16)+'Audit Trail</button>'+
        '<button class="btn ghost sm" id="pfAi">'+ic('Magicpen',16)+'AI Assistant</button>'+
      '</div>'+
-     '<button class="btn ghost sm pfout" id="pfOut">'+ic('LogoutCurve',16)+'Log out</button>'+
+     '<button class="btn ghost sm pfout" id="pfOut">'+ic('LogoutCurve',16)+'Log Out</button>'+
    '</div>'+
    '<div class="pcol">'+
-     '<div class="card"><h3>'+ic('Profile',18)+'Account details</h3><div class="pfgrid">'+
+     '<div class="card"><h3>'+ic('Profile',18)+'Account Details</h3><div class="pfgrid">'+
        fld('Full name',SESSION.name)+fld('Role',SESSION.role,'Set by Army IAM, not editable here')+
        fld('Command scope',SESSION.command||'All commands',SESSION.command?'You see cases of this command only':'You see cases across every command')+
        fld('Email',mail)+
      '</div></div>'+
-     '<div class="card"><h3>'+ic('ShieldTick',18)+'Session and security</h3><div class="pfgrid">'+
+     '<div class="card"><h3>'+ic('ShieldTick',18)+'Session and Security</h3><div class="pfgrid">'+
        fld('Authentication','Army IAM (SAML 2.0) with 2FA')+fld('Session IP',SESSION.ip)+
        fld('Signed in at',since)+fld('Session state','Active','Idle sessions are signed out automatically')+
      '</div>'+
@@ -302,12 +329,12 @@ function vDashboard(m){
  const cnt=s=>c.filter(x=>x.status===s).length;
  const byCmd={};COMMANDS.forEach(k=>byCmd[k]=0);c.forEach(x=>{byCmd[x.command]=(byCmd[x.command]||0)+1;});
  const maxB=Math.max(1,...Object.values(byCmd));
- const pend=c.filter(x=>x.status==="Registered");
+ const pend=c.filter(pendingCase);
  m.innerHTML='<div class="crumb">Home / Dashboard</div><div class="pagehead"><div><div class="h2">Dashboard</div><div class="pagesub">A live view of maintenance-allowance cases in your scope.</div></div></div>'+
  '<div class="kpis">'+
    kpi("Total Cases",c.length,"var(--primary)","all","ClipboardText")+
-   kpi("Active",cnt("Active"),"var(--success-active)","Active","Clock")+
-   kpi("Sub-judice",cnt("Sub-judice"),"var(--warning-active)","Sub-judice","Judge")+
+   kpi("In Progress",cnt("In Progress"),"var(--info-active)","In Progress","Clock")+
+   kpi("Resolved",cnt("Resolved"),"var(--success-active)","Resolved","ClipboardTick")+
    kpi("Closed",cnt("Closed"),"var(--text-3)","Closed","TickCircle")+
  '</div>'+
  '<div class="row2">'+
@@ -352,7 +379,7 @@ function vRegistered(m,arg){
  const c=scoped();const cnt=s=>c.filter(x=>x.status===s).length;
  m.innerHTML='<div class="crumb">Home / Registered Cases</div>'+
  '<div class="pagehead"><div><div class="h2">Registered Cases</div><div class="pagesub">Every case you can see, across '+(SESSION.command||'all commands')+'.</div></div>'+
-   '<div class="acts">'+(canNew?'<button class="btn prim" onclick="go(\'newcase\')">'+ic('AddCircle',17)+'Register new case</button>':'')+'</div></div>'+
+   '<div class="acts">'+(canNew?'<button class="btn prim" onclick="go(\'newcase\')">'+ic('AddCircle',17)+'Register New Case</button>':'')+'</div></div>'+
  '<div class="tools"><span class="fieldwrap"><span class="fic">'+ic('SearchNormal1',16)+'</span><input class="inp search-i" id="regq" placeholder="Search cases" value="'+esc(regFilter.q)+'" oninput="regFilter.q=this.value;regFilter.page=1;drawReg()"></span>'+
    dd('regcmd',[{v:'',l:'All Commands'}].concat(COMMANDS),'All Commands','regFilter.cmd=v;regFilter.page=1;drawReg()','sm',regFilter.cmd)+
    '</div>'+
@@ -363,7 +390,7 @@ function regRows(){let c=scoped();if(regFilter.status!=='all')c=c.filter(x=>x.st
  if(regFilter.cmd)c=c.filter(x=>x.command===regFilter.cmd);
  if(regFilter.q){const q=regFilter.q.toLowerCase();c=c.filter(x=>(x.id+x.applicant+x.armyNo+x.command).toLowerCase().includes(q));}return c;}
 function regTabs(){const c=scoped();const cnt=st=>c.filter(x=>x.status===st).length;
- return '<div class="ltabs">'+['all','Registered','Active','Sub-judice','Closed'].map(st=>
+ return '<div class="ltabs">'+['all'].concat(STATUSES).map(st=>
    '<span class="ltab'+(regFilter.status===st?' on':'')+'" onclick="regFilter.page=1;regFilter.status=&quot;'+st+'&quot;;drawReg()">'+
    (st==='all'?'All':st)+'<b>'+(st==='all'?c.length:cnt(st))+'</b></span>').join('')+'</div>';}
 function drawReg(){const all=sortRows('reg',regRows());const canEdit=SESSION.role!=="Super Admin";
@@ -378,10 +405,10 @@ function drawReg(){const all=sortRows('reg',regRows());const canEdit=SESSION.rol
 /* ================= NEW CASE ================= */
 function vNewCase(m){
  m.innerHTML='<div class="crumb">Home / New Case</div>'+
- '<div class="pagehead"><div><div class="h2" style="margin:0">Register a new case</div><div class="pagesub">Fields marked with an asterisk are required. You can save a draft at any point.</div></div></div>'+
+ '<div class="pagehead"><div><div class="h2" style="margin:0">Register a New Case</div><div class="pagesub">Fields marked with an asterisk are required. You can save a draft at any point.</div></div></div>'+
  '<div class="card formcard">'+
    '<section class="fsec"><div class="sech">Service Personnel</div><div class="grid3">'+
-     f("Army number","nc_army","text","e.g. IC-50231",true,'Enter the Army number, then fetch the service record. Try IC-50231.','<button class="btn ghost sm" style="margin-top:8px" onclick="fetchSvc()">'+ic('SearchNormal1',16)+'Fetch service record</button>')+
+     f("Army number","nc_army","text","e.g. IC-50231",true,'Enter the Army number, then fetch the service record. Try IC-50231.','<button class="btn ghost sm" style="margin-top:8px" onclick="fetchSvc()">'+ic('SearchNormal1',16)+'Fetch Service Record</button>')+
      ro("Rank","nc_rank")+ro("Name of member","nc_mname")+ro("Unit","nc_unit")+ro("Command","nc_cmd")+ro("Monthly salary","nc_salary")+
    '</div></section>'+
    '<section class="fsec"><div class="sech">Applicant Details</div><div class="grid3">'+
@@ -396,7 +423,7 @@ function vNewCase(m){
      sel("Case type","nc_type",["Spouse maintenance","Mother maintenance","Child maintenance","Other"])+
      f("Maintenance sought","nc_maint","text","Amount or percentage")+
      f("Application date","nc_appdate","date","",true)+f("Filed date","nc_filedate","date")+
-     '<div class="f"><label>Status on submission</label><div class="rovalue">'+statTag('Registered')+'</div></div>'+
+     '<div class="f"><label>Status on submission</label><div class="rovalue">'+statTag('In Progress')+'</div></div>'+
    '</div></section>'+
    '<section class="fsec"><div class="sech">Dependents and Cards</div><div class="grid3">'+
      f("Guardian name","nc_guard","text","In addition to parent")+f("Parent name","nc_parent")+
@@ -410,8 +437,8 @@ function vNewCase(m){
    '</div></section>'+
  '</div>'+
  '<div class="formbar"><span class="formbar-note">A draft stays with your unit until you submit it.</span>'+
-   '<button class="btn ghost" onclick="submitCase(true)">'+ic('NoteText',17)+'Save as draft</button>'+
-   '<button class="btn prim" onclick="submitCase(false)">'+ic('Send2',17)+'Submit case for approval</button></div>';
+   '<button class="btn ghost" onclick="submitCase(true)">'+ic('NoteText',17)+'Save as Draft</button>'+
+   '<button class="btn prim" onclick="submitCase(false)">'+ic('Send2',17)+'Submit Case for Approval</button></div>';
 }
 function f(label,id,type,ph,req,hint,extra){const g=(type==='date')?'':'Enter '+label.toLowerCase();return '<div class="f"><label>'+label+(req?' <span class="req">*</span>':'')+'</label><input id="'+id+'" type="'+(type||'text')+'" placeholder="'+g+'">'+(hint?'<div class="hint">'+hint+'</div>':'')+(extra||'')+'</div>';}
 function ro(label,id){return '<div class="f"><label>'+label+'</label><input id="'+id+'" class="isro" readonly placeholder="Auto-filled"></div>';}
@@ -463,7 +490,7 @@ function submitCase(draft){
  const cse={id,applicant:app||"(draft)",relation:rel||"Wife",ageNow:val('nc_agenow'),ageFiling:val('nc_agefile'),
    contact:val('nc_contact'),aadhaar:val('nc_aadhaar'),address:val('nc_addr'),armyNo:army,rank:o.rank,memberName:o.name,
    unit:o.unit,command:o.command,salary:o.salary,category:val('nc_cat')||"Maintenance",type:val('nc_type')||"Spouse maintenance",
-   maintenance:val('nc_maint'),appDate:fmtDate(val('nc_appdate')),filedDate:fmtDate(val('nc_filedate')),status:draft?"Registered":"Registered",
+   maintenance:val('nc_maint'),appDate:fmtDate(val('nc_appdate')),filedDate:fmtDate(val('nc_filedate')),status:draft?"Draft":"In Progress",approved:false,subJudice:false,court:null,resolution:null,
    guardian:val('nc_guard'),parent:val('nc_parent'),spouseEmployment:val('nc_emp'),dependentCard:val('nc_dep'),
    csdCard:val('nc_csd'),employability:val('nc_ability'),docs:["Proof of marriage.pdf","Affidavit.pdf"],
    notings:[],history:[{stage:"Unit filed",by:SESSION.name,when:fmtDate(new Date())}],updated:fmtDate(new Date())};
@@ -471,24 +498,26 @@ function submitCase(draft){
  if(draft){successModal('Draft saved',
    'The draft stays with your unit until you submit it. You can pick it up again from Registered Cases.',
    sokRow('Case number',id),
-   '<button class="btn ghost" onclick="closeModal();go(\'registered\')">Back to cases</button>'+
-   '<button class="btn prim" onclick="closeModal();go(\'casedetail\',\''+id+'\')">'+ic('ArrowRight2',17)+'Open the draft</button>');
+   '<button class="btn ghost" onclick="closeModal();go(\'registered\')">Back to Cases</button>'+
+   '<button class="btn prim" onclick="closeModal();go(\'casedetail\',\''+id+'\')">'+ic('ArrowRight2',17)+'Open the Draft</button>');
  }else{successModal('Case submitted for approval',
    'The case is with Command for review. You can follow its progress on the case page at any time.',
    sokRow('Case number',id)+sokRow('Applicant',cse.applicant+' ('+cse.relation+')'),
-   '<button class="btn ghost" onclick="closeModal();go(\'newcase\')">'+ic('AddCircle',17)+'Register another</button>'+
-   '<button class="btn prim" onclick="closeModal();go(\'casedetail\',\''+id+'\')">'+ic('ArrowRight2',17)+'Open the case</button>');}
+   '<button class="btn ghost" onclick="closeModal();go(\'newcase\')">'+ic('AddCircle',17)+'Register Another</button>'+
+   '<button class="btn prim" onclick="closeModal();go(\'casedetail\',\''+id+'\')">'+ic('ArrowRight2',17)+'Open the Case</button>');}
 }
 /* ================= CASE DETAIL ================= */
 let cdTab="Details";
 function slaChip(x){
  if(x.status==="Closed")return '<span class="timer ok">'+ic('TickCircle',15)+'Closed within the 180 day limit</span>';
+ if(x.status==="Resolved")return '<span class="timer ok">'+ic('TickCircle',15)+'Resolved within the 180 day limit</span>';
+ if(x.status==="Draft")return '';
  const l=slaLeft(x);if(l==null)return '';
  const cls=l<0?' over':(l<30?'':' ok');
  return '<span class="timer'+cls+'">'+ic('Clock',15)+(l<0?Math.abs(l)+' days past the 180 day limit':l+' of 180 days left')+'</span>';}
 function cdRail(x){
- const at={"Registered":2,"Active":3,"Sub-judice":3,"Closed":4}[x.status]||2;
- const steps=[["Filed by unit",x.filedDate||'-'],["Command review",""],["Approved and active",""],["Case closed",""]];
+ const at=x.status==="Draft"?1:(x.status==="Closed"?5:(x.status==="Resolved"?4:(x.approved?3:2)));
+ const steps=[["Filed by unit",x.status==="Draft"?'draft with the unit':(x.filedDate||'-')],["Command review",""],["In progress",""],["Resolved",""],["Case closed",""]];
  return '<div class="rail">'+steps.map((s,i)=>{const n=i+1,cls=n<at?'done':(n===at?'now':'');
    const sub=n===1?(s[1]||'completed'):(n<at?'completed':(n===at?'in progress':'not started'));
    return '<div class="rstep '+cls+'"><b>'+s[0]+'</b><span>'+sub+'</span></div>';}).join('')+'</div>';}
@@ -496,28 +525,30 @@ function vCaseDetail(m,id){
  const x=findCase(id);if(!x){go('registered');return;}vCaseDetail.id=id;
  const canAct=SESSION.role!=="Unit User";
  const acts=
-   (canAct&&x.status==="Registered"?'<button class="btn ghost" onclick="apSendBack(\''+id+'\')">'+ic('ArrowLeft2',16)+'Send back to unit</button><button class="btn prim" onclick="apApprove(\''+id+'\')">'+ic('TickCircle',16)+'Approve case</button>':'')+
-   (canAct&&x.status==="Active"?'<button class="btn ghost" onclick="caseAction(\''+id+'\',\'subjudice\')">'+ic('Judge',16)+'Mark as sub-judice</button><button class="btn prim" onclick="caseAction(\''+id+'\',\'close\')">'+ic('CloseCircle',16)+'Close case</button>':'')+
-   (canAct&&x.status==="Sub-judice"?'<button class="btn prim" onclick="caseAction(\''+id+'\',\'close\')">'+ic('CloseCircle',16)+'Close case</button>':'');
+   (canAct&&pendingCase(x)?'<button class="btn ghost" onclick="apSendBack(\''+id+'\')">'+ic('ArrowLeft2',16)+'Send Back to Unit</button><button class="btn prim" onclick="apApprove(\''+id+'\')">'+ic('TickCircle',16)+'Approve Case</button>':'')+
+   (canAct&&!x.subJudice&&x.status==="In Progress"&&x.approved?'<button class="btn ghost" onclick="caseCloseModal(\''+id+'\',\'resolve\')">'+ic('TickCircle',16)+'Mark Resolved</button><button class="btn prim" onclick="caseCloseModal(\''+id+'\',\'close\')">'+ic('CloseCircle',16)+'Close Case</button>':'')+
+   (canAct&&!x.subJudice&&x.status==="Resolved"?'<button class="btn prim" onclick="caseCloseModal(\''+id+'\',\'close\')">'+ic('CloseCircle',16)+'Close Case</button>':'');
  const meta=(k,v)=>'<div><div class="k">'+k+'</div><div class="v">'+v+'</div></div>';
- const counts={Details:0,Notings:x.notings.length,Documents:x.docs.length,History:x.history.length};
+ const counts={Details:0,"Sub-judice":sjEvents(x).length,Notings:x.notings.length,Documents:x.docs.length,History:x.history.length};
  m.innerHTML='<div class="crumb">Home / Registered Cases / '+id+'</div>'+
- '<div class="chero"><div class="cback" onclick="go(\'registered\')">'+ic('ArrowLeft2',15)+'Back to registered cases</div><div class="ctop"><span class="no">'+id+'</span>'+statTag(x.status)+slaChip(x)+
-   '<span class="cacts">'+(acts||'<span class="muted" style="font-size:12.5px">No decision is open on this case</span>')+'</span></div>'+
+ '<div class="chero"><div class="cback" onclick="go(\'registered\')">'+ic('ArrowLeft2',15)+'Back to registered cases</div><div class="ctop"><span class="no">'+id+'</span>'+statTag(x.status)+(x.subJudice?'<span class="stat s-Sub-judice">'+ic('Judge',14)+'Sub-judice</span>':'')+slaChip(x)+
+   '<span class="cacts">'+(acts||'<span class="muted" style="font-size:12.5px">'+(x.subJudice?'No maintenance decision is taken until the court rules':'No decision is open on this case')+'</span>')+'</span></div>'+
    '<div class="cmeta">'+
      meta('Applicant',esc(x.applicant)+' <span class="muted" style="font-weight:500">('+x.relation+')</span>')+
      meta('Service member',esc(x.memberName)+' <span class="muted" style="font-weight:500">'+(x.rank||'')+' &middot; '+x.armyNo+'</span>')+
      meta('Command and unit',x.command+' <span class="muted" style="font-weight:500">&middot; '+esc(x.unit||'-')+'</span>')+
      meta('Maintenance sought',esc(x.maintenance||'-'))+
    '</div>'+cdRail(x)+
-   '<div class="tabs">'+["Details","Notings","Documents","History"].map(t=>'<div class="tab'+(cdTab===t?' on':'')+'" onclick="cdTab=\''+t+'\';go(\'casedetail\',\''+id+'\')">'+t+(counts[t]?'<span class="cnt">'+counts[t]+'</span>':'')+'</div>').join('')+'</div>'+'</div>'+
+   '<div class="tabs">'+["Details","Sub-judice","Notings","Documents","History"].map(t=>'<div class="tab'+(cdTab===t?' on':'')+'" onclick="cdTab=\''+t+'\';go(\'casedetail\',\''+id+'\')">'+t+(counts[t]?'<span class="cnt">'+counts[t]+'</span>':'')+'</div>').join('')+'</div>'+'</div>'+
  '<div class="cols"><div class="lcol">'+cdBody(x)+'</div><div class="rcol">'+
-   '<div class="card" style="margin-bottom:14px"><h3>Case summary</h3>'+
+   '<div class="card" style="margin-bottom:14px"><h3>Case Summary</h3>'+
      kv("Category",x.category)+kv("Case type",x.type||'-')+kv("Maintenance sought",x.maintenance||'-')+
-     kv("Application date",x.appDate||'-')+kv("Filed date",x.filedDate||'-')+kv("Last updated",x.updated||'-')+'</div>'+
-   '<div class="card"><h3>Approval history</h3><div class="htl">'+
+     kv("Application date",x.appDate||'-')+kv("Filed date",x.filedDate||'-')+kv("Last updated",x.updated||'-')+
+     kv("Court",sjLine(x))+
+     (x.resolution?kv(x.resolution.outcome==="Resolved"?"Reason for resolution":"Reason for closure",x.resolution.reason)+kv("Recorded by",x.resolution.by+' \u00b7 '+x.resolution.when):'')+'</div>'+
+   '<div class="card"><h3>Approval History</h3><div class="htl">'+
      x.history.map(h=>'<div class="hi"><div class="hs">'+esc(h.stage)+'</div><div class="hm">'+esc(h.by||'-')+' &middot; '+h.when+'</div></div>').join('')+
-     (x.status==="Registered"?'<div class="hi pend"><div class="hs">Command review</div><div class="hm">waiting on you</div></div>':'')+
+     (pendingCase(x)?'<div class="hi pend"><div class="hs">Command review</div><div class="hm">waiting on you</div></div>':'')+
    '</div></div>'+
  '</div></div>';
 }
@@ -537,40 +568,189 @@ function cdBody(x){
    cdSection('Eligibility and entitlement',
      kv("Estranged spouse employment",x.spouseEmployment||'-')+kv("Employability",x.employability||'-')+
      kv("Dependent card",x.dependentCard||'-')+kv("CSD card",x.csdCard||'-'));}
- if(cdTab==="Documents"){return '<div class="card"><h3>Documents on file</h3>'+
+ if(cdTab==="Sub-judice"){return cdSubJudice(x);}
+ if(cdTab==="Documents"){return '<div class="card"><h3>Documents on File</h3>'+
    (x.docs.length?x.docs.map(d=>'<div class="doc"><span class="dic">'+ic('DocumentText',19)+'</span>'+
      '<div style="flex:1;min-width:0"><div class="dn">'+esc(d)+'</div><div class="dm">PDF &middot; uploaded by the unit &middot; read only</div></div>'+
      '<span class="act" onclick="previewDoc(\''+x.id+'\',\''+d.replace(/'/g,"")+'\')">'+ic('Eye',15)+'Preview</span></div>').join('')
     :'<div class="empty"><div class="eic">'+ic('DocumentText',22)+'</div><b>No documents yet</b><span>Proof of marriage and the affidavit are attached by the unit.</span></div>')+'</div>';}
- if(cdTab==="History"){return '<div class="card"><h3>Case history</h3><div class="htl">'+
+ if(cdTab==="History"){return '<div class="card"><h3>Case History</h3><div class="htl">'+
    x.history.map(h=>'<div class="hi'+(h.stage==="Sent back"?' pend':'')+'"><div class="hs">'+esc(h.stage)+'</div>'+
      '<div class="hm">'+esc(h.by||'-')+' &middot; '+h.when+'</div>'+
      (h.note?'<div class="hn">'+esc(h.note)+'</div>':'')+'</div>').join('')+'</div></div>';}
  return '<div>'+
    (x.notings.length?x.notings.map((n,i)=>note(x.id,n,i)).join('')
-    :'<div class="card" style="margin-bottom:14px"><div class="empty"><div class="eic">'+ic('NoteText',22)+'</div><b>No notings yet</b><span>Add the first noting below. Yellow notings can be edited, green notings are frozen.</span></div></div>')+
+    :'<div class="card" style="margin-bottom:14px"><div class="empty"><div class="eic">'+ic('NoteText',22)+'</div><b>No notings yet</b><span>Add the first noting below. Notings raised in the chain of command are yellow. They turn green once headquarters gives its verdict.</span></div></div>')+
    (x.status==="Closed"?'':'<div class="composer"><div class="sech" style="margin-bottom:10px">Add a noting</div>'+
      '<textarea id="newnote" placeholder="Record your observation, recommendation or direction"></textarea>'+
-     '<div class="cfoot"><span class="stat" style="background:var(--warning-10);color:var(--warning-active)">Yellow &middot; editable</span>'+
-     '<label class="chk"><input type="checkbox" id="confmove"> Confirm and move forward, which freezes this noting green</label>'+
-     '<button class="btn prim sm" style="margin-left:auto" onclick="addNote(\''+x.id+'\')">'+ic('Send2',16)+'Save noting</button></div></div>')+'</div>';
+     '<div class="cfoot">'+(isHq()?'<span class="stat" style="background:var(--success-10);color:var(--success-active)">Green &middot; headquarters</span>'+
+       '<span class="muted" style="font-size:12px">This is the headquarters verdict. It is recorded green and every earlier noting on the case turns green with it.</span>'
+      :'<span class="stat" style="background:var(--warning-10);color:var(--warning-active)">Yellow &middot; chain of command</span>'+
+       '<span class="muted" style="font-size:12px">Notings from the chain of command stay yellow until headquarters gives its verdict.</span>')+
+     '<button class="btn prim sm" style="margin-left:auto" onclick="addNote(\''+x.id+'\')">'+ic('Send2',16)+'Save Noting</button></div></div>')+'</div>';
 }
-function note(id,n,i){return '<div class="note '+n.colour+'"><div class="top"><span class="who">'+esc(n.by)+'</span>'+
+function isoDate(s){const d=pdate(s);if(!d)return '';
+ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function sjF(label,id,v,type,ph,req){return '<div class="f"><label>'+label+(req?' <span class="req">*</span>':'')+'</label><input id="'+id+'" type="'+(type||'text')+'" value="'+esc(v||'')+'" placeholder="'+(ph||'')+'"></div>';}
+/* ---- Sub-judice: one court proceeding with a trail of hearings and transfers ---- */
+const SJ_COURTS=["District Court","High Court","Supreme Court"];
+const SJ_KINDS={referred:'Referred to court',hearing:'Hearing held',transfer:'Case transferred',judgement:'Final judgement'};
+function sjName(court,name){return court==="Supreme Court"?"Supreme Court of India":((name||'').trim()||court||'-');}
+function sjEvents(x){return (x.court&&x.court.events)||[];}
+function sjCount(x,k){return sjEvents(x).filter(e=>e.kind===k).length;}
+function sjLine(x){if(!x.court)return '-';const c=x.court;
+ return sjName(c.court,c.courtName)+(c.disposed?' · judgement passed':(c.nextHearing?' · next hearing '+c.nextHearing:''));}
+function cdSubJudice(x){
+ const canAct=SESSION.role!=="Unit User"&&x.status!=="Closed",c=x.court;
+ if(!c)return '<div class="card"><div class="empty"><div class="eic">'+ic('Judge',22)+'</div><b>Not sub-judice</b>'+
+   '<span>No court proceeding has been recorded on this case. Refer it to a court once the matter goes before one.</span>'+
+   (canAct?'<div style="margin-top:16px"><button class="btn prim" onclick="sjReferModal(\''+x.id+'\')">'+ic('Judge',16)+'Refer to Court</button></div>':'')+'</div></div>';
+ const st=c.disposed?'<span class="stat s-Resolved">'+ic('Verify',14)+'Judgement passed</span>'
+   :'<span class="stat s-Sub-judice">'+ic('Judge',14)+'Pending before the court</span>';
+ return '<div class="card" style="margin-bottom:14px">'+
+  '<div class="sech">Court Proceeding '+st+'</div>'+
+  '<div class="kvgrid">'+
+   kv(c.disposed?"Court that ruled":"Court now hearing it",sjName(c.court,c.courtName))+
+   kv("Court case number",c.caseNo||'-')+
+   kv("Before a court since",c.since||'-')+
+   kv("Hearings held",String(sjCount(x,'hearing')))+
+   kv(c.disposed?"Date of judgement":"Next hearing date",(c.disposed?c.judgedOn:c.nextHearing)||'-')+
+   kv("Courts so far",String(1+sjCount(x,'transfer')))+
+  '</div>'+
+  (c.disposed&&c.finalOrder?'<div class="sjorder"><b>Operative part of the order</b><p>'+esc(c.finalOrder)+'</p></div>':'')+
+  '</div>'+
+  (canAct&&!c.disposed?'<div class="formbar"><span class="formbar-note">No maintenance decision is taken until the court rules.</span>'+
+   '<button class="btn ghost" onclick="sjHearingModal(\''+x.id+'\')">'+ic('Clock',16)+'Record Hearing</button>'+
+   '<button class="btn ghost" onclick="sjTransferModal(\''+x.id+'\')">'+ic('Refresh2',16)+'Transfer Court</button>'+
+   '<button class="btn prim" onclick="sjJudgeModal(\''+x.id+'\')">'+ic('Verify',16)+'Record Judgement</button></div>':'')+
+  sjTrail(x);}
+function sjTrail(x){const c=x.court,ev=sjEvents(x);
+ return '<div class="card" style="margin-top:14px"><h3>Proceedings Trail</h3><div class="htl">'+
+  (ev.length?ev.map(e=>'<div class="hi'+(e.kind==='transfer'?' pend':'')+'"><div class="hs">'+(SJ_KINDS[e.kind]||'Hearing held')+'</div>'+
+    '<div class="hm">'+esc(e.when||'-')+' &middot; '+esc(sjName(e.court,e.courtName))+(e.by?' &middot; '+esc(e.by):'')+'</div>'+
+    (e.note?'<div class="hn">'+esc(e.note)+'</div>':'')+'</div>').join('')
+   :'<div class="hi"><div class="hs">Referred to court</div><div class="hm">'+esc(c.since||'-')+'</div></div>')+
+  (!c.disposed&&c.nextHearing?'<div class="hi pend"><div class="hs">Next hearing</div>'+
+    '<div class="hm">'+esc(c.nextHearing)+' &middot; '+esc(sjName(c.court,c.courtName))+' &middot; scheduled</div></div>':'')+
+ '</div></div>';}
+function sjCourt(v){const w=document.getElementById('sj_cname_wrap');if(w)w.hidden=(v==="Supreme Court");}
+function sjCourtT(v){const w=document.getElementById('sj_t_cname_wrap');if(w)w.hidden=(v==="Supreme Court");}
+function sjMf(id,label,fn,icon){return '<button class="btn ghost" onclick="closeModal()">Cancel</button>'+
+ '<button class="btn prim" onclick="'+fn+'(\''+id+'\')">'+ic(icon,16)+label+'</button>';}
+function sjReferModal(id){
+ modal('Refer the Case to a Court',
+  '<p class="pagesub" style="margin:-2px 0 14px">Saving this marks the case sub-judice. Every hearing after it is recorded on the trail.</p>'+
+  '<div class="grid2">'+
+   '<div class="f"><label>Court <span class="req">*</span></label>'+dd('sj_court',SJ_COURTS,'Select court','sjCourt(v)','','')+'</div>'+
+   '<div class="f" id="sj_cname_wrap"><label>Name of the court</label><input id="sj_cname" placeholder="e.g. District Court, Jalandhar"></div>'+
+   sjF('Court case number','sj_no','','text','e.g. MC/412/2026')+
+   sjF('Date it went to court','sj_start','','date','',true)+
+   sjF('Next hearing date','sj_next','','date')+
+  '</div>',sjMf(id,'Mark sub-judice','sjSaveRefer','Judge'));}
+function sjSaveRefer(id){const x=findCase(id),court=val('sj_court');
+ if(!court){toast('Select the court first','err');return;}
+ if(court!=="Supreme Court"&&!val('sj_cname')){toast('Enter the name of the court','err');return;}
+ const nm=sjName(court,val('sj_cname')),now=fmtDate(new Date()),when=fmtDate(val('sj_start'))||now;
+ x.court={court:court,courtName:nm,caseNo:val('sj_no'),since:when,lastHearing:'',nextHearing:fmtDate(val('sj_next')),
+   disposed:false,judgedOn:'',finalOrder:'',
+   events:[{kind:'referred',when:when,court:court,courtName:nm,by:SESSION.name,
+     note:'Court case number '+(val('sj_no')||'not recorded on the file')+'.'}]};
+ x.subJudice=true;x.updated=now;
+ x.history.push({stage:"Marked sub-judice",by:SESSION.name,when:now,note:nm});
+ DB.set(STATE);addAudit('SUBJUDICE','Marked '+id+' sub-judice before '+nm);
+ closeModal();toast('Case marked sub-judice');cdTab="Sub-judice";go('casedetail',id);}
+function sjHearingModal(id){const x=findCase(id),c=x.court;
+ modal('Record a Hearing',
+  '<p class="pagesub" style="margin:-2px 0 14px">Before '+esc(sjName(c.court,c.courtName))+'. The case stays sub-judice.</p>'+
+  '<div class="grid2">'+
+   sjF('Date of the hearing','sj_h_date','','date','',true)+
+   sjF('Next hearing date','sj_h_next','','date')+
+   '<div class="f full"><label>What the court said</label><textarea id="sj_h_note" placeholder="Record what happened at the hearing"></textarea></div>'+
+  '</div>',sjMf(id,'Save hearing','sjSaveHearing','Clock'));}
+function sjSaveHearing(id){const x=findCase(id),c=x.court,d=fmtDate(val('sj_h_date'));
+ if(!d){toast('Enter the date of the hearing','err');return;}
+ c.events.push({kind:'hearing',when:d,court:c.court,courtName:c.courtName,by:SESSION.name,
+   note:(document.getElementById('sj_h_note').value||'').trim()});
+ c.lastHearing=d;c.nextHearing=fmtDate(val('sj_h_next'));
+ x.updated=fmtDate(new Date());DB.set(STATE);
+ addAudit('SJ_HEARING','Recorded a hearing on '+id+' before '+c.courtName);
+ closeModal();toast('Hearing recorded');go('casedetail',id);}
+function sjTransferModal(id){const x=findCase(id),c=x.court;
+ modal('Transfer the Case to Another Court',
+  '<p class="pagesub" style="margin:-2px 0 14px">The matter moves from '+esc(sjName(c.court,c.courtName))+'. The earlier hearings stay on the trail.</p>'+
+  '<div class="grid2">'+
+   '<div class="f"><label>New court <span class="req">*</span></label>'+dd('sj_t_court',SJ_COURTS,'Select court','sjCourtT(v)','','')+'</div>'+
+   '<div class="f" id="sj_t_cname_wrap"><label>Name of the court</label><input id="sj_t_cname" placeholder="e.g. High Court, Chandigarh"></div>'+
+   sjF('New court case number','sj_t_no','','text','e.g. CRM/88/2026')+
+   sjF('Date of the transfer','sj_t_date','','date','',true)+
+   sjF('Next hearing date','sj_t_next','','date')+
+   '<div class="f full"><label>Reason for the transfer</label><textarea id="sj_t_note" placeholder="Why the matter moved to this court"></textarea></div>'+
+  '</div>',sjMf(id,'Transfer court','sjSaveTransfer','Refresh2'));}
+function sjSaveTransfer(id){const x=findCase(id),c=x.court,court=val('sj_t_court'),d=fmtDate(val('sj_t_date'));
+ if(!court){toast('Select the new court first','err');return;}
+ if(court!=="Supreme Court"&&!val('sj_t_cname')){toast('Enter the name of the court','err');return;}
+ if(!d){toast('Enter the date of the transfer','err');return;}
+ const nm=sjName(court,val('sj_t_cname')),from=sjName(c.court,c.courtName);
+ const why=(document.getElementById('sj_t_note').value||'').trim();
+ c.events.push({kind:'transfer',when:d,court:court,courtName:nm,by:SESSION.name,
+   note:'Moved from '+from+'.'+(why?' '+why:'')});
+ c.court=court;c.courtName=nm;c.caseNo=val('sj_t_no')||c.caseNo;c.nextHearing=fmtDate(val('sj_t_next'));
+ x.updated=fmtDate(new Date());
+ x.history.push({stage:"Court changed",by:SESSION.name,when:x.updated,note:from+' to '+nm});
+ DB.set(STATE);addAudit('SJ_TRANSFER','Moved '+id+' from '+from+' to '+nm);
+ closeModal();toast('Case transferred to '+nm);go('casedetail',id);}
+function sjJudgeModal(id){const x=findCase(id),c=x.court;
+ modal('Record the Final Judgement',
+  '<p class="pagesub" style="margin:-2px 0 14px">Recorded against '+esc(sjName(c.court,c.courtName))+'. The case stops being sub-judice and the maintenance decision can proceed.</p>'+
+  '<div class="grid2">'+
+   sjF('Date of the judgement','sj_j_date','','date','',true)+
+   '<div class="f full"><label>Operative part of the order <span class="req">*</span></label>'+
+    '<textarea id="sj_j_note" placeholder="Record the operative part of the order"></textarea></div>'+
+  '</div>',sjMf(id,'Record judgement','sjSaveJudge','Verify'));}
+function sjSaveJudge(id){const x=findCase(id),c=x.court,d=fmtDate(val('sj_j_date'));
+ const txt=(document.getElementById('sj_j_note').value||'').trim();
+ if(!d){toast('Enter the date of the judgement','err');return;}
+ if(!txt){toast('Record the operative part of the order','err');return;}
+ c.events.push({kind:'judgement',when:d,court:c.court,courtName:c.courtName,by:SESSION.name,note:txt});
+ c.disposed=true;c.judgedOn=d;c.finalOrder=txt;c.nextHearing='';
+ x.subJudice=false;x.updated=fmtDate(new Date());
+ x.history.push({stage:"Court judgement recorded",by:SESSION.name,when:x.updated,note:txt});
+ DB.set(STATE);addAudit('SJ_JUDGEMENT','Recorded the judgement of '+c.courtName+' on '+id);
+ closeModal();toast('Judgement recorded. The case is no longer sub-judice.');go('casedetail',id);}
+function note(id,n,i){const g=(n.colour==='green');
+ return '<div class="note '+n.colour+'"><div class="top"><span class="who">'+esc(n.by)+'</span>'+
  (n.role?'<span class="muted" style="font-size:11.5px">'+esc(n.role)+'</span>':'')+
- '<span class="badge '+(n.frozen?'frozen':'edit')+'">'+(n.colour==='green'?'Green &middot; frozen':'Yellow &middot; editable')+'</span></div>'+
- '<div class="txt">'+esc(n.text)+'</div><div class="when">'+n.when+' &middot; '+(n.frozen?'frozen at the authority, not amendable':'editable working note')+
- (!n.frozen&&SESSION.role!=="Unit User"?'<span class="freeze" onclick="freezeNote(\''+id+'\','+i+')">Freeze (turn green)</span>':'')+'</div></div>';}
+ '<span class="badge '+(g?'frozen':'edit')+'">'+(g?'Green &middot; headquarters':'Yellow &middot; chain of command')+'</span></div>'+
+ '<div class="txt">'+esc(n.text)+'</div><div class="when">'+n.when+' &middot; '+
+ (n.hq?'issued by headquarters':(g?'carried green by the headquarters verdict':'raised in the chain of command, awaiting the headquarters verdict'))+
+ '</div></div>';}
+/* Headquarters is ADG HR. Its notings are green and they carry every earlier
+   noting on the case green with them. Everyone below files yellow. */
+function isHq(){return SESSION.role==="Super Admin";}
 function addNote(id){const x=findCase(id);const t=(document.getElementById('newnote').value||'').trim();if(!t){toast('Type a noting first','err');return;}
- const conf=document.getElementById('confmove').checked;
- x.notings.push({by:SESSION.name+" ("+SESSION.role+")",role:SESSION.role,text:t,colour:conf?'green':'yellow',frozen:conf,when:fmtDate(new Date())});
- x.updated=fmtDate(new Date());DB.set(STATE);addAudit('ADD_NOTING',(conf?'Frozen noting on ':'Noting on ')+id);toast('Noting saved');go('casedetail',id);}
-function freezeNote(id,i){const x=findCase(id);const n=x.notings[i];n.colour='green';n.frozen=true;DB.set(STATE);addAudit('FREEZE_NOTING','Froze a noting on '+id);toast('Noting frozen (green). It can no longer be changed.');go('casedetail',id);}
-function caseAction(id,action,reason){const x=findCase(id);
- if(action==='approve'){x.status="Active";x.history.push({stage:"Command approved",by:SESSION.name,when:fmtDate(new Date())});addAudit('APPROVE_CASE','Approved '+id);toast('Case approved and set Active');}
- if(action==='sendback'){x.history.push({stage:"Sent back",by:SESSION.name,when:fmtDate(new Date()),note:reason||''});addAudit('SENDBACK','Sent back '+id+(reason?': '+reason:''));toast('Case sent back to the unit');}
- if(action==='subjudice'){x.status="Sub-judice";x.history.push({stage:"Marked sub-judice",by:SESSION.name,when:fmtDate(new Date())});addAudit('SUBJUDICE','Marked '+id+' sub-judice');toast('Case marked sub-judice');}
- if(action==='close'){x.status="Closed";x.history.push({stage:"Case closed",by:SESSION.name,when:fmtDate(new Date())});addAudit('CLOSE_CASE','Closed '+id);toast('Case closed');}
- x.updated=fmtDate(new Date());DB.set(STATE);go('casedetail',id);}
+ const hq=isHq();
+ if(hq)x.notings.forEach(p=>{p.colour='green';});
+ x.notings.push({by:SESSION.name+" ("+SESSION.role+")",role:SESSION.role,hq:hq,text:t,colour:hq?'green':'yellow',when:fmtDate(new Date())});
+ x.updated=fmtDate(new Date());DB.set(STATE);
+ addAudit('ADD_NOTING',(hq?'Headquarters verdict noting on ':'Noting on ')+id);
+ toast(hq?'Verdict recorded. Every noting on this case is now green.':'Noting saved');go('casedetail',id);}
+function caseAction(id,action,reason){const x=findCase(id),now=fmtDate(new Date());
+ if(action==='approve'){x.status="In Progress";x.approved=true;x.history.push({stage:"Command approved",by:SESSION.name,when:now});addAudit('APPROVE_CASE','Approved '+id);toast('Case approved and now in progress');}
+ if(action==='sendback'){x.history.push({stage:"Sent back",by:SESSION.name,when:now,note:reason||''});addAudit('SENDBACK','Sent back '+id+(reason?': '+reason:''));toast('Case sent back to the unit');}
+ if(action==='resolve'){x.status="Resolved";x.resolution={outcome:"Resolved",reason:reason||'',by:SESSION.name,when:now};x.history.push({stage:"Case resolved",by:SESSION.name,when:now,note:reason||''});addAudit('RESOLVE_CASE','Resolved '+id);toast('Case marked resolved');}
+ if(action==='close'){x.status="Closed";x.resolution={outcome:"Closed",reason:reason||'',by:SESSION.name,when:now};x.history.push({stage:"Case closed",by:SESSION.name,when:now,note:reason||''});addAudit('CLOSE_CASE','Closed '+id);toast('Case closed');}
+ x.updated=now;DB.set(STATE);go('casedetail',id);}
+function caseCloseModal(id,mode){const isRes=(mode==='resolve');
+ modal(isRes?'Mark This Case Resolved':'Close This Case',
+  '<div class="pagesub" style="margin:0 0 14px">'+(isRes?'A resolved case has a decision on record and stays open until it is closed.':'Closing is final. The notings and the history stay on record for audit.')+'</div>'+
+  '<div class="f"><label>Reason <span class="req">*</span></label>'+
+  '<textarea id="clreason" style="height:96px" placeholder="'+(isRes?'Say what was decided and on what ground':'Say why the case is being closed')+'"></textarea>'+
+  '<div class="hint">The reason is written to the case summary, the case history and the audit log.</div></div>',
+  '<button class="btn ghost" onclick="closeModal()">Cancel</button>'+
+  '<button class="btn prim" onclick="caseCloseGo(\''+id+'\',\''+mode+'\')">'+ic(isRes?'TickCircle':'CloseCircle',17)+(isRes?'Mark Resolved':'Close Case')+'</button>');}
+function caseCloseGo(id,mode){const r=(document.getElementById('clreason').value||'').trim();
+ if(r.length<5){toast('Enter a reason of at least five characters','err');return;}
+ closeModal();caseAction(id,mode,r);}
 /* ================= APPROVALS ================= */
 const MONS={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
 /* Dates are shown DD-MMM-YYYY everywhere (Indian convention); pdate() reads that back. */
@@ -591,7 +771,7 @@ function ageChip(x){const d=waitDays(x);const cls=d>7?' over':(d>3?' due':'');
  return '<span class="age'+cls+'">'+ic('Clock',13)+(d===0?'Filed today':'Waiting '+d+' day'+(d===1?'':'s'))+'</span>';}
 let apq={q:"",cmd:""};
 let apSel=[];
-function apList(){let c=scoped().filter(x=>x.status==="Registered");
+function apList(){let c=scoped().filter(pendingCase);
  if(apq.cmd)c=c.filter(x=>x.command===apq.cmd);
  if(apq.q){const q=apq.q.toLowerCase();c=c.filter(x=>(x.id+x.applicant+x.memberName+x.armyNo+x.command).toLowerCase().includes(q));}
  return sortRows('ap',c);}
@@ -600,7 +780,7 @@ function apPage(n){const t=apList().length,last=Math.max(1,Math.ceil(t/apPg.per)
 function apPer(v){apPg.per=+v;apPg.page=1;drawAp();}
 function vApprovals(m){
  apSel=[];
- const all=scoped().filter(x=>x.status==="Registered");
+ const all=scoped().filter(pendingCase);
  const oldest=all.length?Math.max.apply(null,all.map(waitDays)):0;
  const cmds=all.filter((x,i,a)=>a.findIndex(y=>y.command===x.command)===i).length;
  const tile=(icon,val,lbl,warn)=>'<div class="qstat'+(warn?' warn':'')+'"><span class="qic">'+ic(icon,19)+'</span><div><div class="qv">'+val+'</div><div class="ql">'+lbl+'</div></div></div>';
@@ -622,8 +802,8 @@ function drawAp(){const all=apList();
  const last=Math.max(1,Math.ceil(all.length/apPg.per));if(apPg.page>last)apPg.page=last;
  const c=pageSlice(all,apPg.page,apPg.per);
  const bulk=apSel.length?'<div class="bulkbar">'+ic('TickCircle',17)+apSel.length+' case'+(apSel.length===1?'':'s')+' selected<span class="sp"></span>'+
-   '<button class="btn ghost sm" onclick="apSel=[];drawAp()">Clear selection</button>'+
-   '<button class="btn prim sm" onclick="apBulkApprove()">'+ic('TickCircle',16)+'Approve selected</button></div>':'';
+   '<button class="btn ghost sm" onclick="apSel=[];drawAp()">Clear Selection</button>'+
+   '<button class="btn prim sm" onclick="apBulkApprove()">'+ic('TickCircle',16)+'Approve Selected</button></div>':'';
  document.getElementById('apqlist').innerHTML=bulk+(all.length?'<div class="card tblcard">'+
    '<div class="tblhead">Pending Cases<b>'+all.length+'</b></div>'+
    '<div class="tblwrap"><table class="tbl"><thead><tr>'+
@@ -653,50 +833,50 @@ function drawAp(){const all=apList();
 function apToggle(id){const i=apSel.indexOf(id);if(i>-1)apSel.splice(i,1);else apSel.push(id);drawAp();}
 function apToggleAll(on){apSel=on?pageSlice(apList(),apPg.page,apPg.per).map(x=>x.id):[];drawAp();}
 function apApprove(id){const x=findCase(id);
- modal('Approve this case',
-  '<div class="pagesub" style="margin:0 0 14px">The case moves to Active, the unit is notified and the decision is written to the audit log.</div>'+
+ modal('Approve This Case',
+  '<div class="pagesub" style="margin:0 0 14px">The case is approved and stays in progress, the unit is notified and the decision is written to the audit log.</div>'+
   '<div class="card" style="background:var(--bg-light)">'+kv('Case number',x.id)+kv('Applicant',x.applicant+' ('+x.relation+')')+
    kv('Service member',x.memberName+' ('+x.armyNo+')')+kv('Command',x.command)+kv('Maintenance sought',x.maintenance||'-')+'</div>',
   '<button class="btn ghost" onclick="closeModal()">Cancel</button>'+
-  '<button class="btn prim" onclick="closeModal();caseAction(\''+id+'\',\'approve\');go(\'approvals\')">'+ic('TickCircle',17)+'Confirm approval</button>');}
+  '<button class="btn prim" onclick="closeModal();caseAction(\''+id+'\',\'approve\');go(\'approvals\')">'+ic('TickCircle',17)+'Confirm Approval</button>');}
 function apSendBack(id){
- modal('Send back to unit',
+ modal('Send Back to Unit',
   '<div class="pagesub" style="margin:0 0 14px">Case '+id+' returns to the originating unit. It leaves your queue until the unit resubmits it.</div>'+
   '<div class="f"><label>Reason for sending back <span class="req">*</span></label>'+
   '<textarea id="sbreason" style="height:96px" placeholder="Say what the unit must correct or attach"></textarea>'+
   '<div class="hint">The reason is added to the case history and shown to the unit.</div></div>',
   '<button class="btn ghost" onclick="closeModal()">Cancel</button>'+
-  '<button class="btn prim" onclick="apSendBackGo(\''+id+'\')">'+ic('ArrowLeft2',17)+'Send back to unit</button>');}
+  '<button class="btn prim" onclick="apSendBackGo(\''+id+'\')">'+ic('ArrowLeft2',17)+'Send Back to Unit</button>');}
 function apSendBackGo(id){const r=(document.getElementById('sbreason').value||'').trim();
  if(r.length<5){toast('Enter a reason of at least five characters','err');return;}
  closeModal();caseAction(id,'sendback',r);go('approvals');}
 function apBulkApprove(){const ids=apSel.slice();
- modal('Approve '+ids.length+' cases',
-  '<div class="pagesub" style="margin:0 0 14px">Each case below moves to Active and is written to the audit log separately.</div>'+
+ modal('Approve '+ids.length+' Cases',
+  '<div class="pagesub" style="margin:0 0 14px">Each case below is approved and is written to the audit log separately.</div>'+
   '<div class="card" style="background:var(--bg-light)">'+ids.map(i=>{const x=findCase(i);
     return '<div class="kv"><span class="k">'+i+'</span><span class="v">'+esc(x.applicant)+' &middot; '+x.command+'</span></div>';}).join('')+'</div>',
   '<button class="btn ghost" onclick="closeModal()">Cancel</button>'+
-  '<button class="btn prim" onclick="apBulkGo()">'+ic('TickCircle',17)+'Approve all '+ids.length+'</button>');}
+  '<button class="btn prim" onclick="apBulkGo()">'+ic('TickCircle',17)+'Approve All '+ids.length+'</button>');}
 function apBulkGo(){const ids=apSel.slice();closeModal();
- ids.forEach(i=>{const x=findCase(i);if(!x||x.status!=="Registered")return;
-   x.status="Active";x.history.push({stage:"Command approved",by:SESSION.name,when:fmtDate(new Date())});
+ ids.forEach(i=>{const x=findCase(i);if(!x||!pendingCase(x))return;
+   x.approved=true;x.history.push({stage:"Command approved",by:SESSION.name,when:fmtDate(new Date())});
    x.updated=fmtDate(new Date());addAudit('APPROVE_CASE','Approved '+i);});
- DB.set(STATE);apSel=[];toast(ids.length+' cases approved and set Active');go('approvals');}
+ DB.set(STATE);apSel=[];toast(ids.length+' cases approved and now in progress');go('approvals');}
 /* ================= REPORTS ================= */
 function vReports(m){
  m.innerHTML='<div class="crumb">Home / Reports</div><div class="pagehead"><div><div class="h2">Reports</div><div class="pagesub">Build a filtered report, then export or print it.</div></div></div>'+
  '<div class="card" style="margin-bottom:16px"><div class="tools" style="margin:0">'+
    dd('rt',[{v:'summary',l:'Case Summary Report'},{v:'cmd',l:'Command-wise Report'},{v:'pending',l:'Pending Approvals Report'}],'Case Summary Report','','sm rt-dd','summary')+
    dd('rcmd',[{v:'',l:'All Commands'}].concat(COMMANDS),'All Commands','','sm')+
-   dd('rstat',[{v:'',l:'All Status'}].concat(["Registered","Active","Sub-judice","Closed"]),'All Status','','sm')+
-   '<div class="sp" style="flex:1"></div><button class="btn prim" onclick="genReport()">'+ic('Chart21',17)+'Generate report</button>'+
-   '<button class="btn ghost" onclick="exportReportPdf()">'+ic('DocumentDownload',17)+'Export to PDF</button><button class="btn ghost" onclick="exportReportPdf()">'+ic('Printer',17)+'Print report</button></div></div>'+
+   dd('rstat',[{v:'',l:'All Status'}].concat(STATUSES),'All Status','','sm')+
+   '<div class="sp" style="flex:1"></div><button class="btn prim" onclick="genReport()">'+ic('Chart21',17)+'Generate Report</button>'+
+   '<button class="btn ghost" onclick="exportReportPdf()">'+ic('DocumentDownload',17)+'Export to PDF</button><button class="btn ghost" onclick="exportReportPdf()">'+ic('Printer',17)+'Print Report</button></div></div>'+
  '<div id="reportArea"></div>';genReport();
 }
 function reportData(){const type=document.getElementById('rt').value;let c=scoped();
  const cmd=document.getElementById('rcmd').value,st=document.getElementById('rstat').value;
  if(cmd)c=c.filter(x=>x.command===cmd);if(st)c=c.filter(x=>x.status===st);
- if(type==='pending')c=c.filter(x=>x.status==="Registered");
+ if(type==='pending')c=c.filter(pendingCase);
  const title=type==='cmd'?'Command-wise Report':type==='pending'?'Pending Approvals Report':'Case Summary Report';
  return {c,title};}
 /* Renders the report into a standalone A4 sheet and hands it to the browser
@@ -712,7 +892,6 @@ function exportReportPdf(){
    '<td>'+esc(x.memberName)+' <i>'+esc(x.armyNo)+'</i></td><td>'+esc(x.command)+'</td>'+
    '<td class="num">'+esc(x.maintenance||'-')+'</td><td>'+esc(x.status)+'</td></tr>').join('')
    :'<tr><td colspan="6" class="none">No records match this filter.</td></tr>';
- let wm='';for(let i=0;i<24;i++)wm+='<span>CONFIDENTIAL &middot; '+mark+'</span>';
  const html='<!doctype html><html><head><meta charset="utf-8"><title>MAARK - '+esc(title)+'</title><style>'+
   '@page{size:A4 portrait;margin:14mm 12mm 16mm}'+
   '*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
@@ -722,9 +901,8 @@ function exportReportPdf(){
   '.bar button{height:32px;padding:0 14px;border:none;border-radius:7px;background:#184A2C;color:#fff;font-size:12px;font-weight:600;cursor:pointer}'+
   '.bar button.gh{background:rgba(255,255,255,.14)}'+
   '.page{position:relative;width:210mm;min-height:297mm;margin:68px auto 0;background:#fff;padding:14mm 12mm 16mm;box-shadow:0 10px 30px rgba(0,0,0,.35);overflow:hidden}'+
-  '@media print{body{background:#fff;padding:0}.bar{display:none}.page{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;overflow:visible}.wm{position:fixed}}'+
-  '.wm{position:absolute;inset:0;z-index:0;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:26px 34px;transform:rotate(-32deg);pointer-events:none}'+
-  '.wm span{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(24,74,44,.07);white-space:nowrap}'+
+  '@media print{body{background:#fff;padding:0}.bar{display:none}.page{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;overflow:visible}}'+
+  '.wm{position:absolute;inset:0;z-index:0;pointer-events:none;background-repeat:repeat;background-position:center}'+
   '.sheet{position:relative;z-index:1}'+
   '.hd{display:flex;align-items:flex-start;gap:10px;border-bottom:2px solid #184A2C;padding-bottom:10px}'+
   '.mk{flex:none;background:#184A2C;color:#fff;font-size:10px;font-weight:800;letter-spacing:1.4px;padding:7px 10px;border-radius:5px}'+
@@ -747,7 +925,7 @@ function exportReportPdf(){
   '</style></head><body>'+
   '<div class="bar"><b>'+esc(title)+'</b><span>A4 portrait &middot; '+c.length+(c.length===1?' record':' records')+'</span><span class="sp"></span>'+
   '<button onclick="window.print()">Save as PDF</button><button class="gh" onclick="window.close()">Close</button></div>'+
-  '<div class="page"><div class="wm">'+wm+'</div><div class="sheet">'+
+  '<div class="page"><div class="wm" style="'+wmTile(mark)+'"></div><div class="sheet">'+
   '<div class="hd"><span class="mk">MAARK</span><div><b>Additional Directorate General of Human Rights</b>'+
   '<small>MAARK 2.0 &middot; maintenance allowance case system</small></div><span class="conf">Confidential</span></div>'+
   '<div class="ti"><h1>'+esc(title)+'</h1><em>'+c.length+(c.length===1?' record':' records')+'</em></div>'+
@@ -775,8 +953,8 @@ function rptHead(title,c){
   '<div class="rh-meta">'+meta('Generated on',fmtDate(new Date()))+meta('Generated by',SESSION.name+' ('+SESSION.role+')')+
    meta('Command',cmd)+meta('Status',st)+'</div></div>';}
 function genReport(){const{c,title}=reportData();
- const wm=(SESSION.name+' · ADG HR · CONFIDENTIAL · '+SESSION.ip+' · ').repeat(80);
- document.getElementById('reportArea').innerHTML='<div class="card sheet"><div class="wm"><span>'+wm+'</span></div>'+
+ const wm=wmTile(SESSION.name+' · '+SESSION.role+' · '+SESSION.ip);
+ document.getElementById('reportArea').innerHTML='<div class="card sheet"><div class="wm" style="'+wm+'"></div>'+
    rptHead(title,c)+
    '<div class="tblwrap"><table class="tbl"><thead><tr>'+
    th('rep','id','Case No')+th('rep','applicant','Applicant')+th('rep','member','Member')+th('rep','command','Command')+th('rep','maintenance','Maintenance','num')+th('rep','status','Status')+
@@ -795,29 +973,29 @@ function vCms(m){const s=STATE.cms;
    '<div class="f"><label>Notice</label><textarea id="cms_n">'+esc(s.notice)+'</textarea></div>'+
    '<button class="btn prim" onclick="saveCms()">'+ic('TickCircle',17)+'Save Settings</button></div>'+
  '<div class="card" style="flex:1;min-width:280px"><div class="sech">Pages and Content</div>'+
-   s.pages.map((p,i)=>'<div class="aitem" style="cursor:default">'+esc(p)+'<span class="act" style="margin-left:auto" onclick="editPageIdx('+i+')">'+ic('Edit2',15)+'Edit content</span><span class="act" onclick="deletePageIdx('+i+')">'+ic('Trash',15)+'Remove page</span></div>').join('')+
-   '<button class="btn ghost sm" style="margin-top:12px" onclick="addPage()">'+ic('AddCircle',16)+'Add new page</button></div></div>'+
+   s.pages.map((p,i)=>'<div class="aitem" style="cursor:default">'+esc(p)+'<span class="act" style="margin-left:auto" onclick="editPageIdx('+i+')">'+ic('Edit2',15)+'Edit content</span><span class="act" onclick="deletePageIdx('+i+')">'+ic('Trash',15)+'Remove Page</span></div>').join('')+
+   '<button class="btn ghost sm" style="margin-top:12px" onclick="addPage()">'+ic('AddCircle',16)+'Add New Page</button></div></div>'+
  '<div class="muted" style="font-size:12.5px;margin-top:12px">Every content change is audit-logged. Access is limited to the Super Admin.</div>';
 }
 function saveCms(){STATE.cms.portalTitle=val('cms_t');STATE.cms.banner=val('cms_b');STATE.cms.theme=document.getElementById('cms_th').value;STATE.cms.notice=val('cms_n');DB.set(STATE);addAudit('CMS_UPDATE','Updated web settings');toast('Web settings saved');}
 function editPageIdx(i){const name=STATE.cms.pages[i];const content=(STATE.cms.content&&STATE.cms.content[name])||('Draft content for the '+name+' page.');
- modal('Edit page: '+esc(name),
+ modal('Edit Page: '+esc(name),
   '<div class="f"><label>Page title</label><input id="pg_t" value="'+esc(name)+'"></div>'+
   '<div class="f"><label>Page content</label><textarea id="pg_c" style="height:150px">'+esc(content)+'</textarea></div>',
-  '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" onclick="savePageIdx('+i+')">Save page</button>');}
+  '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" onclick="savePageIdx('+i+')">Save Page</button>');}
 function savePageIdx(i){const old=STATE.cms.pages[i];const nt=(val('pg_t')||old);const c=document.getElementById('pg_c').value;
  STATE.cms.content=STATE.cms.content||{};STATE.cms.pages[i]=nt;if(old!==nt)delete STATE.cms.content[old];STATE.cms.content[nt]=c;
  DB.set(STATE);addAudit('CMS_PAGE','Edited page: '+nt);closeModal();toast('Page saved');go('cms');}
-function addPage(){modal('Add new page',
+function addPage(){modal('Add New Page',
   '<div class="f"><label>Page title</label><input id="pg_nt" placeholder="Enter page title"></div>'+
   '<div class="f"><label>Page content</label><textarea id="pg_nc" style="height:120px" placeholder="Enter page text"></textarea></div>',
-  '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" onclick="createPage()">Add page</button>');}
+  '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" onclick="createPage()">Add Page</button>');}
 function createPage(){const t=val('pg_nt');if(!t){toast('Enter a page title','err');return;}
  STATE.cms.content=STATE.cms.content||{};STATE.cms.pages.push(t);STATE.cms.content[t]=document.getElementById('pg_nc').value;
  DB.set(STATE);addAudit('CMS_PAGE','Added page: '+t);closeModal();toast('Page added');go('cms');}
 function deletePageIdx(i){const name=STATE.cms.pages[i];
- modal('Remove page','<p style="font-size:14px;color:var(--text-2)">Remove the page <b>'+esc(name)+'</b>? This is audit-logged.</p>',
-  '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" style="background:var(--error-active)" onclick="confirmDeletePage('+i+')">'+ic('Trash',15)+'Remove page</button>');}
+ modal('Remove Page','<p style="font-size:14px;color:var(--text-2)">Remove the page <b>'+esc(name)+'</b>? This is audit-logged.</p>',
+  '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" style="background:var(--error-active)" onclick="confirmDeletePage('+i+')">'+ic('Trash',15)+'Remove Page</button>');}
 function confirmDeletePage(i){const name=STATE.cms.pages[i];STATE.cms.pages.splice(i,1);if(STATE.cms.content)delete STATE.cms.content[name];
  DB.set(STATE);addAudit('CMS_PAGE','Removed page: '+name);closeModal();toast('Page removed');go('cms');}
 /* ================= AUDIT ================= */
@@ -826,10 +1004,12 @@ const AUD_META={
  VIEW_DOCUMENT:{l:'Document viewed',g:'access',ic:'Eye',c:'info'},
  CREATE_CASE:{l:'Case registered',g:'case',ic:'AddCircle',c:'primary'},
  ADD_NOTING:{l:'Noting added',g:'case',ic:'NoteText',c:'primary'},
- FREEZE_NOTING:{l:'Noting frozen',g:'case',ic:'ShieldTick',c:'primary'},
  APPROVE_CASE:{l:'Case approved',g:'approval',ic:'TickCircle',c:'success'},
  SENDBACK:{l:'Sent back',g:'approval',ic:'ArrowLeft2',c:'warning'},
  SUBJUDICE:{l:'Marked sub-judice',g:'approval',ic:'Judge',c:'warning'},
+ SJ_HEARING:{l:'Hearing recorded',g:'approval',ic:'Clock',c:'warning'},
+ SJ_TRANSFER:{l:'Court changed',g:'approval',ic:'Refresh2',c:'warning'},
+ SJ_JUDGEMENT:{l:'Judgement recorded',g:'approval',ic:'Verify',c:'success'},
  CLOSE_CASE:{l:'Case closed',g:'approval',ic:'CloseCircle',c:'muted'},
  GENERATE_REPORT:{l:'Report generated',g:'report',ic:'Chart21',c:'info'},
  EXPORT_REPORT:{l:'Report exported',g:'report',ic:'DocumentDownload',c:'info'},
@@ -913,8 +1093,8 @@ function vAssistant(m){const c=scoped();
   '<div class="aicol">'+
    '<div class="aihead"><div class="av">'+ic('Messages2',20)+'</div>'+
     '<div class="id"><b>MAARK Assistant</b><small><i></i>On-premise and offline, no data leaves the network</small></div>'+
-    '<div class="hacts"><button class="btn ghost sm" onclick="exportChat()">'+ic('DocumentDownload',16)+'Export transcript</button>'+
-    '<button class="btn ghost sm" onclick="newChat()">'+ic('Refresh2',16)+'New chat</button></div></div>'+
+    '<div class="hacts"><button class="btn ghost sm" onclick="exportChat()">'+ic('DocumentDownload',16)+'Export Transcript</button>'+
+    '<button class="btn ghost sm" onclick="newChat()">'+ic('Refresh2',16)+'New Chat</button></div></div>'+
    '<div class="aistream" id="aistream"></div>'+
    '<div class="aicomp"><div class="compbox">'+
      '<textarea id="aiq" rows="1" placeholder="Ask about a case, a rule or a next step" oninput="aiGrow(this)" onkeydown="aiKey(event,this)"></textarea>'+
@@ -922,15 +1102,15 @@ function vAssistant(m){const c=scoped();
    '</div><div class="comphint"><span><kbd>Enter</kbd> to send</span><span><kbd>Shift</kbd> + <kbd>Enter</kbd> for a new line</span><span style="margin-left:auto">Answers are guidance, not an order. Verify against the file.</span></div></div>'+
   '</div>'+
   '<div class="airail">'+
-   '<div class="rcard"><h4>'+ic('ShieldTick',14)+'Your scope</h4>'+
+   '<div class="rcard"><h4>'+ic('ShieldTick',14)+'Your Scope</h4>'+
     '<div class="scoperow"><span class="k">Role</span><span class="v">'+esc(SESSION.role)+'</span></div>'+
     '<div class="scoperow"><span class="k">Command</span><span class="v">'+esc(SESSION.command||'All commands')+'</span></div>'+
     '<div class="scopestats">'+
       '<div class="ss"><b>'+c.length+'</b><span>In scope</span></div>'+
-      '<div class="ss ok"><b>'+c.filter(x=>x.status==='Active').length+'</b><span>Active</span></div>'+
-      '<div class="ss warn"><b>'+c.filter(x=>x.status==='Registered').length+'</b><span>Awaiting</span></div>'+
+      '<div class="ss ok"><b>'+c.filter(x=>x.status==='In Progress').length+'</b><span>In progress</span></div>'+
+      '<div class="ss warn"><b>'+c.filter(pendingCase).length+'</b><span>Awaiting</span></div>'+
     '</div></div>'+
-   '<div class="rcard"><h4>'+ic('Magicpen',14)+'Suggested questions</h4><div class="qlist">'+
+   '<div class="rcard"><h4>'+ic('Magicpen',14)+'Suggested Questions</h4><div class="qlist">'+
      AI_RAIL.map(x=>'<div class="qi" onclick="askAi('+aiArg(x.q)+')"><span class="qc">'+ic(x.ic,16)+'</span><span class="qt">'+x.q+'</span><span class="qg">'+ic('ArrowRight2',14)+'</span></div>').join('')+
    '</div></div>'+
    '<div class="railnote"><span class="rn-ic">'+ic('InfoCircle',15)+'</span><span>The assistant reads the policy set and the case records inside your command only. It cannot open a case for you, change a status or approve anything. Every look-up is written to the audit log.</span></div>'+
@@ -979,19 +1159,19 @@ function aiAnswer(q){const l=q.toLowerCase();const c=scoped();
   if(x)return{html:'<b>'+x.id+'</b>, '+esc(x.applicant)+' ('+esc(x.relation)+'), '+esc(x.command)+' '+statTag(x.status)+'<br>Member '+esc(x.memberName)+' ('+esc(x.armyNo)+'). Maintenance '+esc(x.maintenance||'-')+'.',
    src:'Case register',chips:['Open '+x.id,'Explain the approval workflow']};
   return{html:'No case '+idm[0]+' sits inside your scope. Check the number, or ask your command HQ to share it.',src:'Case register',chips:['How many cases do I have?']};}
- if(l.includes('active'))return{html:'You have <b>'+c.filter(x=>x.status==='Active').length+' active cases</b> in scope. Active means the case is registered, approved and still inside the 180 day window.',src:'Case register',chips:['Break my cases down by status','Which cases are near the 180 day limit?']};
- if(l.includes('sub-judice')||l.includes('subjudice'))return{html:'<b>'+c.filter(x=>x.status==='Sub-judice').length+'</b> cases are sub-judice. These are held in court, and no maintenance decision is taken until the court rules.',src:'Case register',chips:['Break my cases down by status']};
- if(l.includes('closed'))return{html:'<b>'+c.filter(x=>x.status==='Closed').length+'</b> cases are closed. A closed case keeps its full noting history for audit.',src:'Case register',chips:['Break my cases down by status']};
- if(l.includes('180')||l.includes('limit')||l.includes('overdue')||l.includes('deadline')){const n=c.filter(x=>x.status==='Active'||x.status==='Registered').length;
+ if(l.includes('active')||l.includes('in progress'))return{html:'You have <b>'+c.filter(x=>x.status==='In Progress').length+' cases in progress</b> in scope. In progress means the case is filed and still inside the 180 day window, whether or not Command has approved it yet.',src:'Case register',chips:['Break my cases down by status','Which cases are near the 180 day limit?']};
+ if(l.includes('sub-judice')||l.includes('subjudice')||l.includes('court'))return{html:'<b>'+c.filter(x=>x.subJudice).length+'</b> cases are sub-judice. These are held in court, and no maintenance decision is taken until the court rules.',src:'Case register',chips:['Break my cases down by status']};
+ if(l.includes('closed'))return{html:'<b>'+c.filter(x=>x.status==='Closed').length+'</b> cases are closed and <b>'+c.filter(x=>x.status==='Resolved').length+'</b> are resolved. Every closed and resolved case carries the reason on its case summary, and keeps its full noting history for audit.',src:'Case register',chips:['Break my cases down by status']};
+ if(l.includes('180')||l.includes('limit')||l.includes('overdue')||l.includes('deadline')){const n=c.filter(x=>x.status==='In Progress').length;
   return{html:'A case must be resolved within <b>180 days</b> of registration. '+n+' of your cases are still open against that clock. The Registered Cases screen shows the days left on each one.',src:'Policy set, clause 4.2',chips:['What is pending my approval?','Break my cases down by status']};}
- if(l.includes('pending')||l.includes('approval')||l.includes('approve'))return{html:'<b>'+c.filter(x=>x.status==='Registered').length+'</b> cases are waiting on approval. The Brigade Commander approves first, then the file moves one level up.',src:'Approval queue',chips:['Explain the approval workflow','Break my cases down by status']};
- if(l.includes('how many')||l.includes('total')||l.includes('break')||l.includes('status'))return{html:'You have <b>'+c.length+' cases</b> in scope: '+['Registered','Active','Sub-judice','Closed'].map(s=>'<b>'+c.filter(x=>x.status===s).length+'</b> '+s.toLowerCase()).join(', ')+'.',src:'Case register',chips:['What is pending my approval?','Which cases are near the 180 day limit?']};
+ if(l.includes('pending')||l.includes('approval')||l.includes('approve'))return{html:'<b>'+c.filter(pendingCase).length+'</b> cases are waiting on approval. The Brigade Commander approves first, then the file moves one level up.',src:'Approval queue',chips:['Explain the approval workflow','Break my cases down by status']};
+ if(l.includes('how many')||l.includes('total')||l.includes('break')||l.includes('status'))return{html:'You have <b>'+c.length+' cases</b> in scope: '+STATUSES.map(s=>'<b>'+c.filter(x=>x.status===s).length+'</b> '+s.toLowerCase()).join(', ')+'.',src:'Case register',chips:['What is pending my approval?','Which cases are near the 180 day limit?']};
  if(l.includes('eligib')||l.includes('policy')||l.includes('maintenance'))return{html:'Maintenance is payable to an eligible dependent: wife, mother or child. The Army steps in within 3 years of the claim. If the applicant is employable, maintenance is not allowed.',src:'Policy set, clause 2.1',chips:['Explain the approval workflow','Which cases are near the 180 day limit?']};
- if(l.includes('noting')||l.includes('note'))return{html:'Open the case, go to the Notings tab and write your remark. A yellow noting is still editable by you. Freezing it turns it green and locks it into the record for good.',src:'User guide',chips:['Explain the approval workflow']};
- if(l.includes('workflow')||l.includes('process')||l.includes('step'))return{html:'The unit files the case. The Brigade Commander approves it. Approval then moves one level up, and ADG HR keeps oversight throughout. Notings are colour coded: yellow is editable, green is frozen.',src:'Policy set, clause 3',chips:['What is pending my approval?','How do I add a noting to a case?']};
+ if(l.includes('noting')||l.includes('note'))return{html:'Open the case, go to the Notings tab and write your remark. A noting raised anywhere in the chain of command is yellow. When headquarters gives its verdict that noting is green, and every earlier noting on the case turns green with it.',src:'User guide',chips:['Explain the approval workflow']};
+ if(l.includes('workflow')||l.includes('process')||l.includes('step'))return{html:'The unit files the case. The Brigade Commander approves it. Approval then moves one level up, and ADG HR keeps oversight throughout. Notings are colour coded: yellow is raised in the chain of command, green is the headquarters verdict.',src:'Policy set, clause 3',chips:['What is pending my approval?','How do I add a noting to a case?']};
  if(l.includes('role')||l.includes('see')||l.includes('access')||l.includes('permission')||l.includes('security'))return{html:'You are signed in as <b>'+esc(SESSION.role)+'</b>'+(SESSION.command?' for '+esc(SESSION.command):'')+'. You see '+c.length+' cases and nothing outside that scope. Every question you ask here is written to the audit log.',src:'Access control',chips:['Break my cases down by status']};
  if(l==='hi'||l.includes('hello')||l.includes('namaste'))return{html:'Namaste. Ask me about eligibility, the approval workflow, or the live case data in your command.',src:'',chips:['How many active cases?','Who is eligible for maintenance?']};
- return{html:'I did not follow that one. I can answer on eligibility and policy, the approval workflow, security and scope, and the live case data: counts, status breakdowns and a case look-up by number.',src:'',chips:['How many active cases?','Explain the approval workflow','Show MNT/2026/0142']};
+ return{html:'I did not follow that one. I can answer on eligibility and policy, the approval workflow, security and scope, and the live case data: counts, status breakdowns and a case look-up by number.',src:'',chips:['How many cases are in progress?','Explain the approval workflow','Show MNT/2026/0142']};
 }
 /* ================= SEARCH ================= */
 function globalSearch(v){v=(v||'').trim();if(!v){return;}const up=v.toUpperCase();
