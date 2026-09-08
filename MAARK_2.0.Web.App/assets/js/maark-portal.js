@@ -1,5 +1,5 @@
 /* ================= DATA ================= */
-const KEY="maark_portal_v6";
+const KEY="maark_portal_v8";
 const STATUSES=["Draft","In Progress","Resolved","Closed"];
 const COMMANDS=["Northern","Western","Central","Eastern","Southern","South Western"];
 const OFFICERS={
@@ -53,9 +53,36 @@ function seed(){
    {ts:"07-Sep-2026, 11:20",user:"Sub R. Kumar",role:"Unit User",action:"CREATE_CASE",detail:"Registered MNT/2026/0142",ip:"10.0.7.14"},
    {ts:"06-Sep-2026, 17:03",user:"Col A. Verma",role:"Super Admin",action:"GENERATE_REPORT",detail:"Case Summary Report",ip:"10.0.1.9"}
  ];
- const cms={portalTitle:"MAARK 2.0",banner:"Maintenance allowance, digitised",theme:"Light Green",notice:"Cases are to be resolved within 180 days.",
+ const day=n=>fmtDate(new Date(now-n*864e5));
+ const kb=[
+  {id:"KB-0108",title:"Who is eligible for maintenance",cat:"Eligibility",source:"Policy set, clause 2.1",status:"Published",
+   tags:"eligible eligibility dependent wife mother child employable claim",
+   body:"Maintenance is payable to an eligible dependent of a serving member: the wife, the mother or a child. The Army steps in within 3 years of the claim. If the applicant is employable, maintenance is not allowed. Eligibility is checked against the dependent card and the service record before the case leaves the unit.",updated:day(3)},
+  {id:"KB-0107",title:"The 180 day resolution window",cat:"Policy",source:"Policy set, clause 4.2",status:"Published",
+   tags:"180 days limit deadline overdue window timeline resolve",
+   body:"A case must be resolved within 180 days of registration. The clock starts on the filed date, not the application date. The Registered Cases screen shows the days left on each open case. A case that crosses the window stays open and is reported to Command every month until it is closed.",updated:day(4)},
+  {id:"KB-0106",title:"Approval workflow from unit to headquarters",cat:"Workflow",source:"Policy set, clause 3",status:"Published",
+   tags:"workflow approval process steps chain command brigade adg pending",
+   body:"The unit files the case. The Brigade Commander approves it first. Approval then moves one level up, and ADG HR keeps oversight throughout. A case sent back returns to the unit with the reason on the file. Nothing is disbursed until the approval chain is complete.",updated:day(6)},
+  {id:"KB-0105",title:"How to add a noting to a case",cat:"FAQ",source:"User guide, section 5",status:"Published",
+   tags:"noting note remark comment colour yellow green verdict",
+   body:"Open the case, go to the Notings tab and write your remark. A noting raised anywhere in the chain of command is yellow. When headquarters gives its verdict that noting is green, and every earlier noting on the case turns green with it. A noting cannot be deleted once saved.",updated:day(8)},
+  {id:"KB-0104",title:"Sub-judice cases and court proceedings",cat:"Policy",source:"Policy set, clause 6.4",status:"Published",
+   tags:"sub-judice subjudice court hearing judgement transfer stay legal",
+   body:"A case before a civil or criminal court is marked sub-judice. No maintenance decision is taken while the matter is held in court. Every hearing, court transfer and the final judgement is recorded on the case in the Sub-judice tab, so the proceedings trail stays with the file.",updated:day(9)},
+  {id:"KB-0103",title:"Roles and what each role can see",cat:"Security",source:"Access control matrix",status:"Published",
+   tags:"role access permission scope security visible command see data",
+   body:"A Unit User sees the cases of the unit. A Command Admin sees every case of the command. The Super Admin sees all commands and the content and audit screens. Roles and command scope are set in Army IAM, not in this portal. Every look-up is written to the audit log.",updated:day(11)},
+  {id:"KB-0102",title:"Documents required with a maintenance claim",cat:"FAQ",source:"User guide, section 2",status:"Draft",
+   tags:"document upload proof marriage affidavit attachment file",
+   body:"Proof of marriage and a signed affidavit are required with every claim. A dependent card and a CSD card number are recorded where they exist. Documents are held encrypted and opened in the read-only viewer, which stamps the viewer, the IP and the time on each page.",updated:day(2)},
+  {id:"KB-0101",title:"Rate of maintenance and how it is worked out",cat:"Policy",source:"Policy set, clause 2.4",status:"Draft",
+   tags:"rate percent salary amount calculation quantum entitlement",
+   body:"Maintenance is set either as a share of the basic pay of the member or as a fixed monthly amount. The recommended share is entered by the command and sanctioned by headquarters. The sanctioned figure is stamped on the case summary and carried into the disbursement order.",updated:day(5)}
+ ];
+ const cms={portalTitle:"MAARK 2.0",banner:"Maintenance allowance, digitised",primary:"Army Green",notice:"Cases are to be resolved within 180 days.",
    pages:["Home","About ADG HR","Policy and eligibility","Contact","FAQ"]};
- return {cases,audit,cms,seq:143};
+ return {cases,audit,cms,kb,seq:143};
 }
 const DB={
  load(){try{return JSON.parse(localStorage.getItem(KEY))||null}catch(e){return null}},
@@ -65,6 +92,18 @@ const DB={
 };
 let STATE=DB.get();
 let SESSION=null;
+
+/* ================= PRIMARY COLOUR ================= */
+const PALETTE={"Army Green":"#184A2C","Deep Navy":"#143A6B","Regimental Maroon":"#6B1F2A","Teal":"#0F4C4A","Indigo":"#2E2F7A","Bronze":"#6B4A16","Violet":"#4B2A7A","Graphite":"#2B3138"};
+function hx(r,g,b){const c=n=>Math.max(0,Math.min(255,Math.round(n))).toString(16).padStart(2,'0');return '#'+c(r)+c(g)+c(b);}
+function applyPrimary(name){const base=PALETTE[name]||PALETTE["Army Green"];
+ const r=parseInt(base.substr(1,2),16),g=parseInt(base.substr(3,2),16),b=parseInt(base.substr(5,2),16);
+ const tint=p=>hx(r*p+255*(1-p),g*p+255*(1-p),b*p+255*(1-p)),scale=f=>hx(r*f,g*f,b*f);
+ const s=document.documentElement.style;
+ s.setProperty('--primary',base);
+ [50,30,20,15,10,5].forEach(p=>s.setProperty('--primary-'+p,tint(p/100)));
+ s.setProperty('--primary-hover',scale(1.34));s.setProperty('--primary-pressed',scale(.66));}
+applyPrimary(STATE.cms&&STATE.cms.primary);
 
 /* ================= AUTH ================= */
 const EMAIL_RE=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -94,6 +133,9 @@ const ICONS={
  ArrowDown2:"<path d='M19.92 8.95l-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95'/>",
  ArrowRight2:"<path d='M8.91 19.92l6.52-6.52c.77-.77.77-2.03 0-2.8L8.91 4.08'/>",
  ArrowLeft2:"<path d='M15 19.92L8.48 13.4c-.77-.77-.77-2.03 0-2.8L15 4.08'/>",
+ Tick:"<path d='m7.75 12 2.83 2.83 5.67-5.66'/>",
+ DocumentUpload:"<path d='M9 17v-6l-2 2M9 11l2 2'/><path d='M22 10v5c0 5-2 7-7 7H9c-5 0-7-2-7-7V9c0-5 2-7 7-7h5'/><path d='M22 10h-4c-3 0-4-1-4-4V2l8 8Z'/>",
+ Book1:"<path d='M22 16.74V4.67c0-1.2-.98-2.09-2.17-1.99h-.06c-2.1.18-5.29 1.25-7.07 2.37l-.17.11c-.29.18-.77.18-1.06 0l-.25-.15C9.44 3.9 6.26 2.84 4.16 2.67 2.97 2.57 2 3.47 2 4.66v12.08c0 .96.78 1.86 1.74 1.98l.29.04c2.17.29 5.52 1.39 7.44 2.44l.04.02c.27.15.7.15.96 0 1.92-1.06 5.28-2.17 7.46-2.46l.33-.04c.96-.12 1.74-1.02 1.74-1.98ZM12 5.49v15M7.75 8.49H5.5M8.5 11.49h-3'/>",
  Chart21:"<path d='M7 10.74v3.2M12 9v6.68M17 10.74v3.2M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7Z'/>",
  ClipboardText:"<path d='M8 12.2h7M8 16.2h4.38M10 6h4c2 0 2-1 2-2 0-2-1-2-2-2h-4C9 2 8 2 8 4s1 2 2 2Z'/><path d='M16 4.02c3.33.18 5 1.41 5 5.98v6c0 4-1 6-6 6H9c-5 0-6-2-6-6v-6c0-4.56 1.67-5.8 5-5.98'/>",
  ClipboardTick:"<path d='m9.31 14.7 1.5 1.5 4-4'/><path d='M10 6h4c2 0 2-1 2-2 0-2-1-2-2-2h-4C9 2 8 2 8 4s1 2 2 2Z'/><path d='M16 4.02c3.33.18 5 1.41 5 5.98v6c0 4-1 6-6 6H9c-5 0-6-2-6-6v-6c0-4.56 1.67-5.8 5-5.98'/>",
@@ -135,6 +177,8 @@ const EYE=ic('Eye',20),EYE_OFF=ic('EyeSlash',20);
 document.getElementById('searchIcon').innerHTML=ic('SearchNormal1',17);
 document.querySelectorAll('[data-pmic]').forEach(e=>{const k=e.dataset.pmic,z=e.classList.contains('pm-chev')?15:18;e.innerHTML=BICONS[k]?bic(k,z):ic(k,z);});
 document.getElementById('aiFab').innerHTML=bic('AiStar',24);
+document.getElementById('pmSw').innerHTML=Object.keys(PALETTE).map(k=>'<span class="sw'+(k===STATE.cms.primary?' on':'')+'" data-k="'+k+'" title="'+esc(k)+'" style="background:'+PALETTE[k]+'" onclick="setPrimary(\''+k+'\')"></span>').join('');
+function setPrimary(k){STATE.cms.primary=k;applyPrimary(k);DB.set(STATE);previewPrimary(k,1);if(CURRENT==='cms')go('cms');}
 function toggleProfileMenu(ev){
  if(ev)ev.stopPropagation();
  const m=document.getElementById('pmenu'),open=m.classList.toggle('hidden');
@@ -176,11 +220,12 @@ function logout(){SESSION=null;location.reload();}
 /* ================= SCOPE / HELPERS ================= */
 function scoped(){const c=STATE.cases;if(!SESSION||SESSION.role==="Super Admin")return c;return c.filter(x=>x.command===SESSION.command);}
 function findCase(id){return STATE.cases.find(x=>x.id===id);}
+function canSee(route){return (NAV[SESSION&&SESSION.role]||[]).some(item=>item[0]===route);}
 function addAudit(action,detail){STATE.audit.unshift({ts:fmtDT(new Date()),user:SESSION?SESSION.name:'-',role:SESSION?SESSION.role:'-',action,detail,ip:SESSION?SESSION.ip:'-'});DB.set(STATE);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function emptyState(icon,title,sub){return '<div class="card"><div class="empty"><div class="eic">'+ic(icon,22)+'</div><b>'+title+'</b><span>'+sub+'</span></div></div>';}
 /* ---- Column sorting. One state per table namespace; th's carry the Iconsax glyph. ---- */
-const SORT={dash:{key:'updated',dir:-1},reg:{key:'updated',dir:-1},aud:{key:'ts',dir:-1},rep:{key:'id',dir:1},ap:{key:'wait',dir:-1}};
+const SORT={dash:{key:'updated',dir:-1},reg:{key:'updated',dir:-1},aud:{key:'ts',dir:-1},rep:{key:'id',dir:1},ap:{key:'wait',dir:-1},kb:{key:'updated',dir:-1}};
 function sortVal(x,k){
  if(k==='wait')return waitDays(x);
  if(k==='updated')return (pdate(x.updated)||new Date(0)).getTime();
@@ -197,8 +242,10 @@ function th(ns,key,label,cls){const s=SORT[ns],on=s.key===key;
  return '<th class="sortable'+(cls?' '+cls:'')+(on?' sorted':'')+'" onclick="sortBy(&quot;'+ns+'&quot;,&quot;'+key+'&quot;)">'+label+
    '<span class="sic">'+ic(on?(s.dir>0?'ArrowUp2':'ArrowDown2'):'ArrowSwapVertical',14)+'</span></th>';}
 function sortBy(ns,key){const s=SORT[ns];if(s.key===key)s.dir=-s.dir;else{s.key=key;s.dir=1;}
- if(ns==='reg')drawReg();else if(ns==='aud')drawAudit();else if(ns==='rep')genReport();else if(ns==='ap')drawAp();else go('dashboard');}
-function pendingCase(x){return x.status==="In Progress"&&!x.approved;}
+ if(ns==='reg')drawReg();else if(ns==='aud')drawAudit();else if(ns==='rep')genReport();else if(ns==='ap')drawAp();else if(ns==='kb')drawKb();else go('dashboard');}
+function pendingCase(x){return x.status==="In Progress"&&!x.approved&&!x.subJudice;}
+function sjTag(){return '<span class="stat s-Sub-judice sj-dot" title="Sub-judice">'+ic('Judge',13)+'</span>';}
+function statCell(x){return statTag(x.status)+(x.subJudice?sjTag():'');}
 function statTag(s){return '<span class="stat s-'+s.replace(/\s/g,'-')+'">'+s+'</span>';}
 function toast(msg,type){const t=document.createElement('div');t.className='toast'+(type==='err'?' err':'');t.textContent=msg;document.getElementById('toastWrap').appendChild(t);setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.remove(),300)},2600);}
 function modal(title,bodyHtml,footHtml){document.getElementById('modalRoot').innerHTML='<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="mh"><h3>'+title+'</h3><button class="x" onclick="closeModal()">&times;</button></div><div class="mb">'+bodyHtml+'</div>'+(footHtml?'<div class="mf">'+footHtml+'</div>':'')+'</div></div>';}
@@ -213,7 +260,7 @@ function closeModal(){document.getElementById('modalRoot').innerHTML='';}
 function downloadCsv(name,rows){const csv=rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);
  const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
-function uploadDemo(el,name){el.innerHTML='&#10003; '+name+' attached';el.style.color='var(--success-active)';el.style.borderColor='var(--success-active)';el.style.background='var(--success-10)';}
+function uploadDemo(el,name){el.classList.add('done');el.innerHTML='&#10003; '+name+' attached';el.style.color='var(--success-active)';el.style.borderColor='var(--success-active)';el.style.background='var(--success-10)';}
 /* Watermark. Each row is ONE continuous nowrap line of the repeated mark, wider
    than the block it sits in, so a row never ends inside the sheet. Wrapping
    separate marks instead leaves every row ragged at the same place, and those
@@ -237,11 +284,11 @@ function previewDoc(id,name){const wm=wmSpans(SESSION.name+' · '+SESSION.role+'
  addAudit('VIEW_DOCUMENT','Previewed '+name+' on '+id);}
 /* ================= NAV / ROUTER ================= */
 const NAV={
- "Super Admin":[["dashboard","Dashboard"],["registered","Registered Cases"],["newcase","New Case"],["approvals","Approvals"],["reports","Reports"],["audit","Audit Log"]],
+ "Super Admin":[["dashboard","Dashboard"],["registered","Registered Cases"],["newcase","New Case"],["approvals","Approvals"],["reports","Reports"],["kb","Knowledge Base"],["audit","Audit Log"]],
  "Command Admin":[["dashboard","Dashboard"],["registered","Registered Cases"],["newcase","New Case"],["approvals","Approvals"],["reports","Reports"]],
  "Unit User":[["dashboard","Dashboard"],["registered","Registered Cases"],["newcase","New Case"],["reports","Reports"]]
 };
-const NAVICON={dashboard:'Element3',registered:'DocumentText',newcase:'AddCircle',approvals:'ClipboardTick',reports:'Chart21',cms:'NoteText',audit:'ShieldTick',assistant:'Messages2'};
+const NAVICON={dashboard:'Element3',registered:'DocumentText',newcase:'AddCircle',approvals:'ClipboardTick',reports:'Chart21',cms:'NoteText',kb:'Book1',audit:'ShieldTick',assistant:'Messages2'};
 let CURRENT="dashboard";
 /* Iconsax Bulk variant, used for the active sidebar item only.
    d4 = soft body at 40 percent, d = solid shape, l = stroked detail. */
@@ -257,6 +304,8 @@ const ICONS_BULK={
    l:"m9.31 14.7 1.5 1.5 4-4"},
  Chart21:{d4:"M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7Z",
    l:"M7 10.74v3.2M12 9v6.68M17 10.74v3.2"},
+ Book1:{d4:"M22 4.67v12.07c0 .96-.78 1.86-1.74 1.98l-.33.04c-2.18.29-5.54 1.4-7.46 2.46-.26.15-.69.15-.96 0l-.04-.02c-1.92-1.05-5.27-2.15-7.44-2.44l-.29-.04C2.78 18.6 2 17.7 2 16.74V4.66c0-1.19.97-2.09 2.16-1.99 2.1.17 5.28 1.23 7.06 2.34l.25.15c.29.18.77.18 1.06 0l.17-.11c1.78-1.12 4.97-2.19 7.07-2.37h.06c1.19-.1 2.17.79 2.17 1.99Z",
+   l:"M12 5.49v15M7.75 8.49H5.5M8.5 11.49h-3"},
  NoteText:{d4:"M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z",
    l:"M8 2v3M16 2v3M8 11h8M8 16h4"},
  ShieldTick:{d4:"M10.49 2.23 5.5 4.11c-1.15.43-2.09 1.79-2.09 3.01v7.43c0 1.18.78 2.73 1.73 3.44l4.3 3.21c1.41 1.06 3.73 1.06 5.14 0l4.3-3.21c.95-.71 1.73-2.26 1.73-3.44V7.12c0-1.23-.94-2.59-2.09-3.02l-4.99-1.87c-.85-.31-2.21-.31-3.04 0Z",
@@ -279,7 +328,7 @@ function buildNav(){
    if(k==='_a'){const g=document.createElement('div');g.className='grp';g.textContent=label;s.appendChild(g);return;}
    const a=document.createElement('div');a.className='nav';a.dataset.k=k;a.innerHTML='<span class="ic">'+ic(NAVICON[k]||'Element3',20)+'</span>'+label;a.onclick=()=>go(k);s.appendChild(a);});
 }
-const VIEWS={dashboard:vDashboard,registered:vRegistered,newcase:vNewCase,casedetail:vCaseDetail,approvals:vApprovals,reports:vReports,cms:vCms,audit:vAudit,assistant:vAssistant,profile:vProfile};
+const VIEWS={dashboard:vDashboard,registered:vRegistered,newcase:vNewCase,casedetail:vCaseDetail,approvals:vApprovals,reports:vReports,cms:vCms,kb:vKb,audit:vAudit,assistant:vAssistant,profile:vProfile};
 function vProfile(m){
  const mail=document.getElementById('pmMail').textContent;
  const av=document.getElementById('uAv').textContent;
@@ -296,7 +345,7 @@ function vProfile(m){
      '<div class="pline">'+ic('Element3',15)+'<span>'+esc(SESSION.command||'All commands')+'</span></div>'+
      '<div class="pline">'+ic('ShieldTick',15)+'<span>Signed in '+esc(since)+'</span></div>'+
      '<div class="pquick">'+
-       '<button class="btn ghost sm" id="pfAudit">'+ic('ShieldTick',16)+'Audit Trail</button>'+
+       (canSee('audit')?'<button class="btn ghost sm" id="pfAudit">'+ic('ShieldTick',16)+'Audit Trail</button>':'')+
        '<button class="btn ghost sm" id="pfAi">'+ic('Magicpen',16)+'AI Assistant</button>'+
      '</div>'+
      '<button class="btn ghost sm pfout" id="pfOut">'+ic('LogoutCurve',16)+'Log Out</button>'+
@@ -315,7 +364,7 @@ function vProfile(m){
      '</div>'+
    '</div>'+
   '</div>';
- document.getElementById('pfAudit').onclick=()=>go('audit');
+ const pfa=document.getElementById('pfAudit');if(pfa)pfa.onclick=()=>go('audit');
  document.getElementById('pfAi').onclick=()=>go('assistant');
  document.getElementById('pfOut').onclick=()=>logout();
 }
@@ -334,6 +383,7 @@ function vDashboard(m){
  m.innerHTML='<div class="crumb">Home / Dashboard</div><div class="pagehead"><div><div class="h2">Dashboard</div><div class="pagesub">A live view of maintenance-allowance cases in your scope.</div></div></div>'+
  '<div class="kpis">'+
    kpi("Total Cases",c.length,"var(--primary)","all","ClipboardText")+
+   kpi("Draft",cnt("Draft"),"var(--text-3)","Draft","NoteText")+
    kpi("In Progress",cnt("In Progress"),"var(--info-active)","In Progress","Clock")+
    kpi("Resolved",cnt("Resolved"),"var(--success-active)","Resolved","ClipboardTick")+
    kpi("Closed",cnt("Closed"),"var(--text-3)","Closed","TickCircle")+
@@ -356,7 +406,7 @@ function vDashboard(m){
  '<div class="card" style="margin-top:16px"><h3>Recent Cases</h3><div class="tblwrap"><table class="tbl"><thead><tr>'+
    th('dash','id','Case No')+th('dash','applicant','Applicant')+th('dash','command','Command')+th('dash','status','Status')+th('dash','updated','Updated')+
  '</tr></thead><tbody>'+
-   sortRows('dash',c).slice(0,6).map(x=>'<tr style="cursor:pointer" onclick="go(\'casedetail\',\''+x.id+'\')"><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td>'+x.updated+'</td></tr>').join('')+
+   sortRows('dash',c).slice(0,6).map(x=>'<tr style="cursor:pointer" onclick="go(\'casedetail\',\''+x.id+'\')"><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+x.command+'</td><td>'+statCell(x)+'</td><td>'+x.updated+'</td></tr>').join('')+
  '</tbody></table></div></div>';
 }
 function kpi(lbl,val,color,jump,icn){return '<div class="kpi" onclick="go(\'registered\',{status:\''+jump+'\'})"><div class="kico" style="background:color-mix(in srgb,'+color+' 12%,#fff);color:'+color+'">'+ic(icn,19)+'</div><div class="kbody"><div class="val">'+val+'</div><div class="lbl">'+lbl+'</div></div></div>';}
@@ -400,46 +450,97 @@ function drawReg(){const all=sortRows('reg',regRows());const canEdit=SESSION.rol
  document.getElementById('regtable').innerHTML='<div class="card tblcard">'+regTabs()+(all.length?'<div class="tblwrap"><table class="tbl"><thead><tr>'+
    th('reg','id','Case No')+th('reg','applicant','Applicant')+th('reg','member','Member')+th('reg','command','Command')+th('reg','status','Status')+th('reg','updated','Updated','num')+
    '<th>Actions</th></tr></thead><tbody>'+
-   c.map(x=>'<tr><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+esc(x.memberName)+' <span class="muted">('+x.armyNo+')</span></td><td>'+x.command+'</td><td>'+statTag(x.status)+'</td><td class="num">'+x.updated+'</td><td><span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">'+ic('Eye',15)+'View case</span>'+(canEdit?'<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">'+ic('Edit2',15)+'Open and edit</span>':'')+'</td></tr>').join('')+
+   c.map(x=>'<tr><td><b>'+x.id+'</b></td><td>'+esc(x.applicant)+' <span class="muted">('+x.relation+')</span></td><td>'+esc(x.memberName)+' <span class="muted">('+x.armyNo+')</span></td><td>'+x.command+'</td><td>'+statCell(x)+'</td><td class="num">'+x.updated+'</td><td><span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">'+ic('Eye',15)+'View case</span>'+(canEdit?'<span class="act" onclick="go(\'casedetail\',\''+x.id+'\')">'+ic('Edit2',15)+'Open and edit</span>':'')+'</td></tr>').join('')+
  '</tbody></table></div>'+tblFoot('reg',regFilter.page,regFilter.per,all.length)
    :emptyState('DocumentText','No cases match these filters','Clear a filter or change the search term to see more results.'))+'</div>';}
 /* ================= NEW CASE ================= */
+/* Wizard. Every step stays in the DOM, only the current one is shown, so each
+   getElementById read in submitCase keeps working whatever step you are on. */
+const NC_STEPS=[
+ {t:"Service personnel",d:"Fetch the service record from the Army number."},
+ {t:"Applicant details",d:"Who is applying and how to reach them."},
+ {t:"Case details",d:"Category, type and the dates on record."},
+ {t:"Dependents and cards",d:"Guardian, parent and card numbers."},
+ {t:"Documents",d:"Proof of marriage, affidavit and support."},
+ {t:"Review and submit",d:"Check the entries, then send for approval."}];
+let NC_STEP=0;
 function vNewCase(m){
+ NC_STEP=0;
  m.innerHTML='<div class="crumb">Home / New Case</div>'+
- '<div class="pagehead"><div><div class="h2" style="margin:0">Register a New Case</div><div class="pagesub">Fields marked with an asterisk are required. You can save a draft at any point.</div></div></div>'+
- '<div class="card formcard">'+
-   '<section class="fsec"><div class="sech">Service Personnel</div><div class="grid3">'+
-     f("Army number","nc_army","text","e.g. IC-50231",true,'Enter the Army number, then fetch the service record. Try IC-50231.','<button class="btn ghost sm" style="margin-top:8px" onclick="fetchSvc()">'+ic('SearchNormal1',16)+'Fetch Service Record</button>')+
-     ro("Rank","nc_rank")+ro("Name of member","nc_mname")+ro("Unit","nc_unit")+ro("Command","nc_cmd")+ro("Monthly salary","nc_salary")+
-   '</div></section>'+
-   '<section class="fsec"><div class="sech">Applicant Details</div><div class="grid3">'+
-     f("Applicant name","nc_app","text","Full name",true)+
-     sel("Relation to member","nc_rel",["Wife","Mother","Child"],true)+
-     f("Age now","nc_agenow","number","Years")+f("Age at time of filing","nc_agefile","number","Years")+
-     f("Contact number","nc_contact","text","10-digit mobile",true)+f("Aadhaar number","nc_aadhaar","text","Validated")+
-     '<div class="f full"><label>Correspondence address</label><input id="nc_addr" placeholder="Enter correspondence address"></div>'+
-   '</div></section>'+
-   '<section class="fsec"><div class="sech">Case Details</div><div class="grid3">'+
-     sel("Case category","nc_cat",["Maintenance","Spouse allowance"],true)+
-     sel("Case type","nc_type",["Spouse maintenance","Mother maintenance","Child maintenance","Other"])+
-     f("Maintenance sought","nc_maint","text","Amount or percentage")+
-     f("Application date","nc_appdate","date","",true)+f("Filed date","nc_filedate","date")+
-     '<div class="f"><label>Status on submission</label><div class="rovalue">'+statTag('In Progress')+'</div></div>'+
-   '</div></section>'+
-   '<section class="fsec"><div class="sech">Dependents and Cards</div><div class="grid3">'+
-     f("Guardian name","nc_guard","text","In addition to parent")+f("Parent name","nc_parent")+
-     sel("Estranged spouse employment","nc_emp",["Unemployed","Employed","Other"])+
-     f("Dependent card number","nc_dep")+f("CSD card number","nc_csd")+sel("Employability","nc_ability",["No","Yes"])+
-   '</div></section>'+
-   '<section class="fsec"><div class="sech">Documents</div><div class="grid3">'+
-     '<div class="f"><label>Proof of marriage <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Proof-of-marriage.pdf\')">Click to upload PDF</div></div>'+
-     '<div class="f"><label>Affidavit <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Affidavit.pdf\')">Click to upload PDF</div></div>'+
-     '<div class="f"><label>Supporting documents</label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Supporting-documents.pdf\')">Click to upload one or more PDFs</div></div>'+
-   '</div></section>'+
- '</div>'+
- '<div class="formbar"><span class="formbar-note">A draft stays with your unit until you submit it.</span>'+
-   '<button class="btn ghost" onclick="submitCase(true)">'+ic('NoteText',17)+'Save as Draft</button>'+
-   '<button class="btn prim" onclick="submitCase(false)">'+ic('Send2',17)+'Submit Case for Approval</button></div>';
+ '<div class="pagehead"><div><div class="h2" style="margin:0">Register a New Case</div><div class="pagesub">Six short steps. Fields marked with an asterisk are required, and you can save a draft at any point.</div></div></div>'+
+ '<div class="wiz">'+
+  '<div class="wmain">'+
+   '<div class="card formcard wcard">'+
+    '<div class="wtop" id="ncnav"></div>'+
+    wstep(0,'<div class="grid3">'+
+      f("Army number","nc_army","text","e.g. IC-50231",true,'Enter the Army number, then fetch the service record. Try IC-50231.','<button class="btn ghost sm" style="margin-top:8px" onclick="fetchSvc()">'+ic('SearchNormal1',16)+'Fetch Service Record</button>')+
+      ro("Rank","nc_rank")+ro("Name of member","nc_mname")+ro("Unit","nc_unit")+ro("Command","nc_cmd")+ro("Monthly salary","nc_salary")+
+    '</div>')+
+    wstep(1,'<div class="grid3">'+
+      f("Applicant name","nc_app","text","Full name",true)+
+      sel("Relation to member","nc_rel",["Wife","Mother","Child"],true)+
+      f("Age now","nc_agenow","number","Years")+f("Age at time of filing","nc_agefile","number","Years")+
+      f("Contact number","nc_contact","text","10-digit mobile",true)+f("Aadhaar number","nc_aadhaar","text","Validated")+
+      '<div class="f full"><label>Correspondence address</label><input id="nc_addr" placeholder="Enter correspondence address"></div>'+
+    '</div>')+
+    wstep(2,'<div class="grid3">'+
+      sel("Case category","nc_cat",["Maintenance","Spouse allowance"],true)+
+      sel("Case type","nc_type",["Spouse maintenance","Mother maintenance","Child maintenance","Other"])+
+      f("Maintenance sought","nc_maint","text","Amount or percentage")+
+      f("Application date","nc_appdate","date","",true)+f("Filed date","nc_filedate","date")+
+      '<div class="f"><label>Status on submission</label><div class="rovalue">'+statTag('In Progress')+'</div></div>'+
+    '</div>')+
+    wstep(3,'<div class="grid3">'+
+      f("Guardian name","nc_guard","text","In addition to parent")+f("Parent name","nc_parent")+
+      sel("Estranged spouse employment","nc_emp",["Unemployed","Employed","Other"])+
+      f("Dependent card number","nc_dep")+f("CSD card number","nc_csd")+sel("Employability","nc_ability",["No","Yes"])+
+    '</div>')+
+    wstep(4,'<div class="grid3">'+
+      '<div class="f"><label>Proof of marriage <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Proof-of-marriage.pdf\')">Click to upload PDF</div></div>'+
+      '<div class="f"><label>Affidavit <span class="req">*</span></label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Affidavit.pdf\')">Click to upload PDF</div></div>'+
+      '<div class="f"><label>Supporting documents</label><div class="up" style="cursor:pointer" onclick="uploadDemo(this,\'Supporting-documents.pdf\')">Click to upload one or more PDFs</div></div>'+
+    '</div>')+
+    wstep(5,'<div id="nc_review"></div>')+
+   '</div>'+
+   '<div class="formbar" id="ncbar"></div>'+
+  '</div>'+
+ '</div>';
+ ncPaint();
+}
+function wstep(i,body){return '<section class="wpane'+(i===0?' on':'')+'" data-i="'+i+'">'+
+ '<div class="wsh"><div class="wst">'+NC_STEPS[i].t+'</div><div class="wsd">'+NC_STEPS[i].d+'</div></div>'+body+'</section>';}
+function ncPaint(){
+ const n=NC_STEPS.length,last=NC_STEP===n-1;
+ document.getElementById('ncnav').innerHTML='<div class="wsteps">'+
+  NC_STEPS.map((s,i)=>{const st=i<NC_STEP?'done':(i===NC_STEP?'now':'todo');
+   return '<div class="wsi '+st+'" onclick="ncGo('+i+')" title="'+esc(s.d)+'">'+
+    '<span class="wsrow"><span class="wsn">'+(st==='done'?ic('Tick',16):'')+'</span>'+
+     (i<n-1?'<span class="wsline"></span>':'')+'</span>'+
+    '<span class="wsx"><i>Step '+(i+1)+'</i><b>'+s.t+'</b><em>'+(st==='done'?'Completed':st==='now'?'In progress':'Pending')+'</em></span>'+
+   '</div>';}).join('')+'</div>';
+ document.getElementById('ncbar').innerHTML=
+  (NC_STEP?'<button class="btn ghost" onclick="ncGo('+(NC_STEP-1)+')">'+ic('ArrowLeft2',17)+'Back</button>':'')+
+  '<span class="formbar-note">A draft stays with your unit until you submit it.</span>'+
+  '<button class="btn ghost" onclick="submitCase(true)">'+ic('NoteText',17)+'Save as Draft</button>'+
+  (last?'<button class="btn prim" onclick="submitCase(false)">'+ic('Send2',17)+'Submit Case for Approval</button>'
+      :'<button class="btn prim" onclick="ncGo('+(NC_STEP+1)+')">Continue'+ic('ArrowRight2',17)+'</button>');
+ document.querySelectorAll('.wpane').forEach(p=>p.classList.toggle('on',+p.dataset.i===NC_STEP));
+ if(last)ncReview();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function ncGo(i){if(i<0||i>=NC_STEPS.length)return;NC_STEP=i;ncPaint();}
+function ncReview(){
+ const dash='-',v=id=>val(id)||dash,vd=id=>val(id)?fmtDate(val(id)):dash;
+ const row=(l,x)=>'<div class="rvi"><span>'+l+'</span><b>'+esc(x)+'</b></div>';
+ const grp=(i,rows)=>'<div class="rvg"><div class="rvh">'+NC_STEPS[i].t+
+   '<span class="act" onclick="ncGo('+i+')">'+ic('Edit2',15)+'Edit</span></div>'+rows+'</div>';
+ const ups=Array.prototype.slice.call(document.querySelectorAll('.wpane[data-i="4"] .up'));
+ document.getElementById('nc_review').innerHTML=
+  grp(0,row('Army number',v('nc_army'))+row('Rank',v('nc_rank'))+row('Name of member',v('nc_mname'))+row('Unit',v('nc_unit'))+row('Command',v('nc_cmd'))+row('Monthly salary',v('nc_salary')))+
+  grp(1,row('Applicant name',v('nc_app'))+row('Relation to member',v('nc_rel'))+row('Age now',v('nc_agenow'))+row('Age at time of filing',v('nc_agefile'))+row('Contact number',v('nc_contact'))+row('Aadhaar number',v('nc_aadhaar'))+row('Correspondence address',v('nc_addr')))+
+  grp(2,row('Case category',v('nc_cat'))+row('Case type',v('nc_type'))+row('Maintenance sought',v('nc_maint'))+row('Application date',vd('nc_appdate'))+row('Filed date',vd('nc_filedate')))+
+  grp(3,row('Guardian name',v('nc_guard'))+row('Parent name',v('nc_parent'))+row('Estranged spouse employment',v('nc_emp'))+row('Dependent card number',v('nc_dep'))+row('CSD card number',v('nc_csd'))+row('Employability',v('nc_ability')))+
+  grp(4,['Proof of marriage','Affidavit','Supporting documents'].map((l,i)=>row(l,ups[i]&&ups[i].classList.contains('done')?ups[i].textContent.trim():'Not uploaded')).join(''));
 }
 function f(label,id,type,ph,req,hint,extra){const g=(type==='date')?'':'Enter '+label.toLowerCase();return '<div class="f"><label>'+label+(req?' <span class="req">*</span>':'')+'</label><input id="'+id+'" type="'+(type||'text')+'" placeholder="'+g+'">'+(hint?'<div class="hint">'+hint+'</div>':'')+(extra||'')+'</div>';}
 function ro(label,id){return '<div class="f"><label>'+label+'</label><input id="'+id+'" class="isro" readonly placeholder="Auto-filled"></div>';}
@@ -526,6 +627,7 @@ function vCaseDetail(m,id){
  const x=findCase(id);if(!x){go('registered');return;}vCaseDetail.id=id;
  const canAct=SESSION.role!=="Unit User";
  const acts=
+   (x.status==="Draft"?'<button class="btn prim" onclick="submitDraft(\''+id+'\')">'+ic('Send2',16)+'Submit for Approval</button>':'')+
    (canAct&&pendingCase(x)?'<button class="btn ghost" onclick="apSendBack(\''+id+'\')">'+ic('ArrowLeft2',16)+'Send Back to Unit</button><button class="btn prim" onclick="apApprove(\''+id+'\')">'+ic('TickCircle',16)+'Approve Case</button>':'')+
    (canAct&&!x.subJudice&&x.status==="In Progress"&&x.approved?'<button class="btn ghost" onclick="caseCloseModal(\''+id+'\',\'resolve\')">'+ic('TickCircle',16)+'Mark Resolved</button><button class="btn prim" onclick="caseCloseModal(\''+id+'\',\'close\')">'+ic('CloseCircle',16)+'Close Case</button>':'')+
    (canAct&&!x.subJudice&&x.status==="Resolved"?'<button class="btn prim" onclick="caseCloseModal(\''+id+'\',\'close\')">'+ic('CloseCircle',16)+'Close Case</button>':'');
@@ -590,8 +692,6 @@ function cdBody(x){
        '<span class="muted" style="font-size:12px">Notings from the chain of command stay yellow until headquarters gives its verdict.</span>')+
      '<button class="btn prim sm" style="margin-left:auto" onclick="addNote(\''+x.id+'\')">'+ic('Send2',16)+'Save Noting</button></div></div>')+'</div>';
 }
-function isoDate(s){const d=pdate(s);if(!d)return '';
- return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function sjF(label,id,v,type,ph,req){return '<div class="f"><label>'+label+(req?' <span class="req">*</span>':'')+'</label><input id="'+id+'" type="'+(type||'text')+'" value="'+esc(v||'')+'" placeholder="'+(ph||'')+'"></div>';}
 /* ---- Sub-judice: one court proceeding with a trail of hearings and transfers ---- */
 const SJ_COURTS=["District Court","High Court","Supreme Court"];
@@ -651,6 +751,7 @@ function sjReferModal(id){
 function sjSaveRefer(id){const x=findCase(id),court=val('sj_court');
  if(!court){toast('Select the court first','err');return;}
  if(court!=="Supreme Court"&&!val('sj_cname')){toast('Enter the name of the court','err');return;}
+ if(!val('sj_start')){toast('Enter the date the case went to court','err');return;}
  const nm=sjName(court,val('sj_cname')),now=fmtDate(new Date()),when=fmtDate(val('sj_start'))||now;
  x.court={court:court,courtName:nm,caseNo:val('sj_no'),since:when,lastHearing:'',nextHearing:fmtDate(val('sj_next')),
    disposed:false,judgedOn:'',finalOrder:'',
@@ -741,6 +842,12 @@ function caseAction(id,action,reason){const x=findCase(id),now=fmtDate(new Date(
  if(action==='resolve'){x.status="Resolved";x.resolution={outcome:"Resolved",reason:reason||'',by:SESSION.name,when:now};x.history.push({stage:"Case resolved",by:SESSION.name,when:now,note:reason||''});addAudit('RESOLVE_CASE','Resolved '+id);toast('Case marked resolved');}
  if(action==='close'){x.status="Closed";x.resolution={outcome:"Closed",reason:reason||'',by:SESSION.name,when:now};x.history.push({stage:"Case closed",by:SESSION.name,when:now,note:reason||''});addAudit('CLOSE_CASE','Closed '+id);toast('Case closed');}
  x.updated=now;DB.set(STATE);go('casedetail',id);}
+function submitDraft(id){const x=findCase(id),now=fmtDate(new Date());
+ if(x.applicant==="(draft)"||!x.armyNo){toast('Fill the applicant name and Army number on the case first','err');return;}
+ x.status="In Progress";x.approved=false;x.filedDate=x.filedDate||now;x.updated=now;
+ x.history.push({stage:"Submitted for approval",by:SESSION.name,when:now});
+ DB.set(STATE);addAudit('SUBMIT_CASE','Submitted '+id+' for approval');
+ toast('Case submitted. It is with Command for review.');go('casedetail',id);}
 function caseCloseModal(id,mode){const isRes=(mode==='resolve');
  modal(isRes?'Mark This Case Resolved':'Close This Case',
   '<div class="pagesub" style="margin:0 0 14px">'+(isRes?'A resolved case has a decision on record and stays open until it is closed.':'Closing is final. The notings and the history stay on record for audit.')+'</div>'+
@@ -869,14 +976,15 @@ function vReports(m){
  '<div class="card" style="margin-bottom:16px"><div class="tools" style="margin:0">'+
    dd('rt',[{v:'summary',l:'Case Summary Report'},{v:'cmd',l:'Command-wise Report'},{v:'pending',l:'Pending Approvals Report'}],'Case Summary Report','','sm rt-dd','summary')+
    dd('rcmd',[{v:'',l:'All Commands'}].concat(COMMANDS),'All Commands','','sm')+
-   dd('rstat',[{v:'',l:'All Status'}].concat(STATUSES),'All Status','','sm')+
+   dd('rstat',[{v:'',l:'All Status'}].concat(STATUSES).concat(['Sub-judice']),'All Status','','sm')+
    '<div class="sp" style="flex:1"></div><button class="btn prim" onclick="genReport()">'+ic('Chart21',17)+'Generate Report</button>'+
    '<button class="btn ghost" onclick="exportReportPdf()">'+ic('DocumentDownload',17)+'Export to PDF</button><button class="btn ghost" onclick="exportReportPdf()">'+ic('Printer',17)+'Print Report</button></div></div>'+
  '<div id="reportArea"></div>';genReport();
 }
 function reportData(){const type=document.getElementById('rt').value;let c=scoped();
  const cmd=document.getElementById('rcmd').value,st=document.getElementById('rstat').value;
- if(cmd)c=c.filter(x=>x.command===cmd);if(st)c=c.filter(x=>x.status===st);
+ if(cmd)c=c.filter(x=>x.command===cmd);
+ if(st==='Sub-judice')c=c.filter(x=>x.subJudice);else if(st)c=c.filter(x=>x.status===st);
  if(type==='pending')c=c.filter(pendingCase);
  const title=type==='cmd'?'Command-wise Report':type==='pending'?'Pending Approvals Report':'Case Summary Report';
  return {c,title};}
@@ -891,7 +999,7 @@ function exportReportPdf(){
  const meta=(k,v)=>'<div><span>'+k+'</span><b>'+esc(v)+'</b></div>';
  const body=c.length?c.map(x=>'<tr><td class="mono">'+esc(x.id)+'</td><td>'+esc(x.applicant)+' <i>('+esc(x.relation)+')</i></td>'+
    '<td>'+esc(x.memberName)+' <i>'+esc(x.armyNo)+'</i></td><td>'+esc(x.command)+'</td>'+
-   '<td class="num">'+esc(x.maintenance||'-')+'</td><td>'+esc(x.status)+'</td></tr>').join('')
+   '<td class="num">'+esc(x.maintenance||'-')+'</td><td>'+esc(x.status)+(x.subJudice?' <i>(sub-judice)</i>':'')+'</td></tr>').join('')
    :'<tr><td colspan="6" class="none">No records match this filter.</td></tr>';
  const html='<!doctype html><html><head><meta charset="utf-8"><title>MAARK - '+esc(title)+'</title><style>'+
   '@page{size:A4 portrait;margin:0}'+
@@ -961,7 +1069,7 @@ function genReport(){const{c,title}=reportData();
    '<div class="tblwrap"><table class="tbl"><thead><tr>'+
    th('rep','id','Case No')+th('rep','applicant','Applicant')+th('rep','member','Member')+th('rep','command','Command')+th('rep','maintenance','Maintenance','num')+th('rep','status','Status')+
    '</tr></thead><tbody>'+
-   (c.length?sortRows('rep',c).map(x=>'<tr><td>'+x.id+'</td><td>'+esc(x.applicant)+'</td><td>'+esc(x.memberName)+'</td><td>'+x.command+'</td><td class="num">'+(x.maintenance||'-')+'</td><td>'+statTag(x.status)+'</td></tr>').join(''):'<tr><td colspan="6" class="muted" style="text-align:center;padding:20px">No records.</td></tr>')+
+   (c.length?sortRows('rep',c).map(x=>'<tr><td>'+x.id+'</td><td>'+esc(x.applicant)+'</td><td>'+esc(x.memberName)+'</td><td>'+x.command+'</td><td class="num">'+(x.maintenance||'-')+'</td><td>'+statCell(x)+'</td></tr>').join(''):'<tr><td colspan="6" class="muted" style="text-align:center;padding:20px">No records.</td></tr>')+
    '</tbody></table></div><div style="text-align:center;color:var(--text-4);font-size:12px;margin-top:14px;position:relative">Digitally watermarked with machine IP, user ID and timestamp</div></div>';
  addAudit('GENERATE_REPORT',title);
 }
@@ -971,7 +1079,9 @@ function vCms(m){const s=STATE.cms;
  '<div class="row2"><div class="card" style="flex:1;min-width:280px"><div class="sech">Web Settings</div>'+
    '<div class="f"><label>Portal title</label><input id="cms_t" value="'+esc(s.portalTitle)+'"></div>'+
    '<div class="f"><label>Home banner text</label><input id="cms_b" value="'+esc(s.banner)+'"></div>'+
-   '<div class="f"><label>Theme</label>'+dd('cms_th',["Light Green","Dark Green","Violet"],'Select','','',s.theme)+'</div>'+
+   '<div class="f"><label>Primary colour</label>'+dd('cms_pc',Object.keys(PALETTE),'Select','previewPrimary(v)','',s.primary)+
+     '<div class="swrow">'+Object.keys(PALETTE).map(k=>'<span class="sw'+(k===s.primary?' on':'')+'" data-k="'+k+'" title="'+esc(k)+'" style="background:'+PALETTE[k]+'" onclick="previewPrimary(\''+k+'\',1)"></span>').join('')+'</div>'+
+     '<div class="hint">Preview applies at once. Save Settings to keep it.</div></div>'+
    '<div class="f"><label>Notice</label><textarea id="cms_n">'+esc(s.notice)+'</textarea></div>'+
    '<button class="btn prim" onclick="saveCms()">'+ic('TickCircle',17)+'Save Settings</button></div>'+
  '<div class="card" style="flex:1;min-width:280px"><div class="sech">Pages and Content</div>'+
@@ -979,7 +1089,11 @@ function vCms(m){const s=STATE.cms;
    '<button class="btn ghost sm" style="margin-top:12px" onclick="addPage()">'+ic('AddCircle',16)+'Add New Page</button></div></div>'+
  '<div class="muted" style="font-size:12.5px;margin-top:12px">Every content change is audit-logged. Access is limited to the Super Admin.</div>';
 }
-function saveCms(){STATE.cms.portalTitle=val('cms_t');STATE.cms.banner=val('cms_b');STATE.cms.theme=document.getElementById('cms_th').value;STATE.cms.notice=val('cms_n');DB.set(STATE);addAudit('CMS_UPDATE','Updated web settings');toast('Web settings saved');}
+function previewPrimary(k,sync){applyPrimary(k);
+ if(sync){const h=document.getElementById('cms_pc');if(h){h.value=k;const d=h.parentNode;d.querySelector('.ddv').textContent=k;d.querySelector('.ddv').classList.remove('ph');
+  d.querySelectorAll('.ddo').forEach(o=>{const on=o.dataset.v===k;o.classList.toggle('on',on);const t=o.querySelector('.ddk');if(t)t.remove();if(on)o.insertAdjacentHTML('beforeend','<span class="ddk">'+ic('TickCircle',16)+'</span>');});}}
+ document.querySelectorAll('.swrow .sw').forEach(s=>s.classList.toggle('on',s.dataset.k===k));}
+function saveCms(){STATE.cms.portalTitle=val('cms_t');STATE.cms.banner=val('cms_b');STATE.cms.primary=document.getElementById('cms_pc').value;STATE.cms.notice=val('cms_n');applyPrimary(STATE.cms.primary);DB.set(STATE);addAudit('CMS_UPDATE','Updated web settings');toast('Web settings saved');}
 function editPageIdx(i){const name=STATE.cms.pages[i];const content=(STATE.cms.content&&STATE.cms.content[name])||('Draft content for the '+name+' page.');
  modal('Edit Page: '+esc(name),
   '<div class="f"><label>Page title</label><input id="pg_t" value="'+esc(name)+'"></div>'+
@@ -1000,6 +1114,131 @@ function deletePageIdx(i){const name=STATE.cms.pages[i];
   '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" style="background:var(--error-active)" onclick="confirmDeletePage('+i+')">'+ic('Trash',15)+'Remove Page</button>');}
 function confirmDeletePage(i){const name=STATE.cms.pages[i];STATE.cms.pages.splice(i,1);if(STATE.cms.content)delete STATE.cms.content[name];
  DB.set(STATE);addAudit('CMS_PAGE','Removed page: '+name);closeModal();toast('Page removed');go('cms');}
+/* ================= KNOWLEDGE BASE =================
+   The article set the AI Assistant reads. Published articles answer questions
+   in the assistant, drafts are held back until they are published. */
+const KB_CATS=["Policy","Eligibility","Workflow","Security","FAQ"];
+const KB_STATUS=["Published","Draft"];
+let kbFilter={q:"",status:"all",cat:"",page:1,per:10};
+function kbList(){if(!STATE.kb)STATE.kb=[];return STATE.kb;}
+function kbFind(id){return kbList().filter(x=>x.id===id)[0];}
+function kbPage(n){const t=kbRows().length,last=Math.max(1,Math.ceil(t/kbFilter.per));kbFilter.page=Math.min(Math.max(1,n),last);drawKb();}
+function kbPer(v){kbFilter.per=+v;kbFilter.page=1;drawKb();}
+function kbRows(){let r=kbList().slice();
+ if(kbFilter.status!=='all')r=r.filter(x=>x.status===kbFilter.status);
+ if(kbFilter.cat)r=r.filter(x=>x.cat===kbFilter.cat);
+ if(kbFilter.q){const q=kbFilter.q.toLowerCase();
+   r=r.filter(x=>(x.title+' '+x.cat+' '+x.source+' '+(x.tags||'')+' '+x.body).toLowerCase().includes(q));}
+ return r;}
+function kbChip(s){return '<span class="achip a-'+(s==='Published'?'success':'muted')+'">'+ic(s==='Published'?'TickCircle':'Edit2',14)+s+'</span>';}
+function kbKpi(lbl,v,color,icn){return '<div class="kpi" style="cursor:default"><div class="kico" style="background:color-mix(in srgb,'+color+' 12%,#fff);color:'+color+'">'+ic(icn,19)+'</div><div class="kbody"><div class="val">'+v+'</div><div class="lbl">'+lbl+'</div></div></div>';}
+function vKb(m){const a=kbList();
+ m.innerHTML='<div class="crumb">Home / Knowledge Base</div>'+
+ '<div class="pagehead"><div><div class="h2">Knowledge Base</div><div class="pagesub">The policy and guidance articles the AI Assistant answers from. Published articles are read by the assistant, drafts are not.</div></div>'+
+  '<div class="acts"><button class="btn ghost" onclick="go(\'assistant\')">'+ic('Messages2',17)+'Open Assistant</button>'+
+   '<button class="btn ghost" onclick="kbAdd(\'upload\')">'+ic('DocumentUpload',17)+'Upload Document</button>'+
+   '<button class="btn prim" onclick="kbAdd()">'+ic('AddCircle',17)+'Add Article</button></div></div>'+
+ '<div class="kpis">'+
+   kbKpi('Articles',a.length,'var(--primary)','Book1')+
+   kbKpi('Published',a.filter(x=>x.status==='Published').length,'var(--success-active)','TickCircle')+
+   kbKpi('Drafts',a.filter(x=>x.status==='Draft').length,'var(--warning-active)','Edit2')+
+   kbKpi('Categories',KB_CATS.length,'var(--info-active)','Element3')+
+ '</div>'+
+ '<div class="tools"><span class="fieldwrap"><span class="fic">'+ic('SearchNormal1',16)+'</span><input class="inp search-i" id="kbq" placeholder="Search articles" value="'+esc(kbFilter.q)+'" oninput="kbFilter.q=this.value;kbFilter.page=1;drawKb()"></span>'+
+   dd('kbcat',[{v:'',l:'All Categories'}].concat(KB_CATS),'All Categories','kbFilter.cat=v;kbFilter.page=1;drawKb()','sm',kbFilter.cat)+
+ '</div>'+
+ '<div id="kbtable"></div>'+
+ '<div class="muted" style="font-size:12.5px;margin-top:12px">Every article change is audit-logged. The assistant answers from published articles only, and quotes the source line back to the reader.</div>';
+ drawKb();
+}
+function kbTabs(){const a=kbList();const cnt=s=>a.filter(x=>x.status===s).length;
+ return '<div class="ltabs">'+['all'].concat(KB_STATUS).map(s=>
+   '<span class="ltab'+(kbFilter.status===s?' on':'')+'" onclick="kbFilter.page=1;kbFilter.status=&quot;'+s+'&quot;;drawKb()">'+
+   (s==='all'?'All':s)+'<b>'+(s==='all'?a.length:cnt(s))+'</b></span>').join('')+'</div>';}
+function drawKb(){const all=sortRows('kb',kbRows());
+ const last=Math.max(1,Math.ceil(all.length/kbFilter.per));if(kbFilter.page>last)kbFilter.page=last;
+ const r=pageSlice(all,kbFilter.page,kbFilter.per);
+ document.getElementById('kbtable').innerHTML='<div class="card tblcard">'+kbTabs()+(all.length?'<div class="tblwrap"><table class="tbl"><thead><tr>'+
+   th('kb','title','Article')+th('kb','cat','Category')+th('kb','source','Source')+th('kb','status','Status')+th('kb','updated','Updated','num')+
+   '<th>Actions</th></tr></thead><tbody>'+
+   r.map(x=>'<tr><td><b>'+esc(x.title)+'</b><div class="muted" style="font-size:12px">'+esc(x.id)+
+     (x.file?'<span class="kbfile" title="Source document">'+ic('DocumentText',13)+esc(x.file)+'</span>':'')+'</div></td>'+
+     '<td>'+esc(x.cat)+'</td><td class="muted">'+esc(x.source)+'</td><td>'+kbChip(x.status)+'</td><td class="num">'+esc(x.updated)+'</td>'+
+     '<td class="nowrap"><span class="act" onclick="kbView(\''+x.id+'\')">'+ic('Eye',15)+'Read</span>'+
+     '<span class="act" onclick="kbEdit(\''+x.id+'\')">'+ic('Edit2',15)+'Edit</span>'+
+     '<span class="act" onclick="kbRemove(\''+x.id+'\')">'+ic('Trash',15)+'Remove</span></td></tr>').join('')+
+ '</tbody></table></div>'+tblFoot('kb',kbFilter.page,kbFilter.per,all.length)
+   :emptyState('Book1','No articles match these filters','Clear a filter or change the search term, or add a new article.'))+'</div>';}
+function kbForm(x,mode){x=x||{};
+ const up=mode==='upload'||!!x.file;
+ return (x.id?'':'<div class="kbmode">'+
+   '<span class="kbm'+(mode==='upload'?'':' on')+'" onclick="kbAdd()">'+ic('Edit2',15)+'Write article</span>'+
+   '<span class="kbm'+(mode==='upload'?' on':'')+'" onclick="kbAdd(\'upload\')">'+ic('DocumentUpload',15)+'Upload document</span></div>')+
+  (up?'<div class="f"><label>Document</label>'+
+    '<div class="up'+(x.file?' done':'')+'" id="kb_up" style="cursor:pointer" onclick="kbPickFile(this)">'+(x.file?'&#10003; '+esc(x.file)+' attached':'Click to attach a PDF, a Word file or a scanned policy letter')+'</div>'+
+    '<input type="hidden" id="kb_file" value="'+esc(x.file||'')+'">'+
+    '<div class="hint">The text is read out of the document on upload. Check it below before you publish.</div></div>':'')+
+  '<div class="f"><label>Title<span class="req">*</span></label><input id="kb_t" value="'+esc(x.title||'')+'" placeholder="For example, who is eligible for maintenance"></div>'+
+  '<div class="grid2">'+
+   '<div class="f"><label>Category</label>'+dd('kb_c',KB_CATS,'Select category','','',x.cat||'Policy')+'</div>'+
+   '<div class="f"><label>Status</label>'+dd('kb_s',KB_STATUS,'Select status','','',x.status||'Draft')+'</div>'+
+  '</div>'+
+  '<div class="f"><label>Source reference</label><input id="kb_src" value="'+esc(x.source||'')+'" placeholder="For example, Policy set, clause 2.1"><div class="hint">Shown under every assistant answer that uses this article.</div></div>'+
+  '<div class="f"><label>Keywords</label><input id="kb_tg" value="'+esc(x.tags||'')+'" placeholder="Separate words with a space"><div class="hint">The assistant matches a question against the title and these words.</div></div>'+
+  '<div class="f"><label>Article text<span class="req">*</span></label><textarea id="kb_b" style="height:150px" placeholder="Write the answer in plain English">'+esc(x.body||'')+'</textarea></div>';}
+function kbRead(){const f=document.getElementById('kb_file');
+ return {title:val('kb_t'),cat:document.getElementById('kb_c').value||'Policy',status:document.getElementById('kb_s').value||'Draft',
+  source:val('kb_src')||'-',tags:val('kb_tg'),body:document.getElementById('kb_b').value.trim(),file:f?f.value:''};}
+/* Prototype file picker. Nothing leaves the machine, the name is kept on the
+   article and the text area is filled with the read-out placeholder. */
+const KB_FILES=["Policy-set-clause.pdf","ADG-HR-letter.pdf","Maintenance-guidelines.docx","Court-order-extract.pdf","Standing-instruction.pdf"];
+function kbPickFile(el){const n=KB_FILES[Math.floor(Math.random()*KB_FILES.length)];
+ uploadDemo(el,n);
+ const h=document.getElementById('kb_file');if(h)h.value=n;
+ const src=document.getElementById('kb_src');if(src&&!src.value)src.value=n;
+ const t=document.getElementById('kb_t');if(t&&!t.value)t.value=n.replace(/[.][a-z]+$/i,'').replace(/-/g,' ');
+ const b=document.getElementById('kb_b');if(b&&!b.value.trim())b.value='Text read from '+n+'. Check it, edit anything the reader should not see, then set the status to Published.';
+ toast('Document attached, text read out');}
+function kbWide(){const m=document.querySelector('#modalRoot .modal');if(m)m.classList.add('wide');}
+function kbAdd(mode){modal(mode==='upload'?'Upload Document':'Add Article',kbForm(null,mode),
+ '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" onclick="kbCreate()">'+ic('TickCircle',17)+'Save Article</button>');kbWide();}
+function kbCreate(){const d=kbRead();
+ if(!d.title||!d.body){toast('Enter a title and the article text','err');return;}
+ STATE.seq=(STATE.seq||143)+1;
+ d.id='KB-'+String(1000+STATE.seq).slice(-4);d.updated=fmtDate(new Date());
+ kbList().unshift(d);DB.set(STATE);addAudit('KB_ADD','Added article: '+d.title);closeModal();toast('Article added');go('kb');}
+function kbEdit(id){const x=kbFind(id);if(!x)return;
+ modal('Edit Article',kbForm(x),
+  '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" onclick="kbSave(\''+id+'\')">'+ic('TickCircle',17)+'Save Article</button>');kbWide();}
+function kbSave(id){const x=kbFind(id);if(!x)return;const d=kbRead();
+ if(!d.title||!d.body){toast('Enter a title and the article text','err');return;}
+ Object.assign(x,d,{updated:fmtDate(new Date())});
+ DB.set(STATE);addAudit('KB_EDIT','Edited article: '+x.title);closeModal();toast('Article saved');go('kb');}
+function kbView(id){const x=kbFind(id);if(!x)return;
+ modal(esc(x.title),
+  '<div class="kvgrid">'+kv('Article',x.id)+kv('Category',x.cat)+kv('Source',x.source)+kv('Status',x.status)+kv('Updated',x.updated)+'</div>'+
+  '<div class="f" style="margin-top:12px"><label>Article text</label><div class="kbtext">'+esc(x.body)+'</div></div>'+
+  (x.file?'<div class="doc" style="margin-top:12px"><span class="dic">'+ic('DocumentText',16)+'</span><span class="dn">'+esc(x.file)+'</span>'+
+    '<span class="act" style="margin-left:auto" onclick="previewDoc(\''+x.id+'\',\''+esc(x.file)+'\')">'+ic('Eye',15)+'Preview</span></div>':'')+
+  (x.tags?'<div class="mfollow">'+x.tags.split(/\s+/).filter(Boolean).map(t=>'<span class="pill" style="cursor:default">'+esc(t)+'</span>').join('')+'</div>':''),
+  '<button class="btn ghost" onclick="closeModal()">Close</button><button class="btn prim" onclick="closeModal();kbEdit(\''+id+'\')">'+ic('Edit2',17)+'Edit Article</button>');kbWide();}
+function kbRemove(id){const x=kbFind(id);if(!x)return;
+ modal('Remove Article','<p style="font-size:14px;color:var(--text-2)">Remove <b>'+esc(x.title)+'</b> from the knowledge base? The assistant will stop answering from it. This is audit-logged.</p>',
+  '<button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn prim" style="background:var(--error-active)" onclick="kbConfirmRemove(\''+id+'\')">'+ic('Trash',15)+'Remove Article</button>');}
+function kbConfirmRemove(id){const x=kbFind(id);if(!x)return;
+ STATE.kb=kbList().filter(a=>a.id!==id);DB.set(STATE);addAudit('KB_DELETE','Removed article: '+x.title);closeModal();toast('Article removed');go('kb');}
+/* Question matching for the assistant. Scores the published set on the words of
+   the question against title, keywords and category, best article wins. */
+function kbMatch(q){
+ const stop=['what','which','who','how','the','and','for','are','is','do','does','can','my','me','in','on','of','a','an','to','i','it','about','tell','show','explain'];
+ const w=String(q||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(t=>t.length>2&&stop.indexOf(t)<0);
+ if(!w.length)return null;
+ let best=null,score=0;
+ kbList().filter(x=>x.status==='Published').forEach(x=>{
+  const t=(x.title+' '+(x.tags||'')+' '+x.cat).toLowerCase(),b=x.body.toLowerCase();
+  let s=0;w.forEach(k=>{if(t.indexOf(k)>=0)s+=3;else if(b.indexOf(k)>=0)s+=1;});
+  if(s>score){score=s;best=x;}});
+ return score>=3?best:null;}
 /* ================= AUDIT ================= */
 const AUD_META={
  LOGIN:{l:'Signed in',g:'access',ic:'Profile',c:'info'},
@@ -1007,6 +1246,7 @@ const AUD_META={
  CREATE_CASE:{l:'Case registered',g:'case',ic:'AddCircle',c:'primary'},
  ADD_NOTING:{l:'Noting added',g:'case',ic:'NoteText',c:'primary'},
  APPROVE_CASE:{l:'Case approved',g:'approval',ic:'TickCircle',c:'success'},
+ SUBMIT_CASE:{l:'Case submitted',g:'approval',ic:'Send2',c:'primary'},
  SENDBACK:{l:'Sent back',g:'approval',ic:'ArrowLeft2',c:'warning'},
  SUBJUDICE:{l:'Marked sub-judice',g:'approval',ic:'Judge',c:'warning'},
  SJ_HEARING:{l:'Hearing recorded',g:'approval',ic:'Clock',c:'warning'},
@@ -1016,11 +1256,15 @@ const AUD_META={
  GENERATE_REPORT:{l:'Report generated',g:'report',ic:'Chart21',c:'info'},
  EXPORT_REPORT:{l:'Report exported',g:'report',ic:'DocumentDownload',c:'info'},
  CMS_UPDATE:{l:'Settings changed',g:'content',ic:'Setting2',c:'primary'},
- CMS_PAGE:{l:'Page changed',g:'content',ic:'NoteText',c:'primary'}};
+ CMS_PAGE:{l:'Page changed',g:'content',ic:'NoteText',c:'primary'},
+ KB_ADD:{l:'Article added',g:'content',ic:'Book1',c:'primary'},
+ KB_EDIT:{l:'Article edited',g:'content',ic:'Book1',c:'primary'},
+ KB_DELETE:{l:'Article removed',g:'content',ic:'Trash',c:'muted'}};
 const AUD_GROUPS=[['all','All events'],['access','Access'],['case','Cases'],['approval','Approvals'],['report','Reports'],['content','Content']];
 function audMeta(a){return AUD_META[a]||{l:String(a||'').replace(/_/g,' ').toLowerCase().replace(/^./,m=>m.toUpperCase()),g:'other',ic:'InfoCircle',c:'muted'};}
 let audPg={page:1,per:10,q:'',grp:'all'};
 function vAudit(m){
+ if(!canSee('audit')){go('dashboard');return;}
  m.innerHTML='<div class="crumb">Home / Audit Log</div>'+
  '<div class="pagehead"><div><div class="h2">Audit Log</div><div class="pagesub">Every portal action with the user, role, time and source address. Append only.</div></div>'+
   '<div class="acts"><button class="btn ghost" onclick="exportAudit()">'+ic('DocumentDownload',17)+'Export to CSV</button></div></div>'+
@@ -1112,10 +1356,15 @@ function vAssistant(m){const c=scoped();
       '<div class="ss ok"><b>'+c.filter(x=>x.status==='In Progress').length+'</b><span>In progress</span></div>'+
       '<div class="ss warn"><b>'+c.filter(pendingCase).length+'</b><span>Awaiting</span></div>'+
     '</div></div>'+
+   '<div class="rcard"><h4>'+ic('Book1',14)+'Knowledge Base</h4>'+
+    '<div class="scoperow"><span class="k">Articles read</span><span class="v">'+kbList().filter(x=>x.status==='Published').length+'</span></div>'+
+    '<div class="scoperow"><span class="k">Drafts held back</span><span class="v">'+kbList().filter(x=>x.status==='Draft').length+'</span></div>'+
+    (canSee('kb')?'<div class="qi" style="margin-top:10px" onclick="go(\'kb\')"><span class="qc">'+ic('Setting2',16)+'</span><span class="qt">Manage articles</span><span class="qg">'+ic('ArrowRight2',14)+'</span></div>':'')+
+   '</div>'+
    '<div class="rcard"><h4>'+ic('Magicpen',14)+'Suggested Questions</h4><div class="qlist">'+
      AI_RAIL.map(x=>'<div class="qi" onclick="askAi('+aiArg(x.q)+')"><span class="qc">'+ic(x.ic,16)+'</span><span class="qt">'+x.q+'</span><span class="qg">'+ic('ArrowRight2',14)+'</span></div>').join('')+
    '</div></div>'+
-   '<div class="railnote"><span class="rn-ic">'+ic('InfoCircle',15)+'</span><span>The assistant reads the policy set and the case records inside your command only. It cannot open a case for you, change a status or approve anything. Every look-up is written to the audit log.</span></div>'+
+   '<div class="railnote"><span class="rn-ic">'+ic('InfoCircle',15)+'</span><span>The assistant reads the published knowledge base articles and the case records inside your command only. It cannot open a case for you, change a status or approve anything. Every look-up is written to the audit log.</span></div>'+
   '</div>'+
  '</div>';
  drawChat();
@@ -1168,6 +1417,9 @@ function aiAnswer(q){const l=q.toLowerCase();const c=scoped();
   return{html:'A case must be resolved within <b>180 days</b> of registration. '+n+' of your cases are still open against that clock. The Registered Cases screen shows the days left on each one.',src:'Policy set, clause 4.2',chips:['What is pending my approval?','Break my cases down by status']};}
  if(l.includes('pending')||l.includes('approval')||l.includes('approve'))return{html:'<b>'+c.filter(pendingCase).length+'</b> cases are waiting on approval. The Brigade Commander approves first, then the file moves one level up.',src:'Approval queue',chips:['Explain the approval workflow','Break my cases down by status']};
  if(l.includes('how many')||l.includes('total')||l.includes('break')||l.includes('status'))return{html:'You have <b>'+c.length+' cases</b> in scope: '+STATUSES.map(s=>'<b>'+c.filter(x=>x.status===s).length+'</b> '+s.toLowerCase()).join(', ')+'.',src:'Case register',chips:['What is pending my approval?','Which cases are near the 180 day limit?']};
+ const kbHit=kbMatch(q);
+ if(kbHit)return{html:esc(kbHit.body)+'<br><span class="muted">From the knowledge base article <b>'+esc(kbHit.title)+'</b>.</span>',src:kbHit.source||'Knowledge base',
+  chips:kbList().filter(x=>x.status==='Published'&&x.id!==kbHit.id&&x.cat===kbHit.cat).slice(0,2).map(x=>x.title)};
  if(l.includes('eligib')||l.includes('policy')||l.includes('maintenance'))return{html:'Maintenance is payable to an eligible dependent: wife, mother or child. The Army steps in within 3 years of the claim. If the applicant is employable, maintenance is not allowed.',src:'Policy set, clause 2.1',chips:['Explain the approval workflow','Which cases are near the 180 day limit?']};
  if(l.includes('noting')||l.includes('note'))return{html:'Open the case, go to the Notings tab and write your remark. A noting raised anywhere in the chain of command is yellow. When headquarters gives its verdict that noting is green, and every earlier noting on the case turns green with it.',src:'User guide',chips:['Explain the approval workflow']};
  if(l.includes('workflow')||l.includes('process')||l.includes('step'))return{html:'The unit files the case. The Brigade Commander approves it. Approval then moves one level up, and ADG HR keeps oversight throughout. Notings are colour coded: yellow is raised in the chain of command, green is the headquarters verdict.',src:'Policy set, clause 3',chips:['What is pending my approval?','How do I add a noting to a case?']};
