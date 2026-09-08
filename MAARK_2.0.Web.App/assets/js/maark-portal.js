@@ -214,20 +214,21 @@ function downloadCsv(name,rows){const csv=rows.map(r=>r.map(c=>'"'+String(c==nul
  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);
  const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 function uploadDemo(el,name){el.innerHTML='&#10003; '+name+' attached';el.style.color='var(--success-active)';el.style.borderColor='var(--success-active)';el.style.background='var(--success-10)';}
-/* One diagonal tile, repeated. A tile covers the sheet evenly however long the
-   page runs, which a single rotated block of text does not. textLength pins the
-   line to the tile so a long user name cannot spill out of it. */
-function wmTile(mark){
- const t=esc('CONFIDENTIAL · '+mark);
- const svg='<svg xmlns="http://www.w3.org/2000/svg" width="380" height="220">'+
-  '<text x="190" y="110" text-anchor="middle" textLength="330" lengthAdjust="spacingAndGlyphs" '+
-  'transform="rotate(-30 190 110)" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" '+
-  'font-weight="700" letter-spacing="2" fill="#184A2C" fill-opacity=".08">'+t+'</text></svg>';
- return "background-image:url('data:image/svg+xml,"+encodeURIComponent(svg)+"')";}
-function previewDoc(id,name){const wm=wmTile(SESSION.name+' · '+SESSION.role+' · '+SESSION.ip);
+/* Watermark. Each row is ONE continuous nowrap line of the repeated mark, wider
+   than the block it sits in, so a row never ends inside the sheet. Wrapping
+   separate marks instead leaves every row ragged at the same place, and those
+   ends line up into blank diagonal channels across the page. Rows are pulled
+   left on a three step cycle so the repeats do not stack into columns either.
+   The block is twice the sheet and offset back by half, because a block sized
+   to the sheet loses its corners the moment it is rotated. */
+function wmSpans(mark){const t=esc('CONFIDENTIAL · '+mark+' · ');
+ const line=t.repeat(20);let h='';
+ for(let i=0;i<84;i++)h+='<span style="margin-left:-'+((i%3)*190)+'px">'+line+'</span>';
+ return h;}
+function previewDoc(id,name){const wm=wmSpans(SESSION.name+' · '+SESSION.role+' · '+SESSION.ip);
  modal('Document Preview',
   '<div class="muted" style="font-size:12.5px;margin-bottom:10px">'+esc(name)+' &middot; case '+id+'</div>'+
-  '<div class="card sheet" style="min-height:300px"><div class="wm" style="'+wm+'"></div>'+
+  '<div class="card sheet" style="min-height:300px"><div class="wm">'+wm+'</div>'+
    '<div class="rh compact"><div class="rh-top"><div class="rh-brand"><span class="rh-mark">MAARK</span>'+
      '<div><b>Additional Directorate General of Human Rights</b><small>MAARK 2.0 &middot; secure document viewer</small></div></div>'+
      '<span class="rh-stamp">'+ic('ShieldTick',13)+'Confidential</span></div></div>'+
@@ -901,8 +902,9 @@ function exportReportPdf(){
   '.bar button{height:32px;padding:0 14px;border:none;border-radius:7px;background:#184A2C;color:#fff;font-size:12px;font-weight:600;cursor:pointer}'+
   '.bar button.gh{background:rgba(255,255,255,.14)}'+
   '.page{position:relative;width:210mm;min-height:297mm;margin:68px auto 0;background:#fff;padding:14mm 12mm 16mm;box-shadow:0 10px 30px rgba(0,0,0,.35);overflow:hidden}'+
-  '@media print{body{background:#fff;padding:0}.bar{display:none}.page{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;overflow:visible}}'+
-  '.wm{position:absolute;inset:0;z-index:0;pointer-events:none;background-repeat:repeat;background-position:center}'+
+  '.wm{position:absolute;top:-50%;left:-50%;width:200%;height:200%;z-index:0;pointer-events:none;display:flex;flex-direction:column;align-items:flex-start;gap:26px;transform:rotate(-32deg)}'+
+  '.wm span{display:block;flex:none;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(24,74,44,.07);white-space:nowrap}'+
+  '@media print{body{background:#fff;padding:0}.bar{display:none}.page{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;overflow:visible}.wm{position:fixed}}'+
   '.sheet{position:relative;z-index:1}'+
   '.hd{display:flex;align-items:flex-start;gap:10px;border-bottom:2px solid #184A2C;padding-bottom:10px}'+
   '.mk{flex:none;background:#184A2C;color:#fff;font-size:10px;font-weight:800;letter-spacing:1.4px;padding:7px 10px;border-radius:5px}'+
@@ -925,7 +927,7 @@ function exportReportPdf(){
   '</style></head><body>'+
   '<div class="bar"><b>'+esc(title)+'</b><span>A4 portrait &middot; '+c.length+(c.length===1?' record':' records')+'</span><span class="sp"></span>'+
   '<button onclick="window.print()">Save as PDF</button><button class="gh" onclick="window.close()">Close</button></div>'+
-  '<div class="page"><div class="wm" style="'+wmTile(mark)+'"></div><div class="sheet">'+
+  '<div class="page"><div class="wm">'+wmSpans(SESSION.name+' · '+SESSION.role+' · '+SESSION.ip)+'</div><div class="sheet">'+
   '<div class="hd"><span class="mk">MAARK</span><div><b>Additional Directorate General of Human Rights</b>'+
   '<small>MAARK 2.0 &middot; maintenance allowance case system</small></div><span class="conf">Confidential</span></div>'+
   '<div class="ti"><h1>'+esc(title)+'</h1><em>'+c.length+(c.length===1?' record':' records')+'</em></div>'+
@@ -953,8 +955,8 @@ function rptHead(title,c){
   '<div class="rh-meta">'+meta('Generated on',fmtDate(new Date()))+meta('Generated by',SESSION.name+' ('+SESSION.role+')')+
    meta('Command',cmd)+meta('Status',st)+'</div></div>';}
 function genReport(){const{c,title}=reportData();
- const wm=wmTile(SESSION.name+' · '+SESSION.role+' · '+SESSION.ip);
- document.getElementById('reportArea').innerHTML='<div class="card sheet"><div class="wm" style="'+wm+'"></div>'+
+ const wm=wmSpans(SESSION.name+' · '+SESSION.role+' · '+SESSION.ip);
+ document.getElementById('reportArea').innerHTML='<div class="card sheet"><div class="wm">'+wm+'</div>'+
    rptHead(title,c)+
    '<div class="tblwrap"><table class="tbl"><thead><tr>'+
    th('rep','id','Case No')+th('rep','applicant','Applicant')+th('rep','member','Member')+th('rep','command','Command')+th('rep','maintenance','Maintenance','num')+th('rep','status','Status')+

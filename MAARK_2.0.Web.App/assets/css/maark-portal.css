@@ -464,7 +464,8 @@ button.pm-i:hover{background:var(--bg-dark)}
 @media(max-width:640px){.startgrid{grid-template-columns:1fr}}
 /* report sheet */
 .sheet{position:relative;overflow:hidden}
-.wm{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit;background-repeat:repeat;background-position:center}
+.wm{position:absolute;top:-50%;left:-50%;width:200%;height:200%;pointer-events:none;display:flex;flex-direction:column;align-items:flex-start;gap:26px;transform:rotate(-32deg)}
+.wm span{display:block;flex:none;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(24,74,44,.07);white-space:nowrap}
 /* Report letterhead */
 .rh{position:relative;padding-bottom:16px;margin-bottom:16px;border-bottom:2px solid var(--primary)}
 .rh-top{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
