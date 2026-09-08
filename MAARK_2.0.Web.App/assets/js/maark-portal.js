@@ -894,7 +894,7 @@ function exportReportPdf(){
    '<td class="num">'+esc(x.maintenance||'-')+'</td><td>'+esc(x.status)+'</td></tr>').join('')
    :'<tr><td colspan="6" class="none">No records match this filter.</td></tr>';
  const html='<!doctype html><html><head><meta charset="utf-8"><title>MAARK - '+esc(title)+'</title><style>'+
-  '@page{size:A4 portrait;margin:14mm 12mm 16mm}'+
+  '@page{size:A4 portrait;margin:0}'+
   '*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   'body{color:#252F4A;font-size:10.5px;line-height:1.45;background:#6B7280;padding:20px 0}'+
   '.bar{position:fixed;top:0;left:0;right:0;height:48px;z-index:5;background:#071437;color:#fff;display:flex;align-items:center;gap:10px;padding:0 16px;font-size:12px}'+
@@ -904,7 +904,7 @@ function exportReportPdf(){
   '.page{position:relative;width:210mm;min-height:297mm;margin:68px auto 0;background:#fff;padding:14mm 12mm 16mm;box-shadow:0 10px 30px rgba(0,0,0,.35);overflow:hidden}'+
   '.wm{position:absolute;top:-50%;left:-50%;width:200%;height:200%;z-index:0;pointer-events:none;display:flex;flex-direction:column;align-items:flex-start;gap:26px;transform:rotate(-32deg)}'+
   '.wm span{display:block;flex:none;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(24,74,44,.07);white-space:nowrap}'+
-  '@media print{body{background:#fff;padding:0}.bar{display:none}.page{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;overflow:visible}.wm{position:fixed}}'+
+  '@media print{body{background:#fff;padding:0}.bar{display:none}.page{width:auto;min-height:0;margin:0;padding:14mm 12mm 16mm;box-shadow:none;overflow:visible}.wm{position:fixed}}'+
   '.sheet{position:relative;z-index:1}'+
   '.hd{display:flex;align-items:flex-start;gap:10px;border-bottom:2px solid #184A2C;padding-bottom:10px}'+
   '.mk{flex:none;background:#184A2C;color:#fff;font-size:10px;font-weight:800;letter-spacing:1.4px;padding:7px 10px;border-radius:5px}'+
