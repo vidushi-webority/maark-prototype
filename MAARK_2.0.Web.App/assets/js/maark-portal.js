@@ -1,5 +1,5 @@
 /* ================= DATA ================= */
-const KEY="maark_portal_v8";
+const KEY="maark_portal_v9";
 const STATUSES=["Draft","In Progress","Resolved","Closed"];
 const COMMANDS=["Northern","Western","Central","Eastern","Southern","South Western"];
 const OFFICERS={
@@ -80,7 +80,7 @@ function seed(){
    tags:"rate percent salary amount calculation quantum entitlement",
    body:"Maintenance is set either as a share of the basic pay of the member or as a fixed monthly amount. The recommended share is entered by the command and sanctioned by headquarters. The sanctioned figure is stamped on the case summary and carried into the disbursement order.",updated:day(5)}
  ];
- const cms={portalTitle:"MAARK 2.0",banner:"Maintenance allowance, digitised",primary:"Army Green",notice:"Cases are to be resolved within 180 days.",
+ const cms={portalTitle:"MAARK 2.0",banner:"Maintenance allowance, digitised",primary:"Deep Navy",notice:"Cases are to be resolved within 180 days.",
    pages:["Home","About ADG HR","Policy and eligibility","Contact","FAQ"]};
  return {cases,audit,cms,kb,seq:143};
 }
@@ -94,9 +94,9 @@ let STATE=DB.get();
 let SESSION=null;
 
 /* ================= PRIMARY COLOUR ================= */
-const PALETTE={"Army Green":"#184A2C","Deep Navy":"#143A6B","Regimental Maroon":"#6B1F2A","Teal":"#0F4C4A","Indigo":"#2E2F7A","Bronze":"#6B4A16","Violet":"#4B2A7A","Graphite":"#2B3138"};
+const PALETTE={"Deep Navy":"#143A6B","Army Green":"#184A2C","Regimental Maroon":"#6B1F2A","Teal":"#0F4C4A","Indigo":"#2E2F7A","Bronze":"#6B4A16","Violet":"#4B2A7A","Graphite":"#2B3138"};
 function hx(r,g,b){const c=n=>Math.max(0,Math.min(255,Math.round(n))).toString(16).padStart(2,'0');return '#'+c(r)+c(g)+c(b);}
-function applyPrimary(name){const base=PALETTE[name]||PALETTE["Army Green"];
+function applyPrimary(name){const base=PALETTE[name]||PALETTE["Deep Navy"];
  const r=parseInt(base.substr(1,2),16),g=parseInt(base.substr(3,2),16),b=parseInt(base.substr(5,2),16);
  const tint=p=>hx(r*p+255*(1-p),g*p+255*(1-p),b*p+255*(1-p)),scale=f=>hx(r*f,g*f,b*f);
  const s=document.documentElement.style;

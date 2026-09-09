@@ -4,15 +4,15 @@
   /* Lumex palette - Figma "Lumex" library, node 870-1623. Labels match the Figma swatch names. */
 
   /* Primary */
-  --primary:#184A2C;            /* Primary          */
-  --primary-50:#8CA596;         /* Primary 50%      */
-  --primary-30:#BAC9C0;         /* Primary 30%      */
-  --primary-20:#D1DBD5;         /* Primary 20%      */
-  --primary-15:#DDE4E0;         /* Primary 15%      */
-  --primary-10:#E8EDEA;         /* Primary 10%      */
-  --primary-5:#F3F6F4;          /* Primary 5%       */
-  --primary-hover:#20633B;      /* Hover            */
-  --primary-pressed:#10301D;    /* Pressed          */
+  --primary:#143A6B;            /* Primary          */
+  --primary-50:#8A9CB5;         /* Primary 50%      */
+  --primary-30:#B8C4D3;         /* Primary 30%      */
+  --primary-20:#D0D8E1;         /* Primary 20%      */
+  --primary-15:#DCE1E9;         /* Primary 15%      */
+  --primary-10:#E8EBF0;         /* Primary 10%      */
+  --primary-5:#F3F5F8;          /* Primary 5%       */
+  --primary-hover:#1B4E8F;      /* Hover            */
+  --primary-pressed:#0D2647;    /* Pressed          */
 
   /* Fonts */
   --heading:#071437;            /* Heading          */
@@ -85,7 +85,8 @@ a{color:inherit}
 .lright{flex:1;min-width:340px;display:flex;align-items:center;justify-content:center;background:#fff;padding:0}
 .lcard{width:100%;max-width:none;align-self:stretch;background:#fff;border:none;border-radius:0;padding:40px 56px;box-shadow:none;display:flex;flex-direction:column}
 .lform{flex:1;display:flex;flex-direction:column;justify-content:center;width:100%;max-width:500px;margin:0 auto}
-.lbrand{font-size:19px;font-weight:800;letter-spacing:.4px;color:var(--heading)}
+.lbrand{display:flex;align-items:center;gap:12px;font-size:19px;font-weight:800;letter-spacing:.4px;color:var(--heading)}
+.lbrand .lblogo{width:58px;height:58px;flex:none;display:block}
 .lbrand span{font-weight:700;font-size:13px;opacity:.7}
 .lbrand em{display:block;font-style:normal;font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text-4);margin-top:3px}
 
@@ -137,7 +138,8 @@ svg.ix{flex:none;display:block}
 /* ---------- Shell ---------- */
 /* Neutral chrome, colour reserved for actions and state (Mistral / Navattic / Whop pattern) */
 .hdr{height:64px;background:var(--primary);color:#fff;display:flex;align-items:center;padding:0 22px;gap:0;position:sticky;top:0;z-index:20}
-.hdr .brand{flex:none;width:218px;font-size:19px;font-weight:700;letter-spacing:.2px;cursor:pointer;color:#fff;display:flex;align-items:baseline;gap:7px}
+.hdr .brand{flex:none;width:218px;font-size:19px;font-weight:700;letter-spacing:.2px;cursor:pointer;color:#fff;display:flex;align-items:center;gap:7px}
+.hdr .brand .blogo{width:36px;height:36px;flex:none;display:block;align-self:center}
 .hdr .brand small{font-weight:500;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--primary-30)}
 .searchwrap{position:relative;flex:1;max-width:340px;display:flex;align-items:center;margin-left:28px}
 .searchwrap .sicon{position:absolute;left:16px;display:flex;color:var(--primary-30);pointer-events:none}
